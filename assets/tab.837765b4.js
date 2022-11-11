@@ -1,1 +1,1 @@
-const t=""+new URL("tab.d7c08170.svg",import.meta.url).href;export{t as default};
+const s="/assets/tab.d7c08170.svg";export{s as default};

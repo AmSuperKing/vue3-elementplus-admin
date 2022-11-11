@@ -1,1 +1,1 @@
-const a=""+new URL("language.407b7548.svg",import.meta.url).href;export{a as default};
+const a="/assets/language.407b7548.svg";export{a as default};
