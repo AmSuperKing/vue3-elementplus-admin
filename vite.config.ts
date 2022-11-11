@@ -18,9 +18,10 @@ export default defineConfig(({ command, mode }) => {
   const mockConfig = {
     supportTs: true,
     logger: false,
-    mockPath: './mock',
+    mockPath: './mock/',
     localEnabled: mode === 'development' ? true : false, // 开发环境
     prodEnabled: mode === 'production' ? true : false, // 生产环境
+    injectCode: ` import { setupProdMockServer } from './mockProdServer'; setupProdMockServer(); `,
     watchFiles: true, // 监听文件内容变更
   }
 
