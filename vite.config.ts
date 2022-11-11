@@ -30,7 +30,7 @@ export default defineConfig(({ command, mode }) => {
     ` import { setupProdMockServer } from '../mock/prod';
       setupProdMockServer(); `,
     watchFiles: true, // 监听文件内容变更
-    injectFile: path.resolve('src/main.ts'), // 在main.ts注册后需要在此处注入，否则可能报找不到setupProdMockServer的错误
+    injectFile: path.resolve('src/main.js'), // 在main.js注册后需要在此处注入，否则可能报找不到setupProdMockServer的错误
   }
 
   const mockConfig = mode === 'production' ? mockProdConfig : mockDevConfig
