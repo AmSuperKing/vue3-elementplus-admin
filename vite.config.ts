@@ -36,6 +36,7 @@ export default defineConfig(({ command, mode }) => {
   const mockConfig = mode === 'production' ? mockProdConfig : mockDevConfig
 
   return {
+    base: './',
     plugins: [
       vue(),
       vueJsx(),
