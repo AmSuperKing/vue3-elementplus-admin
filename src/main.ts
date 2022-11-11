@@ -15,11 +15,6 @@ import { registerIcons } from '@/utils/common'
 
 import VueCookies from 'vue-cookies'
 
-import { setupProdMockServer } from '../mock/prod'
-if (import.meta.env.MODE === 'production') {
-  setupProdMockServer()
-}
-
 const app = createApp(App)
 
 app.use(createPinia())
