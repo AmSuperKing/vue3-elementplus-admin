@@ -15,25 +15,14 @@ import { viteMockServe } from 'vite-plugin-mock'
 export default defineConfig(({ command, mode }) => {
   console.log('server start mode: =>', mode)
 
-  const mockDevConfig = {
+  const mockConfig = {
     supportTs: true,
     logger: false,
-    mockPath: './mock/dev/',
-  }
-  const mockProdConfig = {
-    supportTs: true,
-    logger: false,
-    mockPath: './mock/prod/',
-    localEnabled: false, // 开发环境
-    prodEnabled: true, // 生产环境设为true，也可以根据官方文档格式
-    injectCode: 
-    ` import { setupProdMockServer } from '../mock/prod';
-      setupProdMockServer(); `,
+    mockPath: './mock',
+    localEnabled: mode === 'development' ? true : false, // 开发环境
+    prodEnabled: mode === 'production' ? true : false, // 生产环境
     watchFiles: true, // 监听文件内容变更
-    injectFile: path.resolve('src/main.js'), // 在main.js注册后需要在此处注入，否则可能报找不到setupProdMockServer的错误
   }
-
-  const mockConfig = mode === 'production' ? mockProdConfig : mockDevConfig
 
   return {
     base: './',
