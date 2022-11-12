@@ -1,1 +1,1 @@
-const e="/vue3-elementplus-admin/assets/pdf.77bd44ca.svg";export{e as default};
+const s="/assets/pdf.77bd44ca.svg";export{s as default};
