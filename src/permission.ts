@@ -31,6 +31,12 @@ router.beforeEach(async to => {
       replace: true
     }
   } else {
+    if (to.path === '/login') {
+      return {
+        name: 'dashboard',
+        replace: true
+      }
+    }
     try {
       await userInfo.getUserInfo()
       await userInfo.getAuthMenus()

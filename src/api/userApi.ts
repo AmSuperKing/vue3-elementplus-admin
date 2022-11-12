@@ -5,12 +5,12 @@ interface LoginForm {
 }
 export const userApi = {
   login(data: LoginForm) {
-    return request.post('/api/user/login', data).then(res => Promise.resolve(res.data))
+    return request.post('/user/login', data).then(res => Promise.resolve(res.data))
   },
   getUserInfo(username: string) {
-    return request.get('/api/user/info', { params: { username }}).then(res => Promise.resolve(res.data))
+    return request.get('/user/info', { params: { username }}).then(res => Promise.resolve(res.data))
   },
   getUserAuthMenu() {
-    return request.get('/api/user/authMenu').then(res => Promise.resolve(res.data))
+    return request.get('/user/authMenu').then(res => Promise.resolve(res.data))
   }
 }

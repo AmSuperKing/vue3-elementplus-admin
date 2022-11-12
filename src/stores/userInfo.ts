@@ -43,19 +43,18 @@ export const useUserInfoStore = defineStore('userInfo', {
       // resetRouter()
     },
     async getUserInfo() {
-      const { code, data } = await userApi.getUserInfo('admin')
+      const { code, data } = await userApi.getUserInfo(this.userName)
       if (+code === 200) {
-        this.userName = data.userName
-        this.userNameCn = data.userNameCn
+        this.userName = data.userInfo.userName
+        this.userNameCn = data.userInfo.userNameCn
         return Promise.resolve(data)
       }
     },
     async getAuthMenus() {
       const { code, data } = await userApi.getUserAuthMenu()
-      console.log(data)
       if (+code === 200) {
-        this.authMenus = data
-        return Promise.resolve(data)
+        this.authMenus = data.authMenus
+        return Promise.resolve(data.authMenus)
       }
     }
   },

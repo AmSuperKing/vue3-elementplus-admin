@@ -1,5 +1,4 @@
 import { fileURLToPath, URL } from 'node:url'
-import path from 'path'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
@@ -8,25 +7,12 @@ import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { svgBuilder } from './src/components/icon/svg/index'
 
-// 引入viteMockServe
-import { viteMockServe } from 'vite-plugin-mock'
-
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
   console.log('server start mode: =>', mode)
 
-  const mockConfig = {
-    supportTs: true,
-    logger: false,
-    mockPath: './mock/',
-    localEnabled: mode === 'development' ? true : false, // 开发环境
-    prodEnabled: mode === 'production' ? true : false, // 生产环境
-    injectCode: ` import { setupProdMockServer } from './mockProdServer'; setupProdMockServer(); `,
-    watchFiles: true, // 监听文件内容变更
-  }
-
   return {
-    base: './',
+    base: '/',
     plugins: [
       vue(),
       vueJsx(),
@@ -36,8 +22,7 @@ export default defineConfig(({ command, mode }) => {
       Components({
         resolvers: [ElementPlusResolver()],
       }),
-      svgBuilder('./src/assets/icons/'),
-      viteMockServe(mockConfig),
+      svgBuilder('./src/assets/icons/')
     ],
     resolve: {
       alias: {

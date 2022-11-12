@@ -23,8 +23,8 @@ const service = axios.create({
 // config 代表发起请求的参数的实体
 service.interceptors.request.use((config: AxiosRequestConfig) => {
     loadingInstance.target = ElLoading.service(loadingInstance.options)
-    // const baseUrl = import.meta.env.VITE_AXIOS_BASE_URL // url = base url + request url
-    // config.url = `${baseUrl}${config.url}`
+    const baseUrl = import.meta.env.VITE_AXIOS_BASE_URL // url = base url + request url
+    config.url = `${baseUrl}${config.url}`
     const token = getToken()
     if (token) { // 判断是否存在token，如果存在的话，则每个http header都加上token
       if (config.headers === undefined) config.headers = { 'X-Requested-With': 'XMLHttpRequest' }

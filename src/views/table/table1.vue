@@ -132,7 +132,6 @@ onMounted(() => {
 const getData = () => {
 	tableApi.getUserList().then(res => {
     if (res) {
-      console.log(res)
       tableData.value = res.data.list
       pageTotal.value = res.data.total
     }

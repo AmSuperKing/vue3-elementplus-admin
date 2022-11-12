@@ -36,7 +36,7 @@
         </div>
         <el-dropdown id="user-setting" class="user-name" trigger="click" @command="handleCommand">
           <span class="el-dropdown-link">
-            {{ userInfo.userName || '尊敬的用户' }}
+            {{ userInfo.userNameCn || '尊敬的用户' }}
             <el-icon :color="variablesList.textColor"><CaretBottom /></el-icon>
           </span>
           <template #dropdown>

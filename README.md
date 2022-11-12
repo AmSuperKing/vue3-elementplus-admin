@@ -1,7 +1,5 @@
 # vue3-elementplus-admin
 
-[项目预览](https://amsuperking.github.io/vue3-elementplus-admin/#/login)
-
 This template should help get you started developing with Vue 3 in Vite.
 
 ## Recommended IDE Setup

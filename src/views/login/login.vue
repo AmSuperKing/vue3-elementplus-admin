@@ -38,7 +38,10 @@
         <div class="login-btn">
           <el-button type="primary" size="large" @click="submitForm(loginFormRef)">登录</el-button>
         </div>
-        <p class="login-tips">Tips : 请填写完整用户名和密码登录。</p>
+        <p class="login-tips">
+          Tips : <br>管理员账号: admin, 密码: 任意, 如 123456<br>
+          其他用户: 账号/密码随意, 如: 账号: visitor, 密码: 123456
+        </p>
       </el-form>
     </div>
     <div class="ms-copyright hidden-sm-and-down">
@@ -106,8 +109,8 @@ const submitForm = async(formEl: FormInstance | undefined) => {
   await formEl.validate((valid, fields) => {
     if (valid) {
       userApi.login(loginForm).then(res => {
-        if(res?.data?.token) {
-          userInfo.setUserInfo(res.data)
+        if(res) {
+          userInfo.setUserInfo(res.data.userInfo)
           ElNotification({
             title: '登录成功!',
             type: 'success'
@@ -228,7 +231,7 @@ const removeUserInfoFromCookie = () => {
 }
 .login-tips {
   font-size: 12px;
-  line-height: 30px;
+  line-height: 15px;
   color: $theme-color;
 }
 .ms-copyright {
