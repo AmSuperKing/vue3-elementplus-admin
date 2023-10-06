@@ -1,1 +1,1 @@
-const e="/vue3-elementplus-admin/assets/message.cb1eb2d5.svg";export{e as default};
+const s="/assets/message.cb1eb2d5.svg";export{s as default};
