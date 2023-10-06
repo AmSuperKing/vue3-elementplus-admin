@@ -1,8 +1,11 @@
 {
   "name": "vue3-elementplus-admin",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "scripts": {
-    "dev": "vite --force",
+    "dev": "vite",
+    "serve": "vite",
+    "dev:force": "vite --force",
+    "serve:force": "vite --force",
     "build": "run-p type-check build-only",
     "preview": "vite preview --port 4173",
     "test:unit": "vitest --environment jsdom",
@@ -21,6 +24,7 @@
     "md-editor-v3": "^2.4.1",
     "nprogress": "^0.2.0",
     "pinia": "^2.0.21",
+    "pinia-plugin-persistedstate": "^3.2.0",
     "screenfull": "^6.0.2",
     "vue": "^3.2.38",
     "vue-clipboard3": "^2.0.0",

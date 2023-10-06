@@ -3,7 +3,7 @@
     <template v-if="item.children.length > 1">
       <el-sub-menu :key="item.menuPath" :index="item.menuPath" class="menu-border-bottom">
         <template #title>
-          <Icon v-if="item.icon" :name="item.icon" style="padding-bottom: 2px;" />
+          <Icon v-if="item.icon" :name="item.icon" color="#fff" style="padding-bottom: 2px;" />
           <span>{{ item.menuName }}</span>
         </template>
         <menu-item
@@ -16,7 +16,7 @@
     <template v-if="item.children.length === 1">
       <router-link :key="item.children[0].menuPath" :to="item.children[0].menuPath">
         <el-menu-item :index="item.children[0].menuPath" class="menu-border-bottom">
-          <Icon v-if="item.icon" :name="item.icon" style="width: 24px;padding-bottom: 2px; margin-right: 5px" />
+          <Icon v-if="item.icon" :name="item.icon" color="#fff" style="width: 24px;padding-bottom: 2px; margin-right: 5px" />
           <template #title>{{ item.children[0].menuName }}</template>
         </el-menu-item>
       </router-link>
@@ -25,7 +25,7 @@
   <template v-else>
     <router-link v-if="!item.hidden" :key="item.menuPath" :to="item.menuPath">
       <el-menu-item :index="item.menuPath">
-        <Icon v-if="item.icon" :name="item.icon" style="width: 24px;padding-bottom: 2px; margin-right: 5px" />
+        <Icon v-if="item.icon" :name="item.icon" color="#fff" style="width: 24px;padding-bottom: 2px; margin-right: 5px" />
         <template v-if="item.menuName" #title>{{ item.menuName }}</template>
       </el-menu-item>
     </router-link>
@@ -61,15 +61,15 @@ export default {
   border-bottom: 1px solid $subMenuBorder;
 }
 :deep(.el-sub-menu__title:hover) {
-  background-color: var(--el-color-primary-light-7) !important;
+  background-color: $menuActiveBg !important;
 }
 :deep(.el-menu-item.is-active) {
-  background-color: var(--el-color-primary-light-7);
+  background-color: $menuActiveBg;
 }
 :deep(.el-menu-item:hover) {
-  background-color: var(--el-color-primary-light-7);
+  background-color: $menuActiveBg;
 }
 .is-active .icon {
-  color: var(--el-menu-active-color) !important;
+  color: $menuActiveText !important;
 }
 </style>

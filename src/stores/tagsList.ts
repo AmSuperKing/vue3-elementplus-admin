@@ -6,6 +6,7 @@ export const useTagsListStore = defineStore('tagsList', {
       list: <TagsItem[]>[],
     }
   },
+  persist: true,
   getters: {
     nameList: (state) => {
       return state.list.map((item) => item.name)
@@ -25,8 +26,8 @@ export const useTagsListStore = defineStore('tagsList', {
     closeRightTagsItem(index: number) {
       this.list = this.list.slice(0, index + 1)
     },
-    closeOtherTags(data: TagsItem) {
-      this.list = [data]
+    closeOtherTags(index: number) {
+      this.list = this.list.slice(index, index + 1)
     },
     clearTags() {
       this.list = []

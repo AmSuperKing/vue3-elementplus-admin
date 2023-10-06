@@ -31,7 +31,7 @@ export default defineConfig(({ command, mode }) => {
     },
     server: {
       host: '0.0.0.0',
-      port: 9527,
+      port: 5100,
       open: true,
       hmr: {
         overlay: true,

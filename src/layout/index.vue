@@ -110,6 +110,7 @@ onBeforeUnmount(() => {
   right: 0;
   z-index: 10;
   transition: all .3s ease;
+  margin-left: 1px;
 }
 .mobile-header {
  left: 0;

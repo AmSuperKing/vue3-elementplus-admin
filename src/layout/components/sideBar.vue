@@ -55,11 +55,16 @@ const handleCollapse = () => {
   overflow-x: hidden;
   overflow-y: scroll;
   background-color: $menuBg;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    width: 0;
+  }
   .sidebar-header {
     position: relative;
     width: 210px;
     height: 56px;
     border-bottom: 1px solid $subMenuBorder;
+    background-color: #fafafa;
     background-image: url('../../assets/images/logo.png');
     background-position: center center;
     background-size: 100% 100%;
@@ -73,10 +78,10 @@ const handleCollapse = () => {
       transform: translateY(-50%);
       width: 24px;
       height: 24px;
-      color: #555;
+      color: #0080ff;
       cursor: pointer;
       &:hover {
-        color: $headerText;
+        color: $blueColor;
       }
     }
 
@@ -87,6 +92,9 @@ const handleCollapse = () => {
 }
 .sidebar::-webkit-scrollbar {
   width: 0;
+}
+.sidebar-el-menu {
+  border-right-width: 0px !important;
 }
 .sidebar-el-menu:not(.el-menu--collapse) {
   width: 210px;

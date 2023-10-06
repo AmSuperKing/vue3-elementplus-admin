@@ -1,5 +1,5 @@
 <template>
-  <div class="header">
+  <div class="header-bar">
     <div id="collapse-btn" class="collapse-btn" @click="collapseChage">
       <el-icon v-if="!sidebar.collapse" class="collapse-btn-icon" :size="22">
         <Fold />
@@ -32,7 +32,7 @@
         </div>
 
         <div class="user-avator hidden-sm-and-down">
-          <img src="../../assets/images/avatar.png" />
+          <img :src="userAvator" />
         </div>
         <el-dropdown id="user-setting" class="user-name" trigger="click" @command="handleCommand">
           <span class="el-dropdown-link">
@@ -65,6 +65,7 @@ import { settings } from '@/settings'
 import variables from '@/styles/variables.module.scss'
 import MenuSearch from './menuSearch.vue'
 import Screenfull from '@/components/Screenfull/index.vue'
+import userAvator from '@/assets/images/avatar.png'
 
 const userInfo = useUserInfoStore()
 const sidebar = useSidebarStore()
@@ -111,14 +112,15 @@ const handleToDetailPage = (data: anyObj) => {
 
 <style lang="scss" scoped>
 @import '@/styles/variables.scss';
-.header {
+.header-bar {
   position: relative;
   box-sizing: border-box;
   width: 100%;
   height: 70px;
   font-size: 24px;
   color: $headerText;
-  border-bottom: 1px solid $subMenuBorder;
+  border-bottom: 1px solid $headerBg;
+  background-color: #fff;
   .logo {
     float: left;
     width: 250px;
@@ -136,11 +138,11 @@ const handleToDetailPage = (data: anyObj) => {
     background-color: var(--el-color-primary-light-9);
   }
   &:hover .collapse-btn-icon {
-    color: $headerText;
+    color: #555;
   }
   .collapse-btn-icon {
     vertical-align: middle;
-    color: $menuText;
+    color: $headerText;
   }
 }
 
@@ -202,7 +204,7 @@ const handleToDetailPage = (data: anyObj) => {
     color: var(--el-color-primary);
     border-radius: 8px;
     border: 1px solid var(--el-color-primary);
-    background-color: var(--el-color-info-light-9);
+    background-color: #fff;
     transition: color 0.5s;
     cursor: pointer;
     &:hover .search-placeholder {
@@ -233,6 +235,8 @@ const handleToDetailPage = (data: anyObj) => {
   margin-left: 10px;
 }
 .el-dropdown-link {
+  max-width: 120px;
+  overflow: hidden;
   color: $textColor;
   cursor: pointer;
 }

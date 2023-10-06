@@ -99,7 +99,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onBeforeUnmount, onMounted, reactive } from 'vue'
+import { onActivated, onBeforeUnmount, onMounted, reactive } from 'vue'
 import * as echarts from 'echarts'
 import type { EChartsOption } from 'echarts'
 
@@ -134,10 +134,16 @@ var barChart:any
 var lineChart:any
 
 onMounted(() => {
-  initBarChart()
-  initLineChart()
   window.addEventListener('resize', resizeChart)
 })
+
+onActivated(() => {
+  setTimeout(() => {
+    initBarChart()
+    initLineChart()
+  }, 300)
+})
+
 onBeforeUnmount(() => {
   window.removeEventListener('resize', resizeChart)
   barChart.dispose()
@@ -151,7 +157,9 @@ const resizeChart = () => {
 }
 
 const initBarChart = () => {
+  if (barChart) return
   const barChartDom: HTMLElement | any = document.getElementById('barChart')
+  if (!barChartDom) return
   const barChartOption: EChartsOption = {
     title: {
       text: 'Series Bar Chart',
@@ -241,7 +249,9 @@ const initBarChart = () => {
 }
 
 const initLineChart = () => {
+  if (lineChart) return
   const lineChartDom: HTMLElement | any = document.getElementById('lineChart')
+  if (!lineChartDom) return
   const lineChartOption: EChartsOption = {
     title: {
       text: 'Stacked Area Chart',
