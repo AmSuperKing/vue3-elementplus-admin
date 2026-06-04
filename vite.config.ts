@@ -12,7 +12,7 @@ export default defineConfig(({ command, mode }) => {
   console.log('server start mode: =>', mode)
 
   return {
-    base: '/vue3-elementplus-admin/',
+    base: '/',
     plugins: [
       vue(),
       vueJsx(),
