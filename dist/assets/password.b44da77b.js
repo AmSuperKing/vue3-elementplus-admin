@@ -1,1 +1,1 @@
-const s=""+new URL("password.2d5db296.svg",import.meta.url).href;export{s as default};
+const s="/assets/password.2d5db296.svg";export{s as default};
