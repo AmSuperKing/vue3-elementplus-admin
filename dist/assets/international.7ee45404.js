@@ -1,1 +1,1 @@
-const t="/assets/international.cdcfd9eb.svg";export{t as default};
+const e="/vue3-elementplus-admin/assets/international.cdcfd9eb.svg";export{e as default};

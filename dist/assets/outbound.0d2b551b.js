@@ -1,1 +1,1 @@
-const o="/assets/outbound.5be12026.svg";export{o as default};
+const e="/vue3-elementplus-admin/assets/outbound.5be12026.svg";export{e as default};
