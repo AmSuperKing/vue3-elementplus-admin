@@ -16,6 +16,10 @@ export interface IconProps {
   color: string
 }
 
+defineOptions({
+  name: 'SvgIcon',
+})
+
 const props = withDefaults(defineProps<IconProps>(), {
   name: '',
   size: '18px',

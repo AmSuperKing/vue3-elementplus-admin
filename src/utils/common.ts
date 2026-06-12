@@ -1,15 +1,15 @@
 import type { App, Component } from 'vue'
 import * as elIcons from '@element-plus/icons-vue'
-import Icon from '@/components/Icon/index.vue'
+import CustomIcon from '@/components/CustomIcon/index.vue'
 
 export function registerIcons(app: App) {
   /*
-   * 全局注册 Icon
-   * 使用方式: <Icon name="name" size="size" color="color" />
+   * 全局注册 CustomIcon
+   * 使用方式: <CustomIcon name="name" size="size" color="color" />
    * 图标名称：如果是element图标需 el-icon- 前缀 + 图标名；
    * 如果是自定义svg图标，需 svg- 前缀 + svg资源文件名，资源见<assets/icons/svg>目录
    */
-  app.component('Icon', Icon)
+  app.component('CustomIcon', CustomIcon)
 
   /*
    * 全局注册element Plus的icon

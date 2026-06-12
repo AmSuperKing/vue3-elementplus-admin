@@ -7,7 +7,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
-import { svgBuilder } from './src/components/Icon/svg/index'
+import { svgBuilder } from './src/components/CustomIcon/svg/index'
 
 // https://vite.dev/config/
 export default defineConfig(({ command, mode }) => {

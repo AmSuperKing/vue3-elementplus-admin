@@ -1,6 +1,6 @@
 <template>
   <span>
-    <Icon :name="isFullscreen ? 'svg-exit-fullscreen' : 'svg-fullscreen'" :color="props.color" @click="onClick" />
+    <CustomIcon :name="isFullscreen ? 'svg-exit-fullscreen' : 'svg-fullscreen'" :color="props.color" @click="onClick" />
   </span>
 </template>
 

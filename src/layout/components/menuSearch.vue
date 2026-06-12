@@ -1,24 +1,16 @@
 <template>
   <div class="search-content">
-    <el-input
-      ref="searchInputRef"
-      v-model="menuSearchContent"
-      type="text"
-      clearable
-      placeholder="搜索菜单 Search Menus"
-      maxlength="20"
-      class="search-input"
-      @input="handleSearchMenu"
-      @change="handleSearchMenu"
-      @keyup.enter="handleSearchEnter"
-    >
+    <el-input ref="searchInputRef" v-model="menuSearchContent" type="text" clearable placeholder="搜索菜单 Search Menus"
+      maxlength="20" class="search-input" @input="handleSearchMenu" @change="handleSearchMenu"
+      @keyup.enter="handleSearchEnter">
       <template #prefix>
         <el-icon class="search-input__icon">
           <Search />
         </el-icon>
       </template>
     </el-input>
-    <div v-loading="loading" element-loading-text="搜索中..." element-loading-background="rgba(255, 255, 255, 0.8)" class="res-list">
+    <div v-loading="loading" element-loading-text="搜索中..." element-loading-background="rgba(255, 255, 255, 0.8)"
+      class="res-list">
       <div v-if="resList.length" class="re-content">
         <div v-for="item of resList" :key="item.menuPath" class="res-item" @click="handleToPage(item)">
           <span>
@@ -27,7 +19,7 @@
             </el-icon>
             {{ item.menuName }}
           </span>
-          <Icon name="svg-enter" color="#999" class="enter-icon" />
+          <CustomIcon name="svg-enter" color="#999" class="enter-icon" />
         </div>
       </div>
       <div v-else class="no-res">没有找到匹配内容<br />No Result.</div>

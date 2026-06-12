@@ -5,16 +5,15 @@
       并全局注册，只需在所需的地方直接使用并传入图标名称，大小，颜色;<br />
       无论 @element-plus/icons-vue 还是自定义额外拓展的 svg 图标,<br />
       使用 @element-plus/icons-vue 时需以 <b><i>el-icon-</i></b> 为前缀或者直接首字母大写的图标名称 使用 svg 图标资源需以
-      <b><i>svg-</i></b> 为前缀，svg 资源文件存放在 <b><i>'src/assets/svgs'</i></b
-      ><br /><br />
+      <b><i>svg-</i></b> 为前缀，svg 资源文件存放在 <b><i>'src/assets/svgs'</i></b><br /><br />
       <b>example: </b><br />
-      <Icon name="svg-chart" size="15px" color="#00aadf"></Icon>
+      <CustomIcon name="svg-chart" size="15px" color="#00aadf"></CustomIcon>
       <pre>&lt;Icon name="svg-chart" size="15px" color="#00aadf"&gt;&lt;/Icon&gt;</pre>
     </section>
 
     <div class="grid">
       <div v-for="item of expandedIcons" :key="item" class="icon-item" @click="handleClipboard(generateIconCode(item))">
-        <Icon :name="'svg-' + item" size="25px" color="#999"></Icon>
+        <CustomIcon :name="'svg-' + item" size="25px" color="#999"></CustomIcon>
         <span>{{ item }}</span>
       </div>
     </div>
@@ -41,7 +40,7 @@ const getIconList = () => {
 }
 
 const generateIconCode = (symbol: string) => {
-  return `<Icon name="svg-${symbol}" size="25px" color="#999"></Icon>`
+  return `<CustomIcon name="svg-${symbol}" size="25px" color="#999"></CustomIcon>`
 }
 
 const handleClipboard = (text: string) => {
