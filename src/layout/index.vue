@@ -24,9 +24,9 @@
 
 <script lang="ts" setup>
 import { onMounted, onBeforeUnmount } from 'vue'
-import VSideBar from './components/SideBar.vue'
-import VHeader from './components/Header.vue'
-import TagsView from './components/TagsView.vue'
+import VSideBar from './components/VSideBar.vue'
+import VHeader from './components/VHeader.vue'
+import TagsView from './components/VTagsView.vue'
 import AppMain from './components/AppMain.vue'
 import { useSidebarStore } from '@/stores/sidebar'
 import { useDeviceStore } from '@/stores/device'

@@ -68,7 +68,7 @@ import { useUserInfoStore } from '@/stores/userInfo'
 import { useSidebarStore } from '@/stores/sidebar'
 import { settings } from '@/settings'
 import variables from '@/assets/styles/variables.module.scss'
-import MenuSearch from './MenuSearch.vue'
+import MenuSearch from './VMenuSearch.vue'
 import Screenfull from '@/components/Screenfull/index.vue'
 import userAvator from '@/assets/imgs/avatar.png'
 

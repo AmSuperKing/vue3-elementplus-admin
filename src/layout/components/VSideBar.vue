@@ -4,15 +4,9 @@
       <Fold class="fold-icon" @click="handleCollapse" />
     </div>
     <el-scrollbar wrap-class="scrollbar-wrapper">
-      <el-menu
-        id="menu-list"
-        class="sidebar-el-menu"
-        :default-active="onRoutes"
-        :collapse="sidebar.collapse"
-        :background-color="variablesList.menuBg"
-        :text-color="variablesList.menuText"
-        :active-text-color="variablesList.menuActiveText"
-      >
+      <el-menu id="menu-list" class="sidebar-el-menu" :default-active="onRoutes" :collapse="sidebar.collapse"
+        :background-color="variablesList.menuBg" :text-color="variablesList.menuText"
+        :active-text-color="variablesList.menuActiveText">
         <menu-item v-for="item of userInfo.authMenus" :key="item.path" :item="item" />
       </el-menu>
     </el-scrollbar>
@@ -25,7 +19,7 @@ import { useRoute } from 'vue-router'
 import { useUserInfoStore } from '@/stores/userInfo'
 import { useSidebarStore } from '@/stores/sidebar'
 import { useDeviceStore } from '@/stores/device'
-import MenuItem from './MenuItem.vue'
+import MenuItem from './VMenuItem.vue'
 import variables from '@/assets/styles/variables.module.scss'
 
 const variablesList = computed(() => variables)
@@ -102,7 +96,7 @@ const handleCollapse = () => {
   width: 210px;
 }
 
-.sidebar > ul {
+.sidebar>ul {
   height: 100%;
 }
 </style>
