@@ -5,7 +5,7 @@ interface LoginForm {
 }
 export const userApi = {
   login(data: LoginForm) {
-    return request.post('/login.json', data).then((res) => Promise.resolve(res.data))
+    return request.get('/login.json', { params: data }).then((res) => Promise.resolve(res.data))
   },
   getUserInfo(username: string) {
     return request.get('/userInfo.json', { params: { username } }).then((res) => Promise.resolve(res.data))
