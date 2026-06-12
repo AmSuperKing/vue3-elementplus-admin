@@ -92,6 +92,28 @@
       ]
     },
     {
+      "path": "/fileViewer",
+      "name": "fileViewer",
+      "redirect": "/fileViewer/pdfViewer",
+      "component": "Layout",
+      "meta": {
+        "title": "文件查看器",
+        "icon": "Document"
+      },
+      "hidden": false,
+      "children": [
+        {
+          "path": "/fileViewer/pdfViewer",
+          "name": "pdfViewer",
+          "meta": {
+            "title": "PDF查看器",
+            "icon": "svg-pdf"
+          },
+          "hidden": false
+        }
+      ]
+    },
+    {
       "path": "/icons",
       "name": "icons",
       "component": "Layout",

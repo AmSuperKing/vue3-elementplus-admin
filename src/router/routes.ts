@@ -75,6 +75,23 @@ const routes = [
     ],
   },
   {
+    path: '/fileViewer',
+    name: 'fileViewer',
+    redirect: '/fileViewer/pdfViewer',
+    component: Layout,
+    meta: { title: '文件查看器', icon: 'Document' },
+    hidden: false,
+    children: [
+      {
+        path: 'pdfViewer',
+        name: 'pdfViewer',
+        meta: { title: 'PDF查看器', icon: 'svg-pdf' },
+        hidden: false,
+        component: () => import(/* webpackChunkName: "fileViewer" */ '@/views/fileViewer/pdfViewer.vue'),
+      },
+    ],
+  },
+  {
     path: '/icons',
     name: 'icons',
     redirect: '/icons/list',
