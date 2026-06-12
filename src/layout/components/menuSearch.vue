@@ -19,7 +19,7 @@
             </el-icon>
             {{ item.menuName }}
           </span>
-          <CustomIcon name="svg-enter" color="#999" class="enter-icon" />
+          <Icon name="svg-enter" color="#999" class="enter-icon" />
         </div>
       </div>
       <div v-else class="no-res">没有找到匹配内容<br />No Result.</div>

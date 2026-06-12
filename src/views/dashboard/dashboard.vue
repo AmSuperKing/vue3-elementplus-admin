@@ -12,7 +12,7 @@
         <el-card class="stat-card" shadow="hover">
           <div class="stat-content">
             <div class="stat-icon users">
-              <CustomIcon name="svg-peoples" />
+              <Icon name="svg-peoples" />
             </div>
             <div class="stat-info">
               <div class="stat-value">
@@ -28,7 +28,7 @@
         <el-card class="stat-card" shadow="hover">
           <div class="stat-content">
             <div class="stat-icon orders">
-              <CustomIcon name="el-icon-Tickets" />
+              <Icon name="el-icon-Tickets" />
             </div>
             <div class="stat-info">
               <div class="stat-value">
@@ -44,7 +44,7 @@
         <el-card class="stat-card" shadow="hover">
           <div class="stat-content">
             <div class="stat-icon revenue">
-              <CustomIcon name="money" />
+              <Icon name="money" />
             </div>
             <div class="stat-info">
               <div class="stat-value">
@@ -60,7 +60,7 @@
         <el-card class="stat-card" shadow="hover">
           <div class="stat-content">
             <div class="stat-icon products">
-              <CustomIcon name="Goods" />
+              <Icon name="Goods" />
             </div>
             <div class="stat-info">
               <div class="stat-value">
@@ -117,19 +117,19 @@
           </template>
           <div class="action-buttons">
             <el-button type="primary" class="action-btn">
-              <CustomIcon name="edit" />
+              <Icon name="edit" />
               <span>新建任务</span>
             </el-button>
             <el-button type="success" class="action-btn">
-              <CustomIcon name="user" />
+              <Icon name="user" />
               <span>添加用户</span>
             </el-button>
             <el-button type="warning" class="action-btn">
-              <CustomIcon name="Document" />
+              <Icon name="Document" />
               <span>生成报告</span>
             </el-button>
             <el-button type="info" class="action-btn">
-              <CustomIcon name="message" />
+              <Icon name="message" />
               <span>发送消息</span>
             </el-button>
           </div>

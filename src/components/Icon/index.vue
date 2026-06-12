@@ -1,7 +1,7 @@
 <script lang="ts">
 import { createVNode, resolveComponent, defineComponent, computed, type ExtractPropTypes } from 'vue'
 import type { CSSProperties } from 'vue'
-import svg from '@/components/CustomIcon/svg/index.vue'
+import svg from '@/components/Icon/svg/index.vue'
 import { isExternal } from '@/utils/common'
 
 // 定义 props 选项对象，以便提取类型
@@ -21,7 +21,7 @@ const iconProps = {
 }
 
 export default defineComponent({
-  name: 'CustomIcon',
+  name: 'Icon',
   props: iconProps,
   setup(props: ExtractPropTypes<typeof iconProps>) {
     const iconStyle = computed((): CSSProperties => {
