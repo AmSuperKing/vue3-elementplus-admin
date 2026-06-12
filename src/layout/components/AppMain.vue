@@ -12,7 +12,7 @@
         </keep-alive>
       </transition>
     </router-view>
-    <el-backtop />
+    <el-backtop style="z-index: 1999;" />
   </div>
 </template>
 
@@ -20,9 +20,6 @@
 import { useTagsListStore } from '@/stores/tagsList'
 
 const tagsList = useTagsListStore()
-
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

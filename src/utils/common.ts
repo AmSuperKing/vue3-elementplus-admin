@@ -1,6 +1,6 @@
-import type { App } from 'vue'
+import type { App, Component } from 'vue'
 import * as elIcons from '@element-plus/icons-vue'
-import Icon from '@/components/icon/index.vue'
+import Icon from '@/components/Icon/index.vue'
 
 export function registerIcons(app: App) {
   /*
@@ -14,32 +14,40 @@ export function registerIcons(app: App) {
   /*
    * 全局注册element Plus的icon
    */
-  const icons = elIcons as any
-  for (const i in icons) {
-    // 以 el-icon- 前缀使用
-    app.component(`el-icon-${icons[i].name}`, icons[i])
-    // 直接图标组件名 使用
-    app.component(`${icons[i].name}`, icons[i])
+  for (const key in elIcons) {
+    if (Object.prototype.hasOwnProperty.call(elIcons, key)) {
+      const icon = elIcons[key as keyof typeof elIcons]
+      // 以 el-icon- 前缀使用
+      app.component(`el-icon-${icon.name}`, icon as Component)
+      // 直接图标组件名 使用
+      app.component(`${icon.name}`, icon as Component)
+    }
   }
 }
 
 /**
  * 是否是外部链接
- * @param path
+ * @param path - 要检查的路径或URL
+ * @returns 是否为外部链接
  */
 export function isExternal(path: string): boolean {
   return /^(https?|ftp|mailto|tel):/.test(path)
 }
 
 /**
- * 展平数组
- * @param {Array} arr
- * @returns {Array} flatternArrayRes
+ * 展平数组（递归处理嵌套的children结构）
+ * @param arr - 包含可能嵌套children属性的对象数组
+ * @returns 展平后的数组
  */
-export function flattern(arr: anyObj[]): anyObj[] {
-  const res: any = []
+interface TreeNode {
+  children?: TreeNode[]
+  [key: string]: unknown
+}
+
+export function flattern(arr: TreeNode[]): TreeNode[] {
+  const res: TreeNode[] = []
   arr.forEach((item) => {
-    if (item?.children?.length) {
+    if (item?.children && item.children.length > 0) {
       res.push(...flattern(item.children))
     } else {
       res.push(item)

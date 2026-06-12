@@ -18,7 +18,6 @@ const router = useRouter()
 const goBack = () => {
   router.go(-1)
 }
-
 </script>
 
 <style lang="scss" scoped>

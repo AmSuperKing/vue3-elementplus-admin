@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
-import VueCookies from 'vue-cookies'
+import { useCookies } from 'vue3-cookies'
 
-const $cookies: any = VueCookies
+const $cookies = useCookies().cookies
 
 export const useDeviceStore = defineStore('device', {
   state: () => {
@@ -13,7 +13,7 @@ export const useDeviceStore = defineStore('device', {
   actions: {
     setIsMobile(data: boolean) {
       this.isMobile = data
-      data ? $cookies.set('is_mobile', 1) : $cookies.set('is_mobile', 0)
+      data ? $cookies.set('is_mobile', '1') : $cookies.set('is_mobile', '0')
     },
   },
 })

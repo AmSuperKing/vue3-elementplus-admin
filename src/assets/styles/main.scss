@@ -1,0 +1,26 @@
+@use './variables.scss' as *;
+a {
+  text-decoration: none;
+}
+
+.svg-icon {
+  --color: inherit;
+  height: 1em;
+  width: 24px;
+  line-height: 1em;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  fill: currentColor;
+  overflow: hidden;
+  color: var(--color);
+  font-size: inherit;
+  vertical-align: middle;
+  text-align: center;
+}
+
+/* header */
+.header {
+  background-color: $headerBg;
+}

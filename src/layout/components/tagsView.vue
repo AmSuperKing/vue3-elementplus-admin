@@ -1,19 +1,15 @@
 <template>
   <div id="tags-list" ref="containerRef" class="tags">
     <ul ref="tagsRef" class="tags-ul">
-      <li
-        v-for="(item, index) of tagsList.list"
-        :key="index"
-        :ref="tabsRefs.set"
-        class="tags-li"
-        @contextmenu.prevent="openMenu(item, $event)"
-      >
+      <li v-for="(item, index) of tagsList.list" :key="index" :ref="tabsRefs.set" class="tags-li" @contextmenu.prevent="openMenu(item, $event)">
         <div class="tags-li-item" :class="{ active: isActive(item.path) }">
-          <router-link :to="item.path || ''" class="tags-li-title">
+          <router-link :to="item.path" class="tags-li-title">
             {{ item.title }}
           </router-link>
           <span v-if="tagsList.list.length > 1" class="tags-li-icon" @click.prevent.stop="closeTags(index)">
-            <el-icon class="tags-icon-content" :size="14"><Close /></el-icon>
+            <el-icon class="tags-icon-content" :size="14">
+              <Close />
+            </el-icon>
           </span>
         </div>
       </li>
@@ -21,23 +17,33 @@
 
     <ul v-show="visible" :style="{ left: left + 'px', top: top + 'px' }" class="contextmenu">
       <li v-if="isActive(selectedTag.path)" class="menu-item" tabindex="-1" @click="refresh">
-        <el-icon class="menu-item-icon"><Refresh /></el-icon>刷新
+        <el-icon class="menu-item-icon">
+          <Refresh /> </el-icon
+        >刷新
       </li>
       <li class="menu-item" tabindex="-1" @click="closeCurrTag(selectedTag)">
-        <el-icon class="menu-item-icon"><Close /></el-icon>关闭
+        <el-icon class="menu-item-icon">
+          <Close /> </el-icon
+        >关闭
       </li>
       <li v-if="isActive(selectedTag.path)" class="menu-item" tabindex="-1" @click="closeOther">
-        <el-icon class="menu-item-icon"><Remove /></el-icon>关闭其他
+        <el-icon class="menu-item-icon">
+          <Remove /> </el-icon
+        >关闭其他
       </li>
       <li class="menu-item" tabindex="-1" @click="closeAll">
-        <el-icon class="menu-item-icon"><CircleClose /></el-icon>关闭全部
+        <el-icon class="menu-item-icon">
+          <CircleClose /> </el-icon
+        >关闭全部
       </li>
     </ul>
 
     <div id="tags-operation" class="tags-close-box">
       <el-dropdown @command="handleTags">
         <span class="close-btn">
-          标签选项<el-icon class="close-btn-icon"><ArrowDown /></el-icon>
+          标签选项<el-icon class="close-btn-icon">
+            <ArrowDown />
+          </el-icon>
         </span>
         <template #dropdown>
           <el-dropdown-menu size="small" class="dropdown-menu">
@@ -55,8 +61,8 @@
 <script lang="ts" setup>
 import { watch, ref, onMounted, nextTick } from 'vue'
 import { useTemplateRefsList } from '@vueuse/core'
-import { useRoute, useRouter } from 'vue-router'
-import { CircleClose, Close, DArrowLeft, DArrowRight, Refresh,Remove } from '@element-plus/icons-vue'
+import { useRoute, useRouter, type RouteLocationNormalizedLoaded } from 'vue-router'
+import { CircleClose, Close, DArrowLeft, DArrowRight, Refresh, Remove } from '@element-plus/icons-vue'
 import { useTagsListStore } from '@/stores/tagsList'
 import HorizontalScroll from './HorizontalScroll'
 
@@ -64,92 +70,101 @@ const route = useRoute()
 const router = useRouter()
 
 const tagsList = useTagsListStore()
-const isActive = (path: string) => path && path === route.fullPath
-const containerRef = ref()
-const tagsRef = ref()
-const tabsRefs = useTemplateRefsList()
+
+const isActive = (path: string): boolean => {
+  return path === route.fullPath
+}
+
+const containerRef = ref<HTMLDivElement>()
+const tagsRef = ref<HTMLUListElement>()
+const tabsRefs = useTemplateRefsList<HTMLLIElement>()
 
 onMounted(() => {
   setTags(route)
-  new HorizontalScroll(tagsRef.value)
+  if (tagsRef.value) {
+    new HorizontalScroll(tagsRef.value)
+  }
   document.body.addEventListener('click', closeMenu)
 })
 
-watch(route, (newVal, oldVal) => { 
-  setTags(newVal) 
-  const index = tagsList.list.findIndex((item: anyObj) => item.path && item.path === newVal.fullPath)
+watch(route, (newVal: RouteLocationNormalizedLoaded) => {
+  setTags(newVal)
+  const index = tagsList.list.findIndex((item: TagsItem) => item.path === newVal.fullPath)
   nextTick(() => {
-    if (index !== -1) selectNavTab(tabsRefs.value[index])
+    if (index !== -1 && tabsRefs.value[index]) {
+      selectNavTab(tabsRefs.value[index])
+    }
   })
 })
 
-// onBeforeRouteUpdate((to) => {
-//   setTags(to)
-//   const index = tagsList.list.findIndex(item => item.path === to.fullPath)
-//   nextTick(() => {
-//     if (index !== -1) selectNavTab(tabsRefs.value[index])
-//   })
-// })
-
-// 设置标签
-const setTags = (route: anyObj) => {
-  if (!route || !route.meta.title) return
+const setTags = (route: RouteLocationNormalizedLoaded) => {
+  if (!route || !route.meta?.title) return
   tagsList.setTagsItem({
-    name: route.name,
-    title: route?.meta?.title || '未知路径',
-    path: route.fullPath
+    name: route.name as string,
+    title: (route.meta.title as string) || '未知路径',
+    path: route.fullPath,
   })
 }
-// 关闭单个标签
+
 const closeTags = (index: number) => {
   if (index === -1 || index === undefined || index === null) return
   const delItem = tagsList.list[index]
   tagsList.closeTagsItem(index)
-  const item = tagsList.list[index] ? tagsList.list[index] : tagsList.list[index - 1]
-  const activeIndex = tagsList.list[index] ? index : tagsList.list[index - 1] ? index - 1 : 0
+  const item = tagsList.list[index] ?? tagsList.list[index - 1]
+  const activeIndex = tagsList.list[index] ? index : index - 1
+
   if (item) {
-    delItem.path === route.fullPath && router.push(item.path)
+    if (delItem?.path === route.fullPath) {
+      router.push(item.path)
+    }
   } else {
     router.push('/')
   }
+
   nextTick(() => {
-    if (activeIndex !== -1) selectNavTab(tabsRefs.value[activeIndex])
+    if (activeIndex !== -1 && tabsRefs.value[activeIndex]) {
+      selectNavTab(tabsRefs.value[activeIndex])
+    }
   })
 }
-// 关闭其他标签
+
 const closeOther = () => {
-  const index = tagsList.list.findIndex((item) => item.path && item.path === route.fullPath)
+  const index = tagsList.list.findIndex((item: TagsItem) => item.path === route.fullPath)
   if (index === -1) return
   tagsList.closeOtherTags(index)
 }
-//关闭左侧标签
+
 const closeLeft = () => {
-  const index = tagsList.list.findIndex((item: anyObj) => item.path === route.fullPath)
+  const index = tagsList.list.findIndex((item: TagsItem) => item.path === route.fullPath)
   if (index === -1) return
   tagsList.closeLeftTagsItem(index)
 }
-//关闭右侧标签
+
 const closeRight = () => {
-  const index = tagsList.list.findIndex((item: anyObj) => item.path === route.fullPath)
+  const index = tagsList.list.findIndex((item: TagsItem) => item.path === route.fullPath)
   if (index === -1) return
   tagsList.closeRightTagsItem(index)
 }
-// 关闭全部标签
+
 const closeAll = () => {
   tagsList.clearTags()
   router.push('/')
   refresh()
 }
-const selectNavTab = function (dom: HTMLElement | any) {
-  if (!dom) return false
-  let scrollLeft = dom.offsetLeft + dom.clientWidth - tagsRef.value.clientWidth
+
+const selectNavTab = (dom: HTMLElement) => {
+  if (!dom || !tagsRef.value) return
+  const scrollLeft = dom.offsetLeft + dom.clientWidth - tagsRef.value.clientWidth
   if (dom.offsetLeft < tagsRef.value.scrollLeft) {
     tagsRef.value.scrollTo(dom.offsetLeft, 0)
   } else if (scrollLeft > tagsRef.value.scrollLeft) {
     tagsRef.value.scrollTo(scrollLeft, 0)
   }
 }
-const handleTags = (command: string) => {
+
+type DropdownCommand = 'left' | 'right' | 'other' | 'all'
+
+const handleTags = (command: DropdownCommand) => {
   switch (command) {
     case 'left':
       closeLeft()
@@ -163,39 +178,40 @@ const handleTags = (command: string) => {
     case 'all':
       closeAll()
       break
-    default:
-      break
   }
 }
 
 const left = ref(0)
 const top = ref(0)
 const visible = ref(false)
-const selectedTag = ref<anyObj>({})
+const selectedTag = ref<TagsItem>({ name: '', path: '', title: '' })
 
-const openMenu = (tag: anyObj, e: MouseEvent) => {
+const openMenu = (tag: TagsItem, e: MouseEvent) => {
   left.value = e.clientX
   top.value = e.clientY
   visible.value = true
   selectedTag.value = tag
 }
+
 const closeMenu = () => {
   visible.value = false
 }
+
 const refresh = () => {
   window.location.reload()
 }
-const closeCurrTag = (tag: anyObj) => {
-  const index = tagsList.list.findIndex((item: anyObj) => item.path === tag.path)
+
+const closeCurrTag = (tag: TagsItem) => {
+  const index = tagsList.list.findIndex((item: TagsItem) => item.path === tag.path)
   if (index === -1) return
   closeTags(index)
 }
-
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/variables.scss';
+@use '@/assets/styles/variables.scss' as *;
 $dark-text: #666;
+
 .tags {
   position: relative;
   height: 34px;
@@ -203,7 +219,8 @@ $dark-text: #666;
   background: $tagsContainerBg;
   padding-right: 120px;
   border-bottom: 1px solid #e3e3e3;
-  box-shadow: 0 2px 4px #dfdfdf;
+  box-shadow: 0px 7px 7px -7px #dfdfdf;
+
   & .tags-ul {
     display: flex;
     box-sizing: border-box;
@@ -213,24 +230,29 @@ $dark-text: #666;
     overflow-x: auto;
     overflow-y: hidden;
     scrollbar-width: none;
+
     &::-webkit-scrollbar {
       height: 4px;
     }
+
     &::-webkit-scrollbar-thumb:hover {
       background: #eaeaea;
       border-radius: var(--el-border-radius-base);
       box-shadow: none;
     }
   }
+
   &:hover {
     &::-webkit-scrollbar-thumb:hover {
       background: #c8c9cc;
     }
   }
 }
+
 .tags-li {
   float: left;
 }
+
 .tags-li-item {
   display: inline-block;
   flex-shrink: 0;
@@ -239,7 +261,6 @@ $dark-text: #666;
   padding: 0 12px;
   border-radius: 3px;
   font-size: 12px;
-  // overflow: hidden;
   cursor: pointer;
   height: 30px;
   line-height: 30px;
@@ -250,6 +271,7 @@ $dark-text: #666;
   border-top-right-radius: 8px;
   transition: all 0.3s ease-in;
   background-color: #fff;
+
   &::before {
     content: '';
     position: absolute;
@@ -264,6 +286,7 @@ $dark-text: #666;
     border-radius: 2px;
     transition: all 0.3s ease-in;
   }
+
   &::after {
     content: '';
     position: absolute;
@@ -278,21 +301,26 @@ $dark-text: #666;
     border-radius: 2px;
     transition: all 0.3s ease-in;
   }
+
   &:hover::before,
   &:hover::after {
     border-bottom-color: $tagsBg;
   }
 }
+
 .tags-li-item:not(.active):hover {
   background: $tagsBg;
 }
+
 .active {
   background: $tagsBg;
+
   &::before,
   &::after {
     border-bottom-color: $tagsBg;
   }
 }
+
 .tags-li-title {
   float: left;
   max-width: 80px;
@@ -302,6 +330,7 @@ $dark-text: #666;
   margin-right: 2px;
   color: $dark-text;
 }
+
 .tags-li-item.active {
   .tags-li-title,
   .tags-icon-content {
@@ -312,19 +341,23 @@ $dark-text: #666;
 .tags-li-icon {
   display: inline-block;
   height: 23px;
+
   &:hover {
     .tags-icon-content {
       color: #fff;
       background-color: $tagActiveText;
     }
+
     .el-icon {
       color: #fff !important;
     }
   }
+
   .el-icon {
     border-radius: 50% !important;
   }
 }
+
 .tags-icon-content {
   color: $dark-text;
   top: 3px;
@@ -336,9 +369,6 @@ $dark-text: #666;
   position: absolute;
   right: 0;
   top: 0;
-  // box-sizing: border-box;
-  // padding-top: 1px;
-  // text-align: center;
   width: 110px;
   height: 100%;
   display: flex;
@@ -346,8 +376,10 @@ $dark-text: #666;
   align-items: center;
   box-shadow: -3px 0 15px 3px rgba(0, 0, 0, 0.1);
   z-index: 10;
+
   &:hover {
     background-color: $tagsBg;
+
     .close-btn {
       color: $tagActiveText;
     }
@@ -356,10 +388,14 @@ $dark-text: #666;
   .close-btn {
     padding: 7px 15px;
     box-sizing: border-box;
-    &:hover, &:focus-visible {
+    cursor: pointer;
+
+    &:hover,
+    &:focus-visible {
       border: none;
       outline: none;
     }
+
     .close-btn-icon {
       margin-left: 5px;
     }
@@ -382,20 +418,23 @@ $dark-text: #666;
   font-size: 12px;
   font-weight: 400;
   color: #333;
-  box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, .3);
+  box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, 0.3);
+
   .menu-item {
     display: flex;
     align-items: center;
     margin: 0;
     padding: 7px 16px;
     cursor: pointer;
+
     &:hover {
       color: $tagActiveText;
       background-color: $tagsBg;
     }
+
     &-icon {
       margin-right: 10px;
     }
   }
-  }
+}
 </style>

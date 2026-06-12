@@ -1,3 +1,7 @@
+interface ExtendedWheelEvent extends WheelEvent {
+  wheelDelta?: number
+}
+
 export default class HorizontalScroll {
   private el: HTMLElement
   constructor(nativeElement: HTMLElement) {
@@ -15,13 +19,18 @@ export default class HorizontalScroll {
     } else {
       wheel = 'DOMMouseScroll'
     }
-    this.el['addEventListener'](wheel, this.scroll)
+    this.el.addEventListener(wheel as keyof HTMLElementEventMap, this.scroll as EventListener)
   }
-  scroll = (event: any) => {
+  scroll = (event: Event) => {
     if (this.el.clientWidth >= this.el.scrollWidth) {
       return
     }
     event.preventDefault()
-    this.el.scrollLeft += event.deltaY ? event.deltaY : event.detail && event.detail !== 0 ? event.detail : -event.wheelDelta
+    const wheelEvent = event as ExtendedWheelEvent
+    this.el.scrollLeft += wheelEvent.deltaY
+      ? wheelEvent.deltaY
+      : wheelEvent.detail && wheelEvent.detail !== 0
+        ? wheelEvent.detail
+        : -(wheelEvent.wheelDelta || 0)
   }
 }

@@ -1,61 +1,81 @@
 import { defineStore } from 'pinia'
-// import { resetRouter } from '@/router'
-import { getToken, removeToken, setToken } from '@/utils/auth'
+import { getToken, removeToken } from '@/utils/auth'
 import { userApi } from '@/api/userApi'
 import { flattern } from '@/utils/common'
+import { ref } from 'vue'
 
-export const useUserInfoStore = defineStore('userInfo', {
-  state: () => {
-    return {
-      token: getToken(),
-      userName: '',
-      userNameCn: '',
-      roles: <anyObj[]>[],
-      authMenus: <anyObj[]>[],
+export const useUserInfoStore = defineStore('userInfo', () => {
+  const userName = ref('')
+  const userNameCn = ref('')
+  const roles = ref<string[]>([])
+  const authMenus = ref<MenuRoute[]>([])
+
+  async function setUserInfo(userInfo: UserInfo) {
+    userName.value = userInfo.userName
+    userNameCn.value = userInfo.userNameCn
+    roles.value = userInfo.roles
+  }
+
+  function setUserName(userInfo: Pick<UserInfo, 'userName' | 'userNameCn'>) {
+    userName.value = userInfo.userName
+    userNameCn.value = userInfo.userNameCn
+  }
+
+  function setAuthMenus(menus: MenuRoute[]) {
+    authMenus.value = menus
+  }
+
+  function getFlatternMenus(): MenuRoute[] {
+    return flattern(authMenus.value) as MenuRoute[]
+  }
+
+  function resetInfo() {
+    removeToken()
+    userName.value = ''
+    userNameCn.value = ''
+    roles.value = []
+    authMenus.value = []
+  }
+
+  async function getUserInfo() {
+    const response = await userApi.getUserInfo(userName.value)
+    if (+response.code === 200) {
+      userName.value = response.data.userName
+      userNameCn.value = response.data.userNameCn
+      return Promise.resolve(response.data as UserInfo)
     }
-  },
-  getters: {},
-  actions: {
-    setUserInfo(userInfo: anyObj) {
-      this.userName = userInfo.userName
-      this.userNameCn = userInfo.userNameCn
-      this.roles = userInfo.roles
-      this.token = userInfo.token
-      setToken(userInfo.token)
-    },
-    setUserName(userInfo: anyObj) {
-      this.userName = userInfo.userName
-      this.userNameCn = userInfo.userNameCn
-    },
-    setAuthMenus(menus: anyObj[]) {
-      this.authMenus = menus
-    },
-    getFlatternMenus() {
-      return flattern(this.authMenus)
-    },
-    resetInfo() {
-      removeToken()
-      this.token = ''
-      this.userName = ''
-      this.userNameCn = ''
-      this.roles = []
-      this.authMenus = []
-      // resetRouter()
-    },
-    async getUserInfo() {
-      const { code, data } = await userApi.getUserInfo(this.userName)
-      if (+code === 200) {
-        this.userName = data.userInfo.userName
-        this.userNameCn = data.userInfo.userNameCn
-        return Promise.resolve(data)
-      }
-    },
-    async getAuthMenus() {
-      const { code, data } = await userApi.getUserAuthMenu()
-      if (+code === 200) {
-        this.authMenus = data.authMenus
-        return Promise.resolve(data.authMenus)
-      }
+  }
+
+  async function getAuthMenus(): Promise<MenuRoute[]> {
+    const response = await userApi.getUserAuthMenu()
+    if (+response.code === 200) {
+      authMenus.value = response.data
+      return Promise.resolve(response.data as MenuRoute[])
     }
-  },
+    return []
+  }
+
+  function initUserData() {
+    getUserInfo().then((userInfo) => {
+      if (userInfo) setUserInfo(userInfo)
+    })
+    getAuthMenus().then((menus) => {
+      setAuthMenus(menus)
+    })
+  }
+
+  return {
+    userName,
+    userNameCn,
+    roles,
+    authMenus,
+    setUserInfo,
+    setUserName,
+    setAuthMenus,
+    getFlatternMenus,
+    resetInfo,
+    getUserInfo,
+    getAuthMenus,
+    initUserData,
+  }
 })

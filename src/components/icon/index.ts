@@ -11,11 +11,18 @@
 // export default expandedIcons
 
 import { defineAsyncComponent } from 'vue'
-import type { App } from 'vue'
-interface componentItem {
-  [key: string]: any
+import type { App, Component } from 'vue'
+
+// 定义异步组件加载器类型
+type AsyncComponentLoader = () => Promise<Component>
+
+interface ComponentMap {
+  [key: string]: AsyncComponentLoader
 }
-const components: componentItem = import.meta.glob('./*.vue') // 异步方式
+
+// 使用正确的类型断言
+const components: ComponentMap = import.meta.glob('./*.vue') as ComponentMap
+
 export default function install(app: App) {
   for (const [key, value] of Object.entries(components)) {
     const name = key.replace(/(\.\/|\.vue)/g, '')

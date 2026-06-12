@@ -13,11 +13,7 @@
         :text-color="variablesList.menuText"
         :active-text-color="variablesList.menuActiveText"
       >
-        <menu-item
-          v-for="item of userInfo.authMenus"
-          :key="item.menuPath"
-          :item="item"
-        />
+        <menu-item v-for="item of userInfo.authMenus" :key="item.path" :item="item" />
       </el-menu>
     </el-scrollbar>
   </div>
@@ -29,8 +25,8 @@ import { useRoute } from 'vue-router'
 import { useUserInfoStore } from '@/stores/userInfo'
 import { useSidebarStore } from '@/stores/sidebar'
 import { useDeviceStore } from '@/stores/device'
-import MenuItem from './menuItem.vue'
-import variables from '@/styles/variables.module.scss'
+import MenuItem from './MenuItem.vue'
+import variables from '@/assets/styles/variables.module.scss'
 
 const variablesList = computed(() => variables)
 const route = useRoute()
@@ -40,15 +36,14 @@ const device = useDeviceStore()
 
 const onRoutes = computed(() => route.path)
 
-
 const handleCollapse = () => {
   sidebar.toggleCollappse()
 }
-
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/variables.scss';
+@use '@/assets/styles/variables.scss' as *;
+
 .sidebar {
   display: block;
   height: 100%;
@@ -56,21 +51,24 @@ const handleCollapse = () => {
   overflow-y: scroll;
   background-color: $menuBg;
   scrollbar-width: none;
+
   &::-webkit-scrollbar {
     width: 0;
   }
+
   .sidebar-header {
     position: relative;
     width: 210px;
     height: 56px;
     border-bottom: 1px solid $subMenuBorder;
     background-color: #fafafa;
-    background-image: url('../../assets/images/logo.png');
+    background-image: url('../../assets/imgs/logo.png');
     background-position: center center;
     background-size: 100% 100%;
     background-repeat: no-repeat;
-    transition: all .3s ease-in-out;
-    transition-delay: .3s;
+    transition: all 0.3s ease-in-out;
+    transition-delay: 0.3s;
+
     .fold-icon {
       position: absolute;
       top: 50%;
@@ -80,25 +78,30 @@ const handleCollapse = () => {
       height: 24px;
       color: #0080ff;
       cursor: pointer;
+
       &:hover {
         color: $blueColor;
       }
     }
-
   }
+
   .el-scrollbar {
     height: 100%;
   }
 }
+
 .sidebar::-webkit-scrollbar {
   width: 0;
 }
+
 .sidebar-el-menu {
   border-right-width: 0px !important;
 }
+
 .sidebar-el-menu:not(.el-menu--collapse) {
   width: 210px;
 }
+
 .sidebar > ul {
   height: 100%;
 }

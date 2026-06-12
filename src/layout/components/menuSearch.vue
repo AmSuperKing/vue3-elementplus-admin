@@ -13,19 +13,18 @@
       @keyup.enter="handleSearchEnter"
     >
       <template #prefix>
-        <el-icon class="search-input__icon"><Search /></el-icon>
+        <el-icon class="search-input__icon">
+          <Search />
+        </el-icon>
       </template>
     </el-input>
-    <div
-      v-loading="loading"
-      element-loading-text="搜索中..."
-      element-loading-background="rgba(255, 255, 255, 0.8)"
-      class="res-list"
-    >
+    <div v-loading="loading" element-loading-text="搜索中..." element-loading-background="rgba(255, 255, 255, 0.8)" class="res-list">
       <div v-if="resList.length" class="re-content">
-        <div v-for="item of resList" :key="item.path" class="res-item" @click="handleToPage(item)">
+        <div v-for="item of resList" :key="item.menuPath" class="res-item" @click="handleToPage(item)">
           <span>
-            <el-icon class="prefix-icon"><Link /></el-icon>
+            <el-icon class="prefix-icon">
+              <Link />
+            </el-icon>
             {{ item.menuName }}
           </span>
           <Icon name="svg-enter" color="#999" class="enter-icon" />
@@ -40,62 +39,52 @@
 import { nextTick, onMounted, ref } from 'vue'
 import { useUserInfoStore } from '@/stores/userInfo'
 
-const emits = defineEmits(['toDetail'])
+const emits = defineEmits<{
+  toDetail: [data: MenuRoute]
+}>()
 
 const userInfo = useUserInfoStore()
 const authMenus = userInfo.getFlatternMenus()
 const loading = ref(false)
 const menuSearchContent = ref('')
-const resList = ref([] as any[])
+const resList = ref<MenuRoute[]>([])
 
-const searchInputRef = ref()
+const searchInputRef = ref<HTMLInputElement>()
 
 onMounted(() => {
   nextTick(() => {
-    searchInputRef.value.focus()
+    searchInputRef.value?.focus()
   })
 })
 
-const handleSearchEnter = () => {
-  if (!menuSearchContent.value) {
-    resList.value = []
-    return
+const filterMenus = (keyword: string): MenuRoute[] => {
+  if (!keyword || !keyword.trim()) {
+    return []
   }
-  if (!menuSearchContent.value.trim().length) {
-    resList.value = []
-    return
-  }
-  loading.value = true
-  const keyword = menuSearchContent.value && menuSearchContent.value.trim()
-  resList.value = []
-  for (const item of authMenus) {
-    if (item.menuName.indexOf(keyword) !== -1) resList.value.push(item)
-  }
-  loading.value = false
-}
-const handleSearchMenu = (val: string) => {
-  if (!val) {
-    resList.value = []
-    return
-  }
-  if (!val.trim().length) {
-    resList.value = []
-    return
-  }
-  loading.value = true
-  const keyword = val && val.trim()
-  const res: any[] = []
-  for (const item of authMenus) {
-    if (item.menuName.indexOf(keyword) !== -1) res.push(item)
-  }
-  setTimeout(() => {
-    resList.value = res
-    loading.value = false
-  }, 300)
-  
+  const trimmedKeyword = keyword.trim()
+  return authMenus.filter((menu: MenuRoute) => menu.menuName.includes(trimmedKeyword))
 }
 
-const handleToPage = (data: anyObj) => {
+const handleSearchEnter = () => {
+  loading.value = true
+  resList.value = filterMenus(menuSearchContent.value)
+  loading.value = false
+}
+
+const handleSearchMenu = (val: string) => {
+  if (!val || !val.trim()) {
+    resList.value = []
+    return
+  }
+
+  loading.value = true
+  setTimeout(() => {
+    resList.value = filterMenus(val)
+    loading.value = false
+  }, 300)
+}
+
+const handleToPage = (data: MenuRoute) => {
   emits('toDetail', data)
 }
 </script>
@@ -105,19 +94,24 @@ const handleToPage = (data: anyObj) => {
   .search-input {
     height: 50px;
     font-size: 16px;
+
     .search-input__icon {
       font-size: 25px;
       color: var(--el-color-primary);
     }
   }
+
   .res-list {
     margin-top: 10px;
+
     .re-content {
       height: 300px;
       overflow-y: scroll;
+
       &::-webkit-scrollbar {
         width: 0;
       }
+
       .res-item {
         display: flex;
         align-items: center;
@@ -128,26 +122,32 @@ const handleToPage = (data: anyObj) => {
         font-size: 16px;
         box-shadow: 0 3px 8px var(--el-color-info-light-7);
         cursor: pointer;
+
         &:hover {
           background-color: var(--el-color-primary-light-3);
           border: 1px solid var(--el-color-primary-light-3);
           box-shadow: 0 3px 8px var(--el-color-primary-light-3);
         }
+
         &:hover span {
           color: #fff;
         }
+
         &:hover .enter-icon {
           color: #fff !important;
         }
+
         span {
           flex: 4;
           display: flex;
           align-items: center;
           padding-left: 15px;
+
           .prefix-icon {
             margin-right: 10px;
           }
         }
+
         .enter-icon {
           flex: 1;
           font-size: 16px;
@@ -155,6 +155,7 @@ const handleToPage = (data: anyObj) => {
         }
       }
     }
+
     .no-res {
       height: 150px;
       display: flex;

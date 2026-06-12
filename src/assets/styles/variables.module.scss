@@ -1,0 +1,8 @@
+@use './variables.scss' as *;
+
+:export {
+  menuBg: $menuBg;
+  menuText: $menuText;
+  menuActiveText: $menuActiveText;
+  textColor: $textColor;
+}

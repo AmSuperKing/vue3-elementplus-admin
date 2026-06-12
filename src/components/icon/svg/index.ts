@@ -23,7 +23,7 @@ function findSvgFile(dir: string): string[] {
         .toString()
         .replace(clearReturn, '')
         .replace(clearFill, 'fill=""')
-        .replace(svgTitle, ($1, $2) => {
+        .replace(svgTitle, ($1: string, $2: string) => {
           let width = 0
           let height = 0
           let content: string = $2.replace(clearHeightWidth, (s1: string, s2: string, s3: number) => {
@@ -53,19 +53,17 @@ export const svgBuilder = (path: string, perfix = 'svg') => {
   return {
     name: 'svg-transform',
     transformIndexHtml(html: string) {
-      /* eslint-disable */
       return html.replace(
         '<body>',
         `
         <body>
         <svg id="local-icon" data-icon-name="${iconNames.join(
-          ','
+          ',',
         )}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="position: absolute; width: 0; height: 0">
         ${res.join('')}
         </svg>
-        `
+        `,
       )
-      /* eslint-enable */
     },
   }
 }

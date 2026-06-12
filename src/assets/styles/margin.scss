@@ -1,0 +1,43 @@
+$margin: (5, 10, 15, 20, 25, 30, 35, 40, 45, 50);
+
+@each $k in $margin {
+  .m-#{$k} {
+    margin: #{$k}px;
+  }
+}
+
+@each $k in $margin {
+  .mt-#{$k} {
+    margin-top: #{$k}px;
+  }
+}
+
+@each $k in $margin {
+  .mr-#{$k} {
+    margin-right: #{$k}px;
+  }
+}
+
+@each $k in $margin {
+  .mb-#{$k} {
+    margin-bottom: #{$k}px;
+  }
+}
+
+@each $k in $margin {
+  .ml-#{$k} {
+    margin-left: #{$k}px;
+  }
+}
+
+@each $k in $margin {
+  .mtb-#{$k} {
+    margin: #{$k}px 0;
+  }
+}
+
+@each $k in $margin {
+  .mlr-#{$k} {
+    margin: 0 #{$k}px;
+  }
+}

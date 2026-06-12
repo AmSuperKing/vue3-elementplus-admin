@@ -1,0 +1,43 @@
+$padding: (5, 10, 15, 20, 25, 30, 35, 40, 45, 50);
+
+@each $k in $padding {
+  .p-#{$k} {
+    padding: #{$k}px;
+  }
+}
+
+@each $k in $padding {
+  .pt-#{$k} {
+    padding-top: #{$k}px;
+  }
+}
+
+@each $k in $padding {
+  .pr-#{$k} {
+    padding-right: #{$k}px;
+  }
+}
+
+@each $k in $padding {
+  .pb-#{$k} {
+    padding-bottom: #{$k}px;
+  }
+}
+
+@each $k in $padding {
+  .pl-#{$k} {
+    padding-left: #{$k}px;
+  }
+}
+
+@each $k in $padding {
+  .ptb-#{$k} {
+    padding: #{$k}px 0;
+  }
+}
+
+@each $k in $padding {
+  .plr-#{$k} {
+    padding: 0 #{$k}px;
+  }
+}

@@ -1,22 +1,24 @@
-import VueCookies from 'vue-cookies'
+import { useCookies } from 'vue3-cookies'
 
-const $cookies: any = VueCookies
+const Vue3Cookies = useCookies()
 
-const TokenKey = 'token'
+const _cookies = Vue3Cookies.cookies
+
+const TOKEN_KEY = 'token'
 
 /**
  * cookie 获取token
  * @returns {String} token
  */
 export function getToken(): string {
-  return $cookies.get(TokenKey)
+  return _cookies.get(TOKEN_KEY)
 }
 
 export function setToken(token: string) {
   const inFifteenMinutes = new Date(new Date().getTime() + 24 * 60 * 60 * 1000)
-  return $cookies.set(TokenKey, token, inFifteenMinutes)
+  return _cookies.set(TOKEN_KEY, token, inFifteenMinutes)
 }
 
 export function removeToken() {
-  return $cookies.remove(TokenKey)
+  return _cookies.remove(TOKEN_KEY)
 }

@@ -12,10 +12,11 @@
     <div class="logo hidden-md-and-down">{{ settings.pageTitle }}</div>
     <div class="header-right">
       <div class="right-content">
-
         <div class="btn-bell hidden-sm-and-down">
           <el-tooltip effect="dark" :content="message ? `有${message}条未读消息` : `消息中心`" placement="bottom">
-            <el-icon :color="variablesList.textColor" @click="handleBellClick"><Bell /></el-icon>
+            <el-icon :color="variablesList.textColor" @click="handleBellClick">
+              <Bell />
+            </el-icon>
           </el-tooltip>
           <span v-if="message" class="btn-bell-badge" />
         </div>
@@ -25,7 +26,9 @@
         <div class="header-search hidden-sm-and-down">
           <el-tooltip effect="dark" content="搜索菜单" placement="bottom">
             <div id="menu-search" class="search-input" @click="showMenuSearchDialog">
-              <el-icon class="search-icon"><Search /></el-icon>
+              <el-icon class="search-icon">
+                <Search />
+              </el-icon>
               <span class="search-placeholder">Search</span>
             </div>
           </el-tooltip>
@@ -37,7 +40,9 @@
         <el-dropdown id="user-setting" class="user-name" trigger="click" @command="handleCommand">
           <span class="el-dropdown-link">
             {{ userInfo.userNameCn || '尊敬的用户' }}
-            <el-icon :color="variablesList.textColor"><CaretBottom /></el-icon>
+            <el-icon :color="variablesList.textColor">
+              <CaretBottom />
+            </el-icon>
           </span>
           <template #dropdown>
             <el-dropdown-menu>
@@ -50,7 +55,7 @@
     </div>
 
     <el-dialog v-model="menuSearchVisible" width="420px" draggable destroy-on-close :show-close="false">
-      <MenuSearch style="margin-top: -25px" @toDetail="handleToDetailPage" />
+      <MenuSearch style="margin-top: -25px" @to-detail="handleToDetailPage" />
     </el-dialog>
   </div>
 </template>
@@ -62,21 +67,21 @@ import { ElMessage } from 'element-plus'
 import { useUserInfoStore } from '@/stores/userInfo'
 import { useSidebarStore } from '@/stores/sidebar'
 import { settings } from '@/settings'
-import variables from '@/styles/variables.module.scss'
-import MenuSearch from './menuSearch.vue'
+import variables from '@/assets/styles/variables.module.scss'
+import MenuSearch from './MenuSearch.vue'
 import Screenfull from '@/components/Screenfull/index.vue'
-import userAvator from '@/assets/images/avatar.png'
+import userAvator from '@/assets/imgs/avatar.png'
 
 const userInfo = useUserInfoStore()
 const sidebar = useSidebarStore()
 const variablesList = computed(() => variables)
 
-const message = 2
+const message = ref(2)
 
-// 侧边栏折叠
 const collapseChage = () => {
   sidebar.toggleCollappse()
 }
+
 const menuSearchVisible = ref(false)
 
 onMounted(() => {
@@ -85,9 +90,11 @@ onMounted(() => {
   }
 })
 
-// 用户名下拉菜单选择事件
 const router = useRouter()
-const handleCommand = (command: string) => {
+
+type DropdownCommand = 'user' | 'loginout'
+
+const handleCommand = (command: DropdownCommand) => {
   if (command === 'loginout') {
     userInfo.resetInfo()
     router.push('/login')
@@ -104,14 +111,15 @@ const showMenuSearchDialog = () => {
   menuSearchVisible.value = true
 }
 
-const handleToDetailPage = (data: anyObj) => {
+const handleToDetailPage = (data: MenuRoute) => {
   menuSearchVisible.value = false
-  router.push(data.menuPath)
+  router.push(data.path)
 }
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/variables.scss';
+@use '@/assets/styles/variables.scss' as *;
+
 .header-bar {
   position: relative;
   box-sizing: border-box;
@@ -121,9 +129,9 @@ const handleToDetailPage = (data: anyObj) => {
   color: $headerText;
   border-bottom: 1px solid $headerBg;
   background-color: #fff;
+
   .logo {
     float: left;
-    width: 250px;
     line-height: 70px;
     font-weight: bold;
   }
@@ -134,12 +142,15 @@ const handleToDetailPage = (data: anyObj) => {
   padding: 0 21px;
   cursor: pointer;
   line-height: 66px;
+
   &:hover {
     background-color: var(--el-color-primary-light-9);
   }
+
   &:hover .collapse-btn-icon {
     color: #555;
   }
+
   .collapse-btn-icon {
     vertical-align: middle;
     color: $headerText;
@@ -151,6 +162,7 @@ const handleToDetailPage = (data: anyObj) => {
   top: 0;
   right: 0;
   padding-right: 15px;
+
   .right-content {
     position: relative;
     display: flex;
@@ -162,11 +174,12 @@ const handleToDetailPage = (data: anyObj) => {
 .btn-bell {
   position: relative;
   width: 24px;
-  height: 24px;
+  padding-top: 5px;
   margin-right: 15px;
   text-align: center;
   border-radius: 15px;
   cursor: pointer;
+
   .btn-bell-badge {
     position: absolute;
     right: 0;
@@ -184,6 +197,7 @@ const handleToDetailPage = (data: anyObj) => {
   margin-right: 15px;
   font-size: 18px;
   color: $menuText;
+
   &:hover {
     color: $headerText;
   }
@@ -194,6 +208,7 @@ const handleToDetailPage = (data: anyObj) => {
   display: flex;
   justify-content: center;
   align-items: center;
+
   .search-input {
     display: flex;
     justify-content: center;
@@ -207,13 +222,16 @@ const handleToDetailPage = (data: anyObj) => {
     background-color: #fff;
     transition: color 0.5s;
     cursor: pointer;
+
     &:hover .search-placeholder {
       font-weight: 800;
     }
+
     .search-icon {
       font-size: 16px;
       margin-right: 5px;
     }
+
     .search-placeholder {
       font-size: 13px;
       font-weight: 500;
@@ -223,6 +241,7 @@ const handleToDetailPage = (data: anyObj) => {
 
 .user-avator {
   margin-left: 20px;
+
   & img {
     display: block;
     width: 40px;
@@ -234,12 +253,14 @@ const handleToDetailPage = (data: anyObj) => {
 .user-name {
   margin-left: 10px;
 }
+
 .el-dropdown-link {
   max-width: 120px;
   overflow: hidden;
   color: $textColor;
   cursor: pointer;
 }
+
 .el-dropdown-menu__item {
   text-align: center;
 }

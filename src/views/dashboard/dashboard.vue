@@ -1,433 +1,515 @@
 <template>
-	<div>
-    <el-row :gutter="20" class="mgb20">
-      <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8">
-        <el-card shadow="hover" :body-style="{ padding: '0px' }">
-          <div class="grid-content grid-con-1">
-            <el-icon class="grid-con-icon"><User /></el-icon>
-            <div class="grid-cont-right">
-              <div class="grid-num">5678</div>
-              <div>用户访问量</div>
+  <div class="dashboard-container">
+    <!-- 欢迎区域 -->
+    <div class="welcome-section">
+      <h2 class="welcome-title">欢迎回来, {{ userNameCn || '管理员' }}</h2>
+      <p class="welcome-subtitle">祝您今天工作愉快！</p>
+    </div>
+
+    <!-- 统计卡片区域 -->
+    <el-row :gutter="20" class="stats-cards">
+      <el-col :xs="24" :sm="12" :lg="6">
+        <el-card class="stat-card" shadow="hover">
+          <div class="stat-content">
+            <div class="stat-icon users">
+              <Icon name="svg-peoples" />
+            </div>
+            <div class="stat-info">
+              <div class="stat-value">
+                <CountTo :start-val="0" :end-val="9687" :duration="2000" />
+              </div>
+              <div class="stat-label">总用户数</div>
             </div>
           </div>
         </el-card>
       </el-col>
-      <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8">
-        <el-card shadow="hover" :body-style="{ padding: '0px' }">
-          <div class="grid-content grid-con-2">
-            <el-icon class="grid-con-icon"><ChatDotRound /></el-icon>
-            <div class="grid-cont-right">
-              <div class="grid-num">123</div>
-              <div>系统消息</div>
+
+      <el-col :xs="24" :sm="12" :lg="6">
+        <el-card class="stat-card" shadow="hover">
+          <div class="stat-content">
+            <div class="stat-icon orders">
+              <Icon name="el-icon-Tickets" />
+            </div>
+            <div class="stat-info">
+              <div class="stat-value">
+                <CountTo :start-val="0" :end-val="5678" :duration="2000" />
+              </div>
+              <div class="stat-label">今日订单</div>
             </div>
           </div>
         </el-card>
       </el-col>
-      <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8">
-        <el-card shadow="hover" :body-style="{ padding: '0px' }">
-          <div class="grid-content grid-con-3">
-            <el-icon class="grid-con-icon"><Goods /></el-icon>
-            <div class="grid-cont-right">
-              <div class="grid-num">5684</div>
-              <div>商品数量</div>
+
+      <el-col :xs="24" :sm="12" :lg="6">
+        <el-card class="stat-card" shadow="hover">
+          <div class="stat-content">
+            <div class="stat-icon revenue">
+              <Icon name="money" />
+            </div>
+            <div class="stat-info">
+              <div class="stat-value">
+                <CountTo :start-val="0" :end-val="89012" :duration="2000" />
+              </div>
+              <div class="stat-label">本月收入</div>
+            </div>
+          </div>
+        </el-card>
+      </el-col>
+
+      <el-col :xs="24" :sm="12" :lg="6">
+        <el-card class="stat-card" shadow="hover">
+          <div class="stat-content">
+            <div class="stat-icon products">
+              <Icon name="Goods" />
+            </div>
+            <div class="stat-info">
+              <div class="stat-value">
+                <CountTo :start-val="0" :end-val="4321" :duration="2000" />
+              </div>
+              <div class="stat-label">商品数量</div>
             </div>
           </div>
         </el-card>
       </el-col>
     </el-row>
 
-		<el-row :gutter="20">
-			<el-col :span="8">
-				<el-card shadow="hover" style="height: 400px">
-					<template #header>
-						<div class="clearfix">
-							<span>语言详情</span>
-						</div>
-					</template>
-					Vue<el-progress :percentage="71.3" color="#42b983"></el-progress>
-          TypeScript<el-progress :percentage="14.1" color="#f1e05a"></el-progress>
-          SCSS<el-progress :percentage="8.7"></el-progress>
-          HTML<el-progress :percentage="3.1" color="#f56c6c"></el-progress>
-          JSON<el-progress :percentage="2.8" color="#626aef"></el-progress>
-				</el-card>
-			</el-col>
-			<el-col :span="16">
-				<el-card shadow="hover" style="height: 400px">
-					<template #header>
-						<div class="clearfix">
-							<span>待办事项</span>
-							<el-button style="float: right; padding: 3px 0" text>添加</el-button>
-						</div>
-					</template>
+    <!-- 主要内容区域 -->
+    <el-row :gutter="20" class="main-content">
+      <!-- 左侧图表区域 -->
+      <el-col :xs="24" :lg="16">
+        <el-card class="chart-card" shadow="hover">
+          <template #header>
+            <div class="card-header">
+              <span>数据趋势</span>
+              <el-button type="primary" size="small">查看详情</el-button>
+            </div>
+          </template>
+          <div class="chart-placeholder">
+            <div class="chart-area">
+              <div class="chart-bar" style="height: 60%"></div>
+              <div class="chart-bar" style="height: 80%"></div>
+              <div class="chart-bar" style="height: 45%"></div>
+              <div class="chart-bar" style="height: 90%"></div>
+              <div class="chart-bar" style="height: 70%"></div>
+              <div class="chart-bar" style="height: 85%"></div>
+              <div class="chart-bar" style="height: 55%"></div>
+            </div>
+            <div class="chart-labels">
+              <span>周一</span>
+              <span>周二</span>
+              <span>周三</span>
+              <span>周四</span>
+              <span>周五</span>
+              <span>周六</span>
+              <span>周日</span>
+            </div>
+          </div>
+        </el-card>
+      </el-col>
 
-					<el-table :show-header="false" :data="todoList" style="width: 100%">
-						<el-table-column width="40">
-							<template #default="scope">
-								<el-checkbox v-model="scope.row.status"></el-checkbox>
-							</template>
-						</el-table-column>
-						<el-table-column>
-							<template #default="scope">
-								<div
-									class="todo-item"
-									:class="{
-										'todo-item-del': scope.row.status
-									}"
-								>
-									{{ scope.row.title }}
-								</div>
-							</template>
-						</el-table-column>
-					</el-table>
-				</el-card>
-			</el-col>
-		</el-row>
+      <!-- 右侧快捷操作 -->
+      <el-col :xs="24" :lg="8">
+        <el-card class="quick-actions" shadow="hover">
+          <template #header>
+            <div class="card-header">
+              <span>快捷操作</span>
+            </div>
+          </template>
+          <div class="action-buttons">
+            <el-button type="primary" class="action-btn">
+              <Icon name="edit" />
+              <span>新建任务</span>
+            </el-button>
+            <el-button type="success" class="action-btn">
+              <Icon name="user" />
+              <span>添加用户</span>
+            </el-button>
+            <el-button type="warning" class="action-btn">
+              <Icon name="Document" />
+              <span>生成报告</span>
+            </el-button>
+            <el-button type="info" class="action-btn">
+              <Icon name="message" />
+              <span>发送消息</span>
+            </el-button>
+          </div>
 
-		<el-row :gutter="20">
-			<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-				<el-card shadow="hover">
-					<div id="barChart" class="schart"></div>
-				</el-card>
-			</el-col>
-			<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-				<el-card shadow="hover">
-					<div id="lineChart" class="schart"></div>
-				</el-card>
-			</el-col>
-		</el-row>
-	</div>
+          <div class="recent-activities">
+            <h3>最近活动</h3>
+            <ul class="activity-list">
+              <li class="activity-item">
+                <span class="activity-time">10:30</span>
+                <span class="activity-desc">新用户注册</span>
+              </li>
+              <li class="activity-item">
+                <span class="activity-time">09:45</span>
+                <span class="activity-desc">订单完成</span>
+              </li>
+              <li class="activity-item">
+                <span class="activity-time">09:15</span>
+                <span class="activity-desc">系统更新</span>
+              </li>
+              <li class="activity-item">
+                <span class="activity-time">08:30</span>
+                <span class="activity-desc">备份完成</span>
+              </li>
+            </ul>
+          </div>
+        </el-card>
+      </el-col>
+    </el-row>
+
+    <!-- 底部信息区域 -->
+    <el-row :gutter="20" class="bottom-section">
+      <el-col :xs="24" :lg="12">
+        <el-card class="info-card" shadow="hover">
+          <template #header>
+            <div class="card-header">
+              <span>系统状态</span>
+            </div>
+          </template>
+          <div class="system-status">
+            <div class="status-item">
+              <span class="status-label">服务器运行时间:</span>
+              <span class="status-value">15天 8小时 32分钟</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">CPU使用率:</span>
+              <el-progress :percentage="35" :color="'#67c23a'" />
+            </div>
+            <div class="status-item">
+              <span class="status-label">内存使用率:</span>
+              <el-progress :percentage="62" :color="'#e6a23c'" />
+            </div>
+            <div class="status-item">
+              <span class="status-label">磁盘空间:</span>
+              <el-progress :percentage="78" :color="'#f56c6c'" />
+            </div>
+          </div>
+        </el-card>
+      </el-col>
+
+      <el-col :xs="24" :lg="12">
+        <el-card class="info-card" shadow="hover">
+          <template #header>
+            <div class="card-header">
+              <span>通知中心</span>
+              <el-badge :value="3" class="notification-badge" />
+            </div>
+          </template>
+          <div class="notifications">
+            <div class="notification-item">
+              <el-tag type="success">成功</el-tag>
+              <span class="notification-text">系统备份已完成</span>
+              <span class="notification-time">2小时前</span>
+            </div>
+            <div class="notification-item">
+              <el-tag type="warning">警告</el-tag>
+              <span class="notification-text">存储空间即将不足</span>
+              <span class="notification-time">5小时前</span>
+            </div>
+            <div class="notification-item">
+              <el-tag type="danger">错误</el-tag>
+              <span class="notification-text">数据库连接异常</span>
+              <span class="notification-time">昨天</span>
+            </div>
+          </div>
+        </el-card>
+      </el-col>
+    </el-row>
+  </div>
 </template>
 
-<script lang="ts" setup>
-import { onActivated, onBeforeUnmount, onMounted, reactive } from 'vue'
-import * as echarts from 'echarts'
-import type { EChartsOption } from 'echarts'
+<script setup lang="ts">
+import { computed } from 'vue'
+import { useUserInfoStore } from '@/stores/userInfo'
+import CountTo from '@/components/CountTo/CountTo.vue'
 
-const todoList = reactive([
-	{
-		title: '今天要修复100个bug',
-		status: false
-	},
-	{
-		title: '今天要修复100个bug',
-		status: false
-	},
-	{
-		title: '今天要写100行代码加几个bug吧',
-		status: false
-	},
-	{
-		title: '今天要修复100个bug',
-		status: false
-	},
-	{
-		title: '今天要修复100个bug',
-		status: true
-	},
-	{
-		title: '今天要写100行代码加几个bug吧',
-		status: true
-	}
-])
-
-var barChart:any
-var lineChart:any
-
-onMounted(() => {
-  window.addEventListener('resize', resizeChart)
-})
-
-onActivated(() => {
-  setTimeout(() => {
-    initBarChart()
-    initLineChart()
-  }, 300)
-})
-
-onBeforeUnmount(() => {
-  window.removeEventListener('resize', resizeChart)
-  barChart.dispose()
-  barChart = null
-  lineChart.dispose()
-  lineChart = null
-})
-
-const resizeChart = () => {
-  barChart.resize()
-}
-
-const initBarChart = () => {
-  if (barChart) return
-  const barChartDom: HTMLElement | any = document.getElementById('barChart')
-  if (!barChartDom) return
-  const barChartOption: EChartsOption = {
-    title: {
-      text: 'Series Bar Chart',
-      left: 'center'
-    },
-    legend: {
-      top: '7%'
-    },
-    tooltip: {
-      trigger: 'axis',
-      axisPointer: {
-        type: 'shadow'
-      }
-    },
-    dataset: {
-      source: [
-        ['product', '2015', '2016', '2017'],
-        ['Matcha Latte', 43.3, 85.8, 93.7],
-        ['Milk Tea', 83.1, 73.4, 55.1],
-        ['Cheese Cocoa', 86.4, 65.2, 82.5],
-        ['Walnut Brownie', 72.4, 53.9, 39.1]
-      ]
-    },
-    xAxis: { type: 'category' },
-    yAxis: { type: 'value' },
-    grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '3%',
-      containLabel: true
-    },
-    // Declare several bar series, each will be mapped
-    // to a column of dataset.source by default.
-    series: [
-      {
-        type: 'bar',
-        itemStyle: {
-          color: new echarts.graphic.LinearGradient(0, 0, 1, 1, [
-            {
-              offset: 1,
-              color: '#00bb91'
-            },
-            {
-              offset: 0,
-              color: '#00aadc'
-            }
-          ]),
-          borderRadius: [2, 2, 0, 0]
-        }
-      },
-      {
-        type: 'bar',
-        itemStyle: {
-          color: new echarts.graphic.LinearGradient(0, 0, 1, 1, [
-            {
-              offset: 1,
-              color: '#FF3F97'
-            },
-            {
-              offset: 0,
-              color: '#FFB773'
-            }
-          ]),
-          borderRadius: [2, 2, 0, 0]
-        }
-      },
-      {
-        type: 'bar',
-        itemStyle: {
-          color: new echarts.graphic.LinearGradient(0, 0, 1, 1, [
-            {
-              offset: 1,
-              color: '#F6AA62'
-            },
-            {
-              offset: 0,
-              color: '#7CF2B9'
-            }
-          ]),
-          borderRadius: [2, 2, 0, 0]
-        }
-      }
-    ]
-  }
-  barChart = echarts.init(barChartDom)
-  barChart.setOption(barChartOption)
-}
-
-const initLineChart = () => {
-  if (lineChart) return
-  const lineChartDom: HTMLElement | any = document.getElementById('lineChart')
-  if (!lineChartDom) return
-  const lineChartOption: EChartsOption = {
-    title: {
-      text: 'Stacked Area Chart',
-      left: 'center'
-    },
-    tooltip: {
-      trigger: 'axis',
-      axisPointer: {
-        type: 'cross',
-        label: {
-          backgroundColor: '#6a7985'
-        }
-      }
-    },
-    legend: {
-      data: ['Email', 'Union Ads', 'Video Ads', 'Direct', 'Search Engine'],
-      top: '7%',
-      type: 'scroll'
-    },
-    toolbox: {
-      feature: {
-        saveAsImage: {}
-      }
-    },
-    grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '3%',
-      containLabel: true
-    },
-    xAxis: [
-      {
-        type: 'category',
-        boundaryGap: false,
-        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-      }
-    ],
-    yAxis: [
-      {
-        type: 'value'
-      }
-    ],
-    series: [
-      {
-        name: 'Email',
-        type: 'line',
-        stack: 'Total',
-        areaStyle: {},
-        emphasis: {
-          focus: 'series'
-        },
-        data: [120, 132, 101, 134, 90, 230, 210]
-      },
-      {
-        name: 'Union Ads',
-        type: 'line',
-        stack: 'Total',
-        areaStyle: {},
-        emphasis: {
-          focus: 'series'
-        },
-        data: [220, 182, 191, 234, 290, 330, 310]
-      },
-      {
-        name: 'Video Ads',
-        type: 'line',
-        stack: 'Total',
-        areaStyle: {},
-        emphasis: {
-          focus: 'series'
-        },
-        data: [150, 232, 201, 154, 190, 330, 410]
-      },
-      {
-        name: 'Direct',
-        type: 'line',
-        stack: 'Total',
-        areaStyle: {},
-        emphasis: {
-          focus: 'series'
-        },
-        data: [320, 332, 301, 334, 390, 330, 320]
-      },
-      {
-        name: 'Search Engine',
-        type: 'line',
-        stack: 'Total',
-        label: {
-          show: true,
-          position: 'top'
-        },
-        areaStyle: {},
-        emphasis: {
-          focus: 'series'
-        },
-        data: [820, 932, 901, 934, 1290, 1330, 1320]
-      }
-    ]
-  }
-  lineChart = echarts.init(lineChartDom)
-  lineChart.setOption(lineChartOption)
-}
-
+const userInfoStore = useUserInfoStore()
+const userNameCn = computed(() => userInfoStore.userNameCn)
 </script>
 
-<style scoped>
-.el-row {
-	margin-bottom: 20px;
+<style scoped lang="scss">
+.dashboard-container {
+  padding: 20px;
+  background-color: #f5f7fa;
 }
 
-.grid-content {
-	display: flex;
-	align-items: center;
-	height: 100px;
+.welcome-section {
+  margin-bottom: 20px;
+
+  .welcome-title {
+    font-size: 24px;
+    color: #303133;
+    margin: 0 0 8px 0;
+  }
+
+  .welcome-subtitle {
+    font-size: 14px;
+    color: #909399;
+    margin: 0;
+  }
 }
 
-.grid-cont-right {
-	flex: 1;
-	text-align: center;
-	font-size: 14px;
-	color: #999;
+.stats-cards {
+  margin-bottom: 20px;
+
+  .stat-card {
+    border-radius: 8px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-content {
+      display: flex;
+      align-items: center;
+
+      .stat-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        color: #fff;
+
+        &.users {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        &.orders {
+          background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+        }
+
+        &.revenue {
+          background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        }
+
+        &.products {
+          background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);
+        }
+      }
+
+      .stat-info {
+        .stat-value {
+          font-size: 24px;
+          font-weight: bold;
+          color: #303133;
+          margin-bottom: 4px;
+        }
+
+        .stat-label {
+          font-size: 14px;
+          color: #909399;
+        }
+      }
+    }
+  }
 }
 
-.grid-num {
-	font-size: 30px;
-	font-weight: bold;
+.main-content {
+  margin-bottom: 20px;
+
+  .chart-card,
+  .quick-actions {
+    border-radius: 8px;
+    height: 100%;
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+
+  .chart-placeholder {
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+
+    .chart-area {
+      flex: 1;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-around;
+      padding: 20px 0;
+
+      .chart-bar {
+        width: 30px;
+        background: linear-gradient(to top, #409eff, #a0cfff);
+        border-radius: 4px 4px 0 0;
+        transition: all 0.3s ease;
+
+        &:hover {
+          opacity: 0.8;
+          transform: scaleY(1.05);
+        }
+      }
+    }
+
+    .chart-labels {
+      display: flex;
+      justify-content: space-around;
+      padding-top: 10px;
+      border-top: 1px solid #ebeef5;
+
+      span {
+        font-size: 12px;
+        color: #909399;
+      }
+    }
+  }
+
+  .quick-actions {
+    .action-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+
+      .action-btn {
+        height: auto;
+        padding: 12px 8px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+
+        &+.action-btn {
+          margin-left: 0;
+        }
+
+        span {
+          font-size: 12px;
+        }
+      }
+    }
+
+    .recent-activities {
+      h3 {
+        font-size: 16px;
+        color: #303133;
+        margin: 0 0 15px 0;
+      }
+
+      .activity-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        .activity-item {
+          display: flex;
+          justify-content: space-between;
+          padding: 8px 0;
+          border-bottom: 1px solid #f0f0f0;
+
+          &:last-child {
+            border-bottom: none;
+          }
+
+          .activity-time {
+            font-size: 12px;
+            color: #909399;
+          }
+
+          .activity-desc {
+            font-size: 14px;
+            color: #606266;
+          }
+        }
+      }
+    }
+  }
 }
 
-.grid-con-icon {
-	font-size: 50px;
-	width: 100px;
-	height: 100px;
-	text-align: center;
-	line-height: 100px;
-	color: #fff;
+.bottom-section {
+  .info-card {
+    border-radius: 8px;
+    height: 100%;
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .system-status {
+      .status-item {
+        margin-bottom: 15px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        .status-label {
+          display: block;
+          font-size: 14px;
+          color: #606266;
+          margin-bottom: 5px;
+        }
+
+        .status-value {
+          font-size: 14px;
+          color: #303133;
+          font-weight: 500;
+        }
+      }
+    }
+
+    .notifications {
+      .notification-item {
+        display: flex;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #f0f0f0;
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        .notification-text {
+          flex: 1;
+          margin: 0 10px;
+          font-size: 14px;
+          color: #606266;
+        }
+
+        .notification-time {
+          font-size: 12px;
+          color: #909399;
+        }
+      }
+    }
+  }
 }
 
-.grid-con-1 .grid-con-icon {
-	background: rgb(45, 140, 240);
-}
+// 响应式设计
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 10px;
+  }
 
-.grid-con-1 .grid-num {
-	color: rgb(45, 140, 240);
-}
+  .stats-cards {
+    .stat-card {
+      margin-bottom: 15px;
+    }
+  }
 
-.grid-con-2 .grid-con-icon {
-	background: rgb(100, 213, 114);
-}
+  .main-content {
+    .chart-placeholder {
+      height: 250px;
+    }
 
-.grid-con-2 .grid-num {
-	color: rgb(100, 213, 114);
-}
-
-.grid-con-3 .grid-con-icon {
-	background: rgb(242, 94, 67);
-}
-
-.grid-con-3 .grid-num {
-	color: rgb(242, 94, 67);
-}
-
-.mgb20 {
-	margin-bottom: 20px;
-}
-
-.todo-item {
-	font-size: 14px;
-}
-
-.todo-item-del {
-	text-decoration: line-through;
-	color: #999;
-}
-
-.schart {
-	width: 100%;
-	height: 300px;
+    .quick-actions {
+      .action-buttons {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
 }
 </style>
