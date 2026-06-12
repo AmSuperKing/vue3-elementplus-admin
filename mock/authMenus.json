@@ -1,0 +1,166 @@
+{
+  "code": 200,
+  "message": "success",
+  "data": [
+    {
+      "path": "/",
+      "name": "home",
+      "component": "Layout",
+      "redirect": "/dashboard",
+      "meta": {
+        "title": "系统首页",
+        "icon": "HomeFilled"
+      },
+      "hidden": false,
+      "children": [
+        {
+          "path": "/dashboard",
+          "name": "dashboard",
+          "meta": {
+            "title": "系统首页",
+            "icon": "HomeFilled"
+          },
+          "hidden": false
+        }
+      ]
+    },
+    {
+      "path": "/editor",
+      "name": "editor",
+      "redirect": "/editor/markdownEditor",
+      "component": "Layout",
+      "meta": {
+        "title": "编辑器",
+        "icon": "EditPen"
+      },
+      "hidden": false,
+      "children": [
+        {
+          "path": "/editor/markdownEditor",
+          "name": "markdownEditor",
+          "meta": {
+            "title": "Markdown编辑器",
+            "icon": "Edit"
+          },
+          "hidden": false
+        },
+        {
+          "path": "/editor/richTextEditor",
+          "name": "richTextEditor",
+          "meta": {
+            "title": "富文本编辑器",
+            "icon": "Edit"
+          },
+          "hidden": false
+        },
+        {
+          "path": "/editor/richTextEditor2",
+          "name": "richTextEditor2",
+          "meta": {
+            "title": "富文本编辑器2",
+            "icon": "Edit"
+          },
+          "hidden": false
+        },
+        {
+          "path": "/editor/richTextEditor3",
+          "name": "richTextEditor3",
+          "meta": {
+            "title": "富文本编辑器3",
+            "icon": "Edit"
+          },
+          "hidden": false
+        },
+        {
+          "path": "/editor/richTextEditor4",
+          "name": "richTextEditor4",
+          "meta": {
+            "title": "富文本编辑器4",
+            "icon": "Edit"
+          },
+          "hidden": false
+        },
+        {
+          "path": "/editor/codeEditor",
+          "name": "codeEditor",
+          "meta": {
+            "title": "代码编辑器",
+            "icon": "Edit"
+          },
+          "hidden": false
+        }
+      ]
+    },
+    {
+      "path": "/fileViewer",
+      "name": "fileViewer",
+      "redirect": "/fileViewer/pdfViewer",
+      "component": "Layout",
+      "meta": {
+        "title": "文件查看器",
+        "icon": "Document"
+      },
+      "hidden": false,
+      "children": [
+        {
+          "path": "/fileViewer/pdfViewer",
+          "name": "pdfViewer",
+          "meta": {
+            "title": "PDF查看器",
+            "icon": "svg-pdf"
+          },
+          "hidden": false
+        }
+      ]
+    },
+    {
+      "path": "/icons",
+      "name": "icons",
+      "component": "Layout",
+      "meta": {
+        "title": "图标资源",
+        "icon": "HelpFilled"
+      },
+      "hidden": false,
+      "children": [
+        {
+          "path": "/icons/list",
+          "name": "iconList",
+          "meta": {
+            "title": "图标资源",
+            "icon": "HelpFilled"
+          },
+          "hidden": false
+        }
+      ]
+    },
+    {
+      "path": "/error",
+      "name": "Error",
+      "redirect": "/error/403",
+      "hidden": false,
+      "meta": {
+        "title": "错误页面",
+        "icon": "svg-bug"
+      },
+      "children": [
+        {
+          "path": "/error/403",
+          "name": "403",
+          "meta": {
+            "title": "没有权限"
+          },
+          "hidden": false
+        },
+        {
+          "path": "/error/404",
+          "name": "404",
+          "meta": {
+            "title": "找不到页面"
+          },
+          "hidden": false
+        }
+      ]
+    }
+  ]
+}

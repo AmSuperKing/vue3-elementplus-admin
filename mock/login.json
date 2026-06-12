@@ -1,0 +1,13 @@
+{
+  "code": 200,
+  "message": "success",
+  "data": {
+    "userName": "admin",
+    "userNameCn": "超级管理员",
+    "roles": [
+      "admin"
+    ],
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.mock_token_string",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.mock_refresh_token"
+  }
+}
