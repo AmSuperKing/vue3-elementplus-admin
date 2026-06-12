@@ -98,6 +98,5 @@ const phrases: Record<string, string> = {
 
 :deep(.code-editor .cm-editor) {
   min-height: 500px;
-  border: 1px solid #ddd;
 }
 </style>
