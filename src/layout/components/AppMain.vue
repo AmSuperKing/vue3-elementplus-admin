@@ -5,14 +5,13 @@
         <keep-alive :include="tagsList.nameList" :max="8">
           <suspense>
             <template #default>
-              <component :is="Component" :key="route.path ?? undefined" />
+              <component :is="Component" :key="route.path" />
             </template>
             <template #fallback> Loading... </template>
           </suspense>
         </keep-alive>
       </transition>
     </router-view>
-    <el-backtop style="z-index: 1999;" />
   </div>
 </template>
 
