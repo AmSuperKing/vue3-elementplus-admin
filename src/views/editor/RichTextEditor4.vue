@@ -22,7 +22,7 @@ import { ElLoading, ElMessage } from 'element-plus'
 import request from '@/utils/request'
 
 
-const editorContent = ref('<p>欢迎使用 TinyMCE!</p>')
+const editorContent = ref('<p>欢迎使用&nbsp;&nbsp;TinyMCE! </p>')
 
 const plugins = [
   "table",
@@ -32,7 +32,7 @@ const plugins = [
   "code",
   "lists",
   "advlist",
-  "hr",
+  // "visualchars", // 显示不可见字符
   "formatpainter",
   "searchreplace",
   "autolink"
