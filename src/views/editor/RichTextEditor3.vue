@@ -5,7 +5,7 @@
       <el-link type="primary" href="https://dev.umodoc.com/cn/docs/editor" target="_blank">@umoteam/editor</el-link>
     </div>
     <div class="rich-text-editor">
-      <umo-editor ref="editorRef" v-bind="options" @save="onSave" @file-upload="onFileUpload"
+      <UmoEditor ref="editorRef" v-bind="options" @save="onSave" @file-upload="onFileUpload"
         @file-delete="onFileDelete" />
     </div>
   </div>
@@ -18,10 +18,16 @@ import request from '@/utils/request'
 
 const editorRef = ref()
 
-const options = ref({
+const options = {
   // 配置项
-  // ...
-})
+  document: {
+    title: '示例文档',
+    content: '<p>这是文档内容</p>',
+    autoSave: {
+      enabled: false,
+    },
+  },
+}
 
 const onSave = async (content: string, page: string, document: string) => {
   const res = await request.post('/api/save', {

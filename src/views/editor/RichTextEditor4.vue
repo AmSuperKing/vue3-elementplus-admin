@@ -7,7 +7,8 @@
       </el-link>
     </div>
     <div class="rich-text-editor">
-      <Editor api-key="s3qopqo0oijwpexqahe2xzk9h7nczp0dvmf0p5enpytk8t9x" :init="editorInitOptions"
+      <!--  本地托管tinymce资源，不使用官方CDN Cloud -->
+      <Editor tinymceScriptSrc="/tinymce/tinymce.min.js" license-key="gpl" :init="editorInitOptions"
         v-model="editorContent" />
     </div>
   </div>
@@ -42,6 +43,7 @@ const toolbar =
 
 const editorInitOptions: RawEditorOptions = {
   language: "zh-CN",
+  base_url: '/tinymce', // 本地托管tinymce资源，不使用官方CDN Cloud
   skin: "oxide",
   branding: false,
   promotion: false,
