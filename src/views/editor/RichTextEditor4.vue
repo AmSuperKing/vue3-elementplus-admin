@@ -8,20 +8,25 @@
     </div>
     <div class="rich-text-editor">
       <!--  本地托管tinymce资源，不使用官方CDN Cloud -->
-      <Editor tinymceScriptSrc="/tinymce/tinymce.min.js" license-key="gpl" :init="editorInitOptions"
+      <Editor :tinymceScriptSrc="tinymceScriptSrc" license-key="gpl" :init="editorInitOptions"
         v-model="editorContent" />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import Editor from '@tinymce/tinymce-vue'
 import type { RawEditorOptions } from "tinymce";
 import { ElLoading, ElMessage } from 'element-plus'
 import request from '@/utils/request'
 
-
+// 计算 tinymce 脚本源路径
+const tinymceScriptSrc = computed(() => {
+  return import.meta.env.PROD
+    ? `${import.meta.env.VITE_BASE_PATH}tinymce/tinymce.min.js`
+    : '/tinymce/tinymce.min.js'
+})
 const editorContent = ref('<p>欢迎使用&nbsp;&nbsp;TinyMCE! </p>')
 
 const plugins = [
@@ -43,7 +48,7 @@ const toolbar =
 
 const editorInitOptions: RawEditorOptions = {
   language: "zh-CN",
-  base_url: '/tinymce', // 本地托管tinymce资源，不使用官方CDN Cloud
+  base_url: `${import.meta.env.VITE_BASE_PATH}tinymce`, // 本地托管tinymce资源，不使用官方CDN Cloud
   skin: "oxide",
   branding: false,
   promotion: false,
