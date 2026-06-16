@@ -37,7 +37,7 @@ import DocxPreviewer from './components/DocxPreviewer.vue'
 import ExcelPreviewer from './components/ExcelPreviewer.vue'
 import PPTXPreviewer from './components/PPTXPreviewer.vue'
 
-const activeName = ref('pptx')
+const activeName = ref('docx')
 
 const fileData = ref<File | null>(null)
 

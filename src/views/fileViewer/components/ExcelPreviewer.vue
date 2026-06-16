@@ -301,8 +301,8 @@ const initSpreadsheet = (sheetDataArray: Array<{ maxRow?: number; rows?: Record<
     showContextmenu: false,
     showBottomBar: true,
     view: {
-      height: () => containerRef.value?.offsetHeight || 600,
-      width: () => containerRef.value?.offsetWidth || 800
+      height: () => containerRef.value?.offsetHeight || 720,
+      width: () => containerRef.value?.offsetWidth || 1080
     },
     row: { len: dynamicRowLen, height: 25 },
     col: { len: 26, width: 100, indexWidth: 60, minWidth: 60 },
