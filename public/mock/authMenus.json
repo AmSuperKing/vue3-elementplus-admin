@@ -110,6 +110,15 @@
             "icon": "svg-pdf"
           },
           "hidden": false
+        },
+        {
+          "path": "/fileViewer/officeViewer",
+          "name": "officeViewer",
+          "meta": {
+            "title": "Office查看器",
+            "icon": "Reading"
+          },
+          "hidden": false
         }
       ]
     },

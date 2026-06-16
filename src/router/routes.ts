@@ -89,6 +89,14 @@ const routes = [
         hidden: false,
         component: () => import(/* webpackChunkName: "fileViewer" */ '@/views/fileViewer/pdfViewer.vue'),
       },
+      {
+        path: 'officeViewer',
+        name: 'officeViewer',
+        meta: { title: 'Office查看器', icon: 'Reading' },
+        hidden: false,
+        component: () => import(/* webpackChunkName: "officeViewer" */ '@/views/fileViewer/officeViewer.vue'),
+      },
+
     ],
   },
   {

@@ -1,4 +1,12 @@
 <template>
+  <div>
+    <div class="plugins-tips">
+      PDF查看器示例。
+      <el-link type="primary" href="https://www.embedpdf.com/vue-pdf-viewer" target="_blank">
+        @embedpdf/vue-pdf-viewer
+      </el-link>
+    </div>
+
   <div class="pdfviewer-wrapper">
     <PDFViewer :config="{
       src: 'https://snippet.embedpdf.com/ebook.pdf',
@@ -9,6 +17,7 @@
       },
       disabledCategories: disabledCategories,
     }" class="embedpdf-viewer" />
+  </div>
   </div>
 </template>
 
@@ -34,6 +43,13 @@ const disabledCategories = [
 </script>
 
 <style lang="scss" scoped>
+.plugins-tips {
+  margin-bottom: 15px;
+  padding: 20px;
+  background-color: #e7ecf3;
+  color: #444;
+}
+
 .pdfviewer-wrapper {
   height: 65vh;
   border: 1px solid #e4e7ed;
