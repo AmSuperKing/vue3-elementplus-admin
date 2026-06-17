@@ -50,5 +50,6 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   border: 1px solid #bfbfbf;
+  background-color: #bfbfbf;
 }
 </style>
