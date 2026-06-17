@@ -100,6 +100,23 @@ const routes = [
     ],
   },
   {
+    path: '/media',
+    name: 'media',
+    redirect: '/media/compress',
+    component: Layout,
+    meta: { title: '文件压缩', icon: 'PictureRounded' },
+    hidden: false,
+    children: [
+      {
+        path: 'compress',
+        name: 'compress',
+        meta: { title: '文件压缩', icon: 'PictureRounded' },
+        hidden: false,
+        component: () => import(/* webpackChunkName: "compress" */ '@/views/media/compress.vue'),
+      },
+    ],
+  },
+  {
     path: '/icons',
     name: 'icons',
     redirect: '/icons/list',

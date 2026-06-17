@@ -123,6 +123,28 @@
       ]
     },
     {
+      "path": "/media",
+      "name": "media",
+      "redirect": "/media/compress",
+      "component": "Layout",
+      "meta": {
+        "title": "文件压缩",
+        "icon": "PictureRounded"
+      },
+      "hidden": false,
+      "children": [
+        {
+          "path": "/media/compress",
+          "name": "compress",
+          "meta": {
+            "title": "文件压缩",
+            "icon": "PictureRounded"
+          },
+          "hidden": false
+        }
+      ]
+    },
+    {
       "path": "/icons",
       "name": "icons",
       "component": "Layout",

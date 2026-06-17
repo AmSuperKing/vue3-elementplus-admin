@@ -1,0 +1,168 @@
+<template>
+  <div>
+    <div v-loading="imgLoading" element-loading-text="正在压缩图片，请稍候...">
+      <el-form label-width="100px" class="compress-form mt-10">
+        <el-form-item label="选择图片">
+          <!-- <el-upload :auto-upload="false" :show-file-list="false" accept="image/*" :on-change="(file) => handleImageChange(file.raw)">
+            <el-button type="primary" :disabled="imgLoading">选择图片</el-button>
+          </el-upload> -->
+          <el-upload drag :auto-upload="false" :show-file-list="false" accept=".jpg,.jpeg,.png,.webp,.bmp" :on-change="(file) => handleImageChange(file.raw)" class="wp-100">
+            <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+            <div class="el-upload__text">
+              拖拽文件到这里 或<em>点击上传</em>
+            </div>
+          </el-upload>
+          <span v-if="imageFile" style="margin-left: 10px;">{{ imageFile.name }}</span>
+        </el-form-item>
+        <el-form-item label="压缩质量">
+          <el-slider v-model="imageQuality" :min="0.1" :max="1" :step="0.1" show-input :disabled="imgLoading" style="max-width: 375px;" />
+        </el-form-item>
+        <el-form-item label="最大宽度">
+          <el-input-number v-model="imageMaxWidth" :min="320" :max="3840" :step="100" :disabled="imgLoading" />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="success" @click="compressImage" :loading="imgLoading">压缩图片</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
+
+    <div v-if="compressedImageUrl" class="preview-box">
+      <p>压缩后大小: {{ formatSize(compressedImageSize) }}，图片预览：</p>
+      <el-image :src="compressedImageUrl" fit="scale-down" :preview-src-list="[compressedImageUrl]" style="width: 300px; height: auto;" />
+      <el-button type="primary" link @click="downloadFile(compressedImageUrl, `compressed_${imageFile?.name || 'image'}`)" style="margin-top: 10px;">
+        <el-icon><Download /></el-icon> 下载压缩图片
+      </el-button>
+    </div>
+  </div>
+</template>
+
+<script lang="ts" setup>
+import { ref } from 'vue';
+import { ElMessage } from 'element-plus';
+import { Download } from '@element-plus/icons-vue';
+
+/**
+ * 当使用 Canvas 的 toBlob() 或 toDataURL() 方法时，
+ * 如果将质量参数（quality）设置为 1 或者其他值（如 0.8），
+ * 由于 Canvas 内部会对图片进行重新编码，对于某些本身已经经过高度压缩的图片，重新编码反而会导致体积膨胀。
+ */
+
+// --- 图片压缩相关状态 ---
+const imageFile = ref<File | null>(null);
+const imageType = ref<string>('image/jpeg');
+const imageQuality = ref(0.8);
+const imageMaxWidth = ref(1200);
+const imgLoading = ref(false);
+const compressedImageUrl = ref('');
+const compressedImageSize = ref(0);
+
+// 工具函数：格式化文件大小
+const formatSize = (bytes: number): string => {
+  if (!bytes) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+};
+
+// 工具函数：安全下载文件
+const downloadFile = (url: string, filename: string): void => {
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+};
+
+// 1. 图片压缩核心逻辑
+const handleImageChange = (file: File | undefined): void => {
+  if (!file) return;
+  console.log('Selected file:', file);
+  imageFile.value = file;
+  imageType.value = file.type;
+  if (compressedImageUrl.value) URL.revokeObjectURL(compressedImageUrl.value);
+  compressedImageUrl.value = '';
+
+  // 获取图片宽度并更新 imageMaxWidth
+  const img = new Image();
+  const url = URL.createObjectURL(file);
+  img.src = url;
+  img.onload = () => {
+    imageMaxWidth.value = img.width;
+    URL.revokeObjectURL(url);
+  };
+};
+
+const compressImage = async () => {
+  if (!imageFile.value) return ElMessage.warning('请先选择图片');
+  imgLoading.value = true;
+  try {
+    const img = new Image();
+    const url = URL.createObjectURL(imageFile.value);
+    img.src = url;
+    await new Promise((resolve) => { img.onload = resolve; });
+
+    let width = img.width, height = img.height;
+    if (width > imageMaxWidth.value) {
+      height = Math.round((height * imageMaxWidth.value) / width);
+      width = imageMaxWidth.value;
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.drawImage(img, 0, 0, width, height);
+    }
+
+    if (compressedImageUrl.value) URL.revokeObjectURL(compressedImageUrl.value);
+    URL.revokeObjectURL(url);
+
+    canvas.toBlob((blob) => {
+      if (blob) {
+        compressedImageUrl.value = URL.createObjectURL(blob);
+        compressedImageSize.value = blob.size;
+        ElMessage.success('图片压缩完成');
+      }
+    }, imageType.value, imageQuality.value);
+  } catch (err) {
+    console.error('图片压缩失败:', err);
+    ElMessage.error('图片压缩失败');
+  } finally {
+    imgLoading.value = false;
+  }
+};
+
+
+</script>
+
+<style lang="scss" scoped>
+.preview-box {
+  margin-top: 15px;
+  padding: 10px;
+  background: #f5f7fa;
+  border-radius: 4px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 进度条区域样式 */
+.progress-box {
+  margin: 15px 0;
+  padding: 10px;
+  background: #ecf5ff;
+  border-radius: 4px;
+}
+.progress-text {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #606266;
+  text-align: center;
+}
+</style>
