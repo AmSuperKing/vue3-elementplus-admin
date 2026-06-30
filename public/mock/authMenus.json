@@ -145,6 +145,27 @@
       ]
     },
     {
+      "path": "/table",
+      "name": "table",
+      "component": "Layout",
+      "meta": {
+        "title": "表格",
+        "icon": "Grid"
+      },
+      "hidden": false,
+      "children": [
+        {
+          "path": "/table/TableExample",
+          "name": "Grid",
+          "meta": {
+            "title": "表格示例",
+            "icon": "Grid"
+          },
+          "hidden": false
+        }
+      ]
+    },
+    {
       "path": "/icons",
       "name": "icons",
       "component": "Layout",

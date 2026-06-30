@@ -117,6 +117,23 @@ const routes = [
     ],
   },
   {
+    path: '/table',
+    name: 'table',
+    redirect: '/table/TableExample',
+    component: Layout,
+    meta: { title: '表格', icon: 'Grid' },
+    hidden: false,
+    children: [
+      {
+        path: 'TableExample',
+        name: 'TableExample',
+        meta: { title: '嵌套表格', icon: 'Grid' },
+        hidden: false,
+        component: () => import(/* webpackChunkName: "TableExample" */  '@/views/table/TableExample.vue')
+      }
+    ]
+  },
+  {
     path: '/icons',
     name: 'icons',
     redirect: '/icons/list',
