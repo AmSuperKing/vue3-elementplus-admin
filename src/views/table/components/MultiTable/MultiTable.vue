@@ -1,190 +1,231 @@
 <!-- MultiTable.vue -->
 <template>
-  <div class="multi-table-wrapper" ref="wrapperRef">
-    <div class="multi-table-container" ref="containerRef" @scroll="onScroll">
-      <table class="multi-table" :style="{ minWidth: totalWidth + 'px' }" cellpadding="0" cellspacing="0">
-        <!-- 表头 -->
-        <thead class="multi-table__header">
-          <tr v-for="(row, rowIndex) in headerRows" :key="'hr-' + rowIndex" class="multi-table__header-row">
-            <th
-              v-for="(cell, cellIdx) in row.cells"
-              :key="cell.dataIndex"
-              :colspan="cell._colSpan > 1 ? cell._colSpan : undefined"
-              :rowspan="cell._rowSpan > 1 ? cell._rowSpan : undefined"
-              :class="[
-                'multi-table__th',
-                cell.align ? `align-${cell.align}` : '',
-                cell._isLeaf ? 'is-leaf' : '',
-                cell._isSelection ? 'is-selection-th' : '',
-                { 'is-fixed-left': cell.fixed === 'left' },
-                { 'is-fixed-right': cell.fixed === 'right' },
-                { 'is-last-column': cell.dataIndex === lastColumnKey },
-                resizing && resizeColIndex === cell.dataIndex ? 'is-resizing' : '',
-              ]"
-              :style="getHeaderCellStyle(cell)"
-            >
-              <div class="th-content">
-                <!-- 选择列表头 -->
-                <template v-if="cell._isSelection">
-                  <label v-if="selectMode === 'checkbox'" class="custom-checkbox" @click.stop>
-                    <input
-                      type="checkbox"
-                      :checked="isAllSelected"
-                      :indeterminate.prop="isIndeterminate"
-                      @change="toggleSelectAll"
-                    />
-                    <span class="checkmark"></span>
-                  </label>
-                </template>
-
-                <!-- 正常表头插槽 -->
-                <template v-else>
-                  <slot
-                    :name="`header_${cell._parentDataIndex ? cell._parentDataIndex + '_' + cell.dataIndex : cell.dataIndex}`"
-                    :column="cell"
-                    :row="row"
-                    :depth="cell._depth"
-                    :index="cellIdx"
-                  >
-                    <span class="th-title">{{ cell.title }}</span>
-                  </slot>
-                </template>
-              </div>
-
-              <!-- 列拖拽手柄 -->
-              <div
-                v-if="cell._isLeaf && cell.resizable && !cell._isSelection"
-                class="resize-handle"
-                :class="{ active: resizing && resizeColIndex === cell.dataIndex }"
-                @mousedown="
-                  onResizeMouseDown(
-                    $event,
-                    cell.dataIndex,
-                    getEffectiveWidth(cell.dataIndex, cell.width ?? 120)
-                  )
-                "
-              />
-            </th>
-          </tr>
-        </thead>
-
-        <!-- 数据行 -->
-        <tbody class="multi-table__body">
-          <tr
-            v-for="expandedRow in expandedRows"
-            :key="'row-' + expandedRow.originalIndex + '-' + expandedRow.subRowIndex"
-            class="multi-table__row"
-            :class="{
-              'is-stripe': expandedRow.originalIndex % 2 === 1,
-              'is-selected': isSelected(expandedRow.originalRow),
-              'is-row-hover': hoverRowGroup === expandedRow.groupKey,
-            }"
-            @click="onRowClick(expandedRow.originalRow, expandedRow.originalIndex)"
-            @mouseenter="hoverRowGroup = expandedRow.groupKey"
-            @mouseleave="hoverRowGroup = null"
-          >
-            <template v-for="col in leafColumns" :key="col.dataIndex + '-' + expandedRow.originalIndex">
-              <td
-                v-if="shouldRenderCell(col, expandedRow)"
-                :rowspan="getRowSpan(col, expandedRow) > 1 ? getRowSpan(col, expandedRow) : undefined"
+  <div
+    class="multi-table-layout"
+    :class="{
+      'multi-table-wrapper__small': props.size === 'small',
+      'multi-table-wrapper__large': props.size === 'large'
+    }"
+    :style="tableConfigStyle"
+  >
+    <div v-if="$slots.header" class="multi-table-header">
+      <slot name="header"></slot>
+    </div>
+    <div ref="wrapperRef" class="multi-table-wrapper">
+      <div class="multi-table-container" ref="containerRef" @scroll="onScroll">
+        <table class="multi-table" :style="{ minWidth: totalWidth + 'px' }" cellpadding="0" cellspacing="0">
+          <!-- 表头 -->
+          <thead class="multi-table__header">
+            <tr v-for="(row, rowIndex) in headerRows" :key="'hr-' + rowIndex" class="multi-table__header-row">
+              <th
+                v-for="(cell, cellIdx) in row.cells"
+                :key="cell.dataIndex"
+                :colspan="cell._colSpan > 1 ? cell._colSpan : undefined"
+                :rowspan="cell._rowSpan > 1 ? cell._rowSpan : undefined"
                 :class="[
-                  'multi-table__td',
-                  col.align ? `align-${col.align}` : '',
-                  { 'is-fixed-left': col.fixed === 'left' },
-                  { 'is-fixed-right': col.fixed === 'right' },
-                  { 'is-selection-td': col.dataIndex === '__selection__' },
-                  { 'is-object-cell': isObjectValue(resolveCellValue(expandedRow, col)) },
-                  { 'is-hover-cell': hoverRowGroup === expandedRow.groupKey },
-                  { 'is-last-column': col.dataIndex === lastColumnKey },
+                  'multi-table__th',
+                  { 'multi-table__th-small': props.size === 'small' },
+                  { 'multi-table__th-large': props.size === 'large' },
+                  cell.align ? `align-${cell.align}` : '',
+                  cell._isLeaf ? 'is-leaf' : '',
+                  cell._isSelection ? (props.size === 'small' || props.size === 'large') ? `is-selection-th-${props.size}` : 'is-selection-th' : '',
+                  { 'is-fixed-left': cell.fixed === 'left' },
+                  { 'is-fixed-right': cell.fixed === 'right' },
+                  { 'is-last-column': cell.dataIndex === lastColumnKey },
+                  resizing && resizeColIndex === cell.dataIndex ? 'is-resizing' : '',
                 ]"
-                :style="getCellStyle(col)"
-                @click="col.dataIndex === '__selection__' ? $event.stopPropagation() : null"
+                :style="getHeaderCellStyle(cell)"
               >
-                <div class="td-content">
-                  <!-- 选择列单元格 -->
-                  <template v-if="col.dataIndex === '__selection__'">
+                <div class="th-content">
+                  <!-- 选择列表头 -->
+                  <template v-if="cell._isSelection">
                     <label v-if="selectMode === 'checkbox'" class="custom-checkbox" @click.stop>
                       <input
                         type="checkbox"
-                        :checked="isSelected(expandedRow.originalRow)"
-                        @change="toggleSelection(expandedRow.originalRow)"
+                        :checked="isAllSelected"
+                        :indeterminate.prop="isIndeterminate"
+                        @change="toggleSelectAll"
                       />
                       <span class="checkmark"></span>
                     </label>
-                    <label v-else class="custom-radio" @click.stop>
-                      <input
-                        type="radio"
-                        :name="`radio_${tableId}`"
-                        :checked="isSelected(expandedRow.originalRow)"
-                        @change="toggleSelection(expandedRow.originalRow)"
-                      />
-                      <span class="radiomark"></span>
-                    </label>
                   </template>
 
-                  <!-- 正常单元格插槽 -->
+                  <!-- 正常表头插槽 -->
                   <template v-else>
                     <slot
-                      :name="`cell_${col._parentDataIndex ? col._parentDataIndex + '_' + col.dataIndex : col.dataIndex}`"
-                      :row="expandedRow.originalRow"
-                      :column="col"
-                      :value="resolveCellValue(expandedRow, col)"
-                      :index="expandedRow.originalIndex"
+                      :name="`header_${cell._parentDataIndex ? cell._parentDataIndex + '_' + cell.dataIndex : cell.dataIndex}`"
+                      :column="cell"
+                      :row="row"
+                      :depth="cell._depth"
+                      :index="cellIdx"
                     >
-                      <!-- 对象值：渲染字段并匹配子插槽 -->
-                      <template v-if="isObjectValue(resolveCellValue(expandedRow, col))">
-                        <div class="object-cell">
-                          <div
-                            v-for="(val, key) in getObjectFields(resolveCellValue(expandedRow, col) as Record<string, unknown>)"
-                            :key="key"
-                            class="object-field"
-                          >
-                            <slot :name="`cell_${col.dataIndex}_${key}`" :value="val" :row="expandedRow.originalRow">
-                              <span class="object-key">{{ key }}:</span>
-                              <span class="object-val">{{ val }}</span>
-                            </slot>
-                          </div>
-                        </div>
-                      </template>
-                      <template v-else>
-                        {{ formatCellValue(resolveCellValue(expandedRow, col)) }}
-                      </template>
+                      <span class="th-title">{{ cell.title }}</span>
                     </slot>
                   </template>
                 </div>
-              </td>
-            </template>
-          </tr>
 
-          <!-- 空数据 -->
-          <tr v-if="!tableData || tableData.length === 0">
-            <td :colspan="leafColumns.length" class="multi-table__empty">
-              <slot name="empty">
-                <div class="empty-text">暂无数据</div>
-              </slot>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+                <!-- 列拖拽手柄 -->
+                <div
+                  v-if="cell._isLeaf && cell.resizable && !cell._isSelection"
+                  class="resize-handle"
+                  :class="[
+                    props.size === 'small' || props.size === 'large' ? `resize-handle-${props.size}` : '',
+                    { active: resizing && resizeColIndex === cell.dataIndex }
+                  ]"
+                  @mousedown="
+                    onResizeMouseDown(
+                      $event,
+                      cell.dataIndex,
+                      getEffectiveWidth(cell.dataIndex, cell.width ?? 120)
+                    )
+                  "
+                />
+              </th>
+            </tr>
+          </thead>
+
+          <!-- 数据行 -->
+          <tbody class="multi-table__body">
+            <tr
+              v-for="expandedRow in expandedRows"
+              :key="'row-' + expandedRow.originalIndex + '-' + expandedRow.subRowIndex"
+              class="multi-table__row"
+              :class="{
+                'is-stripe': props.stripe && expandedRow.originalIndex % 2 === 1,
+                'is-selected': isSelected(expandedRow.originalRow),
+                'is-row-hover': hoverRowGroup === expandedRow.groupKey,
+              }"
+              @click="onRowClick(expandedRow.originalRow, expandedRow.originalIndex)"
+              @mouseenter="handleRowMouseEnter(expandedRow.groupKey, expandedRow.originalIndex, expandedRow.originalRow)"
+              @mouseleave="handleRowMouseLeave( expandedRow.originalIndex, expandedRow.originalRow)"
+            >
+              <template v-for="col in leafColumns" :key="col.dataIndex + '-' + expandedRow.originalIndex">
+                <td
+                  v-if="shouldRenderCell(col, expandedRow)"
+                  :rowspan="getRowSpan(col, expandedRow) > 1 ? getRowSpan(col, expandedRow) : undefined"
+                  :class="[
+                    'multi-table__td',
+                    { 'multi-table__td-small': props.size === 'small' },
+                    { 'multi-table__td-large': props.size === 'large' },
+                    col.align ? `align-${col.align}` : '',
+                    { 'is-fixed-left': col.fixed === 'left' },
+                    { 'is-fixed-right': col.fixed === 'right' },
+                    { 'is-selection-td': col.dataIndex === '__selection__' },
+                    { 'is-selection-td__small': col.dataIndex === '__selection__' && props.size === 'small' },
+                    { 'is-selection-td__large': col.dataIndex === '__selection__' && props.size === 'large' },
+                    { 'is-object-cell': isObjectValue(resolveCellValue(expandedRow, col)) },
+                    { 'is-hover-cell': hoverRowGroup === expandedRow.groupKey },
+                    { 'is-last-column': col.dataIndex === lastColumnKey },
+                  ]"
+                  :style="getCellStyle(col)"
+                  @click="col.dataIndex === '__selection__' ? $event.stopPropagation() : null"
+                >
+                  <div class="td-content">
+                    <!-- 选择列单元格 -->
+                    <template v-if="col.dataIndex === '__selection__'">
+                      <label v-if="selectMode === 'checkbox'" class="custom-checkbox" @click.stop>
+                        <input
+                          type="checkbox"
+                          :checked="isSelected(expandedRow.originalRow)"
+                          :disabled="(props.selectableProps && props.selectableProps(expandedRow.originalRow)) || false"
+                          @change="toggleSelection(expandedRow.originalRow)"
+                        />
+                        <span class="checkmark"></span>
+                      </label>
+                      <label v-else class="custom-radio" @click.stop>
+                        <input
+                          type="radio"
+                          :name="`radio_${tableId}`"
+                          :disabled="(props.selectableProps && props.selectableProps(expandedRow.originalRow)) || false"
+                          :checked="isSelected(expandedRow.originalRow)"
+                          @change="toggleSelection(expandedRow.originalRow)"
+                        />
+                        <span class="radiomark"></span>
+                      </label>
+                    </template>
+
+                    <!-- 正常单元格插槽 -->
+                    <template v-else>
+                      <slot
+                        :name="`cell_${col._parentDataIndex ? col._parentDataIndex + '_' + col.dataIndex : col.dataIndex}`"
+                        :row="expandedRow.originalRow"
+                        :column="col"
+                        :value="resolveCellValue(expandedRow, col)"
+                        :index="expandedRow.originalIndex"
+                      >
+                        <!-- 对象值：渲染字段并匹配子插槽 -->
+                        <template v-if="isObjectValue(resolveCellValue(expandedRow, col))">
+                          <div class="object-cell">
+                            <div
+                              v-for="(val, key) in getObjectFields(resolveCellValue(expandedRow, col) as Record<string, unknown>)"
+                              :key="key"
+                              class="object-field"
+                            >
+                              <slot :name="`cell_${col.dataIndex}_${key}`" :value="val" :row="expandedRow.originalRow">
+                                <span class="object-key">{{ key }}:</span>
+                                <span class="object-val">{{ val }}</span>
+                              </slot>
+                            </div>
+                          </div>
+                        </template>
+                        <template v-else>
+                          {{ formatCellValue(resolveCellValue(expandedRow, col)) }}
+                        </template>
+                      </slot>
+                    </template>
+                  </div>
+                </td>
+              </template>
+            </tr>
+
+            <!-- 空数据 -->
+            <tr v-if="!tableData || tableData.length === 0">
+              <td
+                :colspan="leafColumns.length"
+                class="multi-table__empty"
+                :class="{
+                  'multi-table__empty-small': props.size === 'small',
+                  'multi-table__empty-large': props.size === 'large'
+                }"
+              >
+                <slot name="empty">
+                  <div class="empty-text" :class="{ 'empty-text__small': props.size === 'small', 'empty-text__large': props.size === 'large' }">暂无数据</div>
+                </slot>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 总结行 -->
+      <div v-if="props.showSummary" class="multi-table__summary">
+        <slot name="summary">
+          <div class="multi-table__summary-text">{{ props.summary }}</div>
+        </slot>
+      </div>
+
+      <!-- 固定列阴影 -->
+      <div
+        v-if="leftFixedLeaves.length > 0"
+        class="fixed-shadow fixed-shadow--left"
+        :class="{ 'has-shadow': scrollLeft > 1 }"
+        :style="{ left: leftFixedWidth + 'px' }"
+      />
+      <div
+        v-if="rightFixedLeaves.length > 0"
+        class="fixed-shadow fixed-shadow--right"
+        :class="{ 'has-shadow': hasRightScroll }"
+        :style="{ right: rightFixedWidth + scrollbarWidth + 'px' }"
+      />
     </div>
-    <!-- 固定列阴影 -->
-    <div
-      v-if="leftFixedLeaves.length > 0"
-      class="fixed-shadow fixed-shadow--left"
-      :class="{ 'has-shadow': scrollLeft > 1 }"
-      :style="{ left: leftFixedWidth + 'px' }"
-    />
-    <div
-      v-if="rightFixedLeaves.length > 0"
-      class="fixed-shadow fixed-shadow--right"
-      :class="{ 'has-shadow': hasRightScroll }"
-      :style="{ right: rightFixedWidth + scrollbarWidth + 'px' }"
-    />
+    <div v-if="$slots.footer" class="multi-table-footer">
+      <slot name="footer"></slot>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, toRef, useId } from 'vue'
+import { computed, onBeforeUnmount, ref, toRef, useId } from 'vue'
 import type { ColumnConfig, LeafColumn, FlatColumn } from './types'
 import { useColumns } from './useColumns'
 import { useResizable } from './useResizable'
@@ -195,15 +236,34 @@ const props = withDefaults(
     data: Record<string, unknown>[]
     rowKey?: string
     stripe?: boolean
+    stripeColor?: string
     border?: boolean
+    headerRowBg?: string
+    headerCellBg?: string
+    borderColor?: string
+    selectorColor?: string
+    selectorBorderColor?: string
+    selectorCheckedColor?: string
+    rowHoverBg?: string
+    highlightSlectedRow?: boolean
+    highlightSlectedColor?: string
+    fixedColumnBg?: string
+    size?: 'small' | 'default' | 'large'
+    theme?: string
+    clickRowToSelect?: boolean
     selectable?: boolean
     selectMode?: 'radio' | 'checkbox'
     selectedRowKeys?: (string | number)[]
+    showSummary?: boolean
+    summary?: string
+    selectableProps?: (row: Record<string, unknown>) => boolean
   }>(),
   {
     rowKey: 'id',
     stripe: true,
     border: true,
+    size: 'default',
+    clickRowToSelect: false,
     selectable: false,
     selectMode: 'radio',
     selectedRowKeys: () => [],
@@ -213,7 +273,10 @@ const props = withDefaults(
 const emit = defineEmits<{
   (e: 'update:selectedRowKeys', keys: (string | number)[]): void
   (e: 'selection-change', selectedRows: Record<string, unknown>[], selectedRowKeys: (string | number)[]): void
-  (e: 'row-click', row: Record<string, unknown>, index: number): void
+  (e: 'row-click', row: Record<string, unknown>, rowIndex: number): void
+  (e: 'row-dblclick', row: Record<string, unknown>, rowIndex: number): void
+  (e: 'row-mouseenter', row: Record<string, unknown>, rowIndex: number): void
+  (e: 'row-mouseleave', row: Record<string, unknown>, rowIndex: number): void
 }>()
 
 const tableId = useId() // 用于 radio name 唯一性
@@ -246,6 +309,104 @@ const {
 } = useColumns(columnsRef, widthOverrides, selectableRef)
 
 const tableData = computed(() => props.data || [])
+
+/**
+ * HEX 颜色转 rgba
+ * @param {string} hex - HEX 颜色值，如 '#1890ff'、'1890ff'、'#fff'
+ * @param {number} alpha - 透明度，范围 0~1，默认 1
+ * @returns {string} rgba 字符串，如 'rgba(24, 144, 255, 0.5)'
+ */
+function hexToRgba(hex: string, alpha: number = 1) {
+  // 去除 # 前缀
+  hex = hex.replace(/^#/, '');
+
+  // 支持 3 位缩写（如 fff → ffffff）
+  if (hex.length === 3) {
+    hex = hex.split('').map(c => c + c).join('');
+  }
+
+  // 支持 4 位缩写（如 fffa → ffffffaa）
+  if (hex.length === 4) {
+    hex = hex.split('').map(c => c + c).join('');
+  }
+
+  // 解析 RGB
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+
+  // 如果 HEX 自带透明度（8位），则优先使用
+  let a = alpha;
+  if (hex.length === 8) {
+    a = parseInt(hex.substring(6, 8), 16) / 255;
+  }
+
+  return `rgba(${r}, ${g}, ${b}, ${+a.toFixed(3)})`;
+}
+
+function rgbaToHex6(rgba: string, bgHex: string = "#ffffff"): string {
+  const match = rgba.match(
+    /rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*([\d.]+))?\s*\)/i
+  );
+
+  if (!match || match[1] === undefined || match[2] === undefined || match[3] === undefined) {
+    throw new Error(`无效的 RGBA 颜色值: ${rgba}`);
+  }
+
+  const r = parseInt(match[1], 10);
+  const g = parseInt(match[2], 10);
+  const b = parseInt(match[3], 10);
+  const a = match[4] !== undefined ? parseFloat(match[4]) : 1;
+
+  // 解析背景色
+  const bgR = parseInt(bgHex.slice(1, 3), 16);
+  const bgG = parseInt(bgHex.slice(3, 5), 16);
+  const bgB = parseInt(bgHex.slice(5, 7), 16);
+
+  // Alpha 合成：foreground * alpha + background * (1 - alpha)
+  const blend = (fg: number, bg: number) =>
+    Math.round(fg * a + bg * (1 - a));
+
+  const toHex = (n: number) =>
+    Math.min(255, Math.max(0, n)).toString(16).padStart(2, "0");
+
+  return `#${toHex(blend(r, bgR))}${toHex(blend(g, bgG))}${toHex(blend(b, bgB))}`;
+}
+
+const tableConfigStyle = computed(() => {
+  const style: Record<string, string> = {}
+
+  // 主题色相关
+  if (props.theme) {
+    style['--table-primary-color'] = props.theme
+    style['--table-selector-checked-color'] = props.theme
+    style['--table-selector-color'] = props.theme
+    style['--table-selector-border-color'] = props.theme
+    style['--table-th-resizing-color'] = props.theme
+  }
+
+  const themeAlphaColor = props.theme ? rgbaToHex6(hexToRgba(props.theme, 0.055)) : ''
+
+  // 辅助函数：优先取 prop 值，否则回退到主题透明色
+  const applyStyle = (cssVar: string, propValue: string | undefined, fallbackValue: string = themeAlphaColor) => {
+    const value = propValue || fallbackValue
+    if (value) style[cssVar] = value
+  }
+  applyStyle('--table-header-bg', props.headerRowBg)
+  applyStyle('--table-header-cell-bg', props.headerCellBg)
+  applyStyle('--table-selector-border-color', props.selectorBorderColor)
+  applyStyle('--table-selector-color', props.selectorColor)
+  applyStyle('--table-row-stripe-color', props.stripeColor)
+  applyStyle('--table-row-hover-bg', props.rowHoverBg)
+  applyStyle('--table-row-selected-bg', props.highlightSlectedRow ? props.highlightSlectedColor : undefined)
+
+  if (props.borderColor) style['--table-border-color'] = props.borderColor
+  if (props.fixedColumnBg) style['--table-fixed-column-bg'] = props.fixedColumnBg
+  if (props.clickRowToSelect) style['--table-row-cursor'] = 'pointer'
+  if (!props.border) style.border = 'none'
+
+  return style
+})
 
 // ================= 子行展开逻辑 =================
 /** 有子列的父列 */
@@ -405,43 +566,61 @@ const isSelected = (row: Record<string, unknown>) => {
 
 // 是否全选
 const isAllSelected = computed(() => {
-  if (tableData.value.length === 0) return false
-  return tableData.value.every((row) => selectedKeys.value.includes(getRowKey(row)))
-})
+  if (tableData.value.length === 0) return false;
+  const selectableRows = tableData.value.filter((row) => {
+    return !props.selectableProps || !props.selectableProps(row);
+  });
+  if (selectableRows.length === 0) return true;
+  return selectableRows.every((row) => selectedKeys.value.includes(getRowKey(row)));
+});
 
 // 是否半选
 const isIndeterminate = computed(() => {
-  const selectedCount = tableData.value.filter((row) =>
+  const selectableRows = tableData.value.filter((row) => {
+    return !props.selectableProps || !props.selectableProps(row);
+  });
+  const selectedCount = selectableRows.filter((row) =>
     selectedKeys.value.includes(getRowKey(row))
-  ).length
-  return selectedCount > 0 && selectedCount < tableData.value.length
-})
+  ).length;
+  return selectedCount > 0 && selectedCount < selectableRows.length;
+});
 
 function toggleSelection(row: Record<string, unknown>) {
-  const key = getRowKey(row)
-  let newKeys: (string | number)[]
-
-  if (props.selectMode === 'radio') {
-    newKeys = [key]
-  } else {
-    if (selectedKeys.value.includes(key)) {
-      newKeys = selectedKeys.value.filter((k) => k !== key)
-    } else {
-      newKeys = [...selectedKeys.value, key]
-    }
+  // 在这里加入 selectableProps 判断
+  if (props.selectableProps && props.selectableProps(row)) {
+    return; // 如果 selectableProps 返回 true (表示禁用)，则不执行选择
   }
 
-  emitUpdate(newKeys)
+  const key = getRowKey(row);
+  let newKeys: (string | number)[];
+
+  if (props.selectMode === 'radio') {
+    newKeys = [key];
+  } else {
+    if (selectedKeys.value.includes(key)) {
+      newKeys = selectedKeys.value.filter((k) => k !== key);
+    } else {
+      newKeys = [...selectedKeys.value, key];
+    }
+  }
+  emitUpdate(newKeys);
 }
 
 function toggleSelectAll() {
-  let newKeys: (string | number)[]
-  if (isAllSelected.value) {
-    newKeys = []
-  } else {
-    newKeys = tableData.value.map((row) => getRowKey(row))
-  }
-  emitUpdate(newKeys)
+  // 获取所有可被选择的行的 key
+  const selectableKeys = tableData.value
+    .filter((row) => {
+      return !props.selectableProps || !props.selectableProps(row);
+    })
+    .map((row) => getRowKey(row));
+
+  // 如果当前是全选状态（所有可选行都已选中），则清空选择
+  // 否则，选中所有可选行
+  const newKeys = isAllSelected.value
+    ? selectedKeys.value.filter(key => !selectableKeys.includes(key))
+    : [...new Set([...selectedKeys.value, ...selectableKeys])];
+
+  emitUpdate(newKeys);
 }
 
 function emitUpdate(newKeys: (string | number)[]) {
@@ -450,11 +629,23 @@ function emitUpdate(newKeys: (string | number)[]) {
   emit('selection-change', selectedRows, newKeys)
 }
 
+let clickTimer: ReturnType<typeof setTimeout> | null = null;
 function onRowClick(row: Record<string, unknown>, index: number) {
-  emit('row-click', row, index)
-  // 点击行也触发选中（可选）
-  if (props.selectable) {
-    toggleSelection(row)
+  if (clickTimer) {
+    clearTimeout(clickTimer);
+    clickTimer = null;
+    // 在延迟时间内再次点击，判定为双击
+    emit('row-dblclick', row, index)
+  } else {
+    // 第一次点击，设置定时器等待第二次点击
+    clickTimer = setTimeout(() => {
+      emit('row-click', row, index)
+      // 点击行也触发选中（可选）
+      if (props.selectable && props.clickRowToSelect) {
+        toggleSelection(row)
+      }
+      clickTimer = null;
+    }, 300);
   }
 }
 
@@ -493,11 +684,17 @@ const hasRightScroll = computed(() => {
 function onScroll(e: Event) {
   const target = e.target as HTMLElement
   scrollLeft.value = target.scrollLeft
+  console.log('scroll', e)
 }
 
 function getHeaderCellStyle(cell: FlatColumn) {
   const style: Record<string, string> = {
     textAlign: cell.align || 'left',
+  }
+
+  if (!props.border) {
+    style.borderRight = 'none'
+    style.borderBottom = 'none'
   }
 
   if (cell._isLeaf) {
@@ -538,6 +735,11 @@ function getCellStyle(col: LeafColumn) {
     textAlign: col.align || 'left',
   }
 
+  if (!props.border) {
+    style.borderRight = 'none'
+    style.borderBottom = 'none'
+  }
+
   if (col.fixed === 'left') {
     style.position = 'sticky'
     style.left = getLeftOffset(col.dataIndex) + 'px'
@@ -570,24 +772,81 @@ function formatCellValue(value: unknown): string {
   return String(value)
 }
 
+// 定义防抖延迟时间（毫秒）
+const DEBOUNCE_DELAY = 100
+// 义定时器变量
+let enterTimer: ReturnType<typeof setTimeout> | null = null
+let leaveTimer: ReturnType<typeof setTimeout> | null = null
+// 修改后的悬停进入处理函数
+function handleRowMouseEnter(groupKey: string | number, rowIndex: number, row: Record<string, unknown>) {
+  // 如果有未执行的离开定时器，说明鼠标刚离开又回来了，取消离开操作
+  if (leaveTimer) {
+    clearTimeout(leaveTimer)
+    leaveTimer = null
+  }
+  // 如果有未执行的进入定时器，说明触发频率过高，取消上一次的，重新计时
+  if (enterTimer) {
+    clearTimeout(enterTimer)
+  }
+  // 设置新的进入定时器
+  enterTimer = setTimeout(() => {
+    hoverRowGroup.value = groupKey
+    emit('row-mouseenter', row, rowIndex)
+  }, DEBOUNCE_DELAY)
+}
+// 修改后的悬停离开处理函数
+function handleRowMouseLeave(rowIndex: number, row: Record<string, unknown>) {
+  // 如果有未执行的进入定时器，说明鼠标刚进入就离开了，取消进入操作
+  if (enterTimer) {
+    clearTimeout(enterTimer)
+    enterTimer = null
+  }
+  // 设置离开定时器
+  leaveTimer = setTimeout(() => {
+    hoverRowGroup.value = null
+    emit('row-mouseleave', row, rowIndex)
+  }, DEBOUNCE_DELAY)
+}
+
 defineExpose({
   getEffectiveWidth,
   widthOverrides,
   toggleSelectAll,
   clearSelection: () => emitUpdate([]),
 })
+
+onBeforeUnmount(() => {
+  if (enterTimer) clearTimeout(enterTimer)
+  if (leaveTimer) clearTimeout(leaveTimer)
+})
 </script>
 
 <style scoped>
-.multi-table-wrapper {
+.multi-table-layout {
   position: relative;
   width: 100%;
-  border: 1px solid #e8e8e8;
+  border: 1px solid var(--table-border-color, #e8e8e8);
   border-radius: 4px;
-  overflow: hidden;
   font-size: 14px;
   color: #333;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+.multi-table-layout__small {
+  font-size: 12px;
+}
+.multi-table-layout__large {
+  font-size: 16px;
+}
+.multi-table-header {
+  border-bottom: 1px solid var(--table-border-color, #e8e8e8);
+}
+.multi-table-footer {
+  border-top: 1px solid var(--table-border-color, #e8e8e8);
+}
+.multi-table-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
 }
 
 .multi-table-container {
@@ -609,35 +868,39 @@ defineExpose({
 .multi-table__header {
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 5;
 }
 
 .multi-table__header-row {
-  background-color: #fafafa;
+  background-color: var(--table-header-bg, #fafafa);
 }
 
 .multi-table__th {
   padding: 12px 16px;
-  border-bottom: 1px solid #e8e8e8;
-  border-right: 1px solid #e8e8e8;
+  border-bottom: 1px solid var(--table-border-color, #e8e8e8);
+  border-right: 1px solid  var(--table-border-color, #e8e8e8);
   font-weight: 600;
-  background-color: #f5f5f5;
+  background-color: var(--table-header-cell-bg, #f5f5f5);
   position: relative;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   box-sizing: border-box;
 }
+.multi-table__th-small {
+  padding: 6px 8px;
+}
+.multi-table__th-large {
+  padding: 16px 20px;
+}
 
-/* .multi-table__th:last-child {
-  border-right: none;
-} */
+
 .multi-table__th.is-last-column {
   border-right: none;
 }
 
 .multi-table__th.is-leaf {
-  background-color: #f5f5f5;
+  background-color: var(--table-header-cell-bg, #f5f5f5);
 }
 
 .multi-table__th.align-center {
@@ -652,6 +915,12 @@ defineExpose({
 
 .multi-table__th.is-selection-th {
   padding: 12px 8px;
+}
+.multi-table__th.is-selection-th-small {
+  padding: 6px 4px;
+}
+.multi-table__th.is-selection-th-large {
+  padding: 16px 12px;
 }
 
 .th-content {
@@ -673,65 +942,76 @@ defineExpose({
   right: 0;
   top: 0;
   bottom: 0;
-  width: 6px;
+  width: 4px;
   cursor: col-resize;
-  z-index: 5;
+  z-index: 2;
   transition: background-color 0.2s;
+}
+.resize-handle-small {
+  width: 3px;
+}
+.resize-handle-large {
+  width: 6px;
 }
 
 .resize-handle:hover,
 .resize-handle.active {
-  background-color: #1890ff;
+  background-color: var(--table-primary-color, #1890ff);
   opacity: 0.6;
 }
 
 .multi-table__th.is-resizing {
-  background-color: #e6f7ff !important;
+  background-color: var(--table-th-resizing-color, #e6f7ff) !important;
 }
 
 /* 数据行 */
 .multi-table__row {
-  /* transition: background-color 0.2s; */
-  cursor: pointer;
+  cursor: var(--table-row-cursor, default);
 }
 
-.multi-table__row.is-row-hover,
-.multi-table__row:hover {
-  background-color: #f5f7fa !important;
-  transition: background-color 0.2s;
+.multi-table__row.is-row-hover {
+  background-color: var(--table-row-hover-bg, #f5f7fa) !important;
+  transition: background-color .3s;
 }
 
 .multi-table__row.is-stripe {
-  background-color: #fafafa;
+  background-color: var(--table-row-stripe-color, #fafafa);
 }
 
 .multi-table__row.is-selected {
-  /* background-color: #f5f7fa !important; */
+  background-color: var(--table-row-selected-bg) !important;
 }
 
-.multi-table__row.is-selected .multi-table__td,
-.multi-table__row.is-selected.is-row-hover .multi-table__td {
-  /* background-color: #f5f7fa !important; */
+.multi-table__row.is-selected .multi-table__td {
+  background-color: var(--table-row-selected-bg);
+}
+.multi-table__row.is-row-hover:not(.is-selected) .multi-table__td {
+  background-color: var(--table-row-hover-bg) !important;
+  transition: background-color .3s;
 }
 
-.multi-table__row.is-stripe:hover {
-  background-color: #f5f7fa !important;
+.multi-table__row.is-stripe.is-row-hover {
+  background-color: var(--table-row-hover-bg, #f5f7fa) !important;
+  transition: background-color .3s;
 }
 
 .multi-table__td {
   padding: 10px 16px;
-  border-bottom: 1px solid #f0f0f0;
-  border-right: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--table-border-color, #f0f0f0);
+  border-right: 1px solid var(--table-border-color, #f0f0f0);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   box-sizing: border-box;
   background-color: inherit;
 }
+.multi-table__td-small {
+  padding: 5px 8px;
+}
+.multi-table__td-large {
+  padding: 14px 20px;
+}
 
-/* .multi-table__td:last-child {
-  border-right: none;
-} */
 .multi-table__td.is-last-column {
   border-right: none;
 }
@@ -743,40 +1023,47 @@ defineExpose({
 .multi-table__td.is-selection-td {
   padding: 10px 8px;
 }
+.multi-table__td.is-selection-td__small {
+  padding: 5px 4px;
+}
+.multi-table__td.is-selection-td__large {
+  padding: 14px 12px;
+}
 
 .multi-table__td.is-hover-cell,
-.multi-table__row:hover .multi-table__td {
-  background-color: #f5f7fa !important;
-  transition: background-color 0.2s;
+.multi-table__row.is-row-hover:not(.is-row-hover) .multi-table__td {
+  background-color: var(--table-row-hover-bg, #f5f7fa);
 }
 
 /* 固定列 */
 .multi-table__td.is-fixed-left,
-.multi-table__td.is-fixed-right,
-.multi-table__th.is-fixed-left,
-.multi-table__th.is-fixed-right {
-  background-color: #fff;
-  z-index: 2;
+.multi-table__td.is-fixed-right {
+  background-color: var(--table-fixed-column-bg, #fff);
+  z-index: 3;
 }
 
 .multi-table__th.is-fixed-left,
 .multi-table__th.is-fixed-right {
-  z-index: 12 !important;
-  background-color: #f5f5f5;
+  z-index: 3;
+  background-color: var(--table-header-cell-bg, #f5f5f5);
 }
 
 .multi-table__row.is-stripe .multi-table__td.is-fixed-left,
 .multi-table__row.is-stripe .multi-table__td.is-fixed-right {
-  background-color: #fafafa;
+  background-color: var(--table-row-stripe-color, #fafafa);
 }
 
-.multi-table__row:hover .multi-table__td.is-fixed-left,
-.multi-table__row:hover .multi-table__td.is-fixed-right {
-  background-color: #f5f7fa !important;
+.multi-table__row.is-row-hover:not(.is-selected) .multi-table__td.is-fixed-left,
+.multi-table__row.is-row-hover:not(.is-selected) .multi-table__td.is-fixed-right {
+  background-color: var(--table-row-hover-bg, #f5f7fa) !important;
 }
+
 .multi-table__row.is-selected .multi-table__td.is-fixed-left,
-.multi-table__row.is-selected .multi-table__td.is-fixed-right {
-  /* background-color: #f5f7fa !important; */
+.multi-table__row.is-selected .multi-table__td.is-fixed-right,
+.multi-table__row.is-selected.is-row-hover .multi-table__td.is-fixed-left,
+.multi-table__row.is-selected.is-row-hover .multi-table__td.is-fixed-right {
+  background-color: var(--table-row-selected-bg) !important;
+  opacity: 1;
 }
 
 .td-content {
@@ -816,7 +1103,7 @@ defineExpose({
   bottom: 0;
   width: 5px;
   pointer-events: none;
-  z-index: 19;
+  z-index: 5;
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -834,15 +1121,38 @@ defineExpose({
   opacity: 1;
 }
 
+/* 总结行 */
+.multi-table__summary {
+  font-size: 14px;
+}
+multi-table__summary-small {
+  font-size: 12px;
+}
+multi-table__summary-large {
+  font-size: 16px;
+}
+
 /* 空数据 */
 .multi-table__empty {
   text-align: center;
   padding: 40px 0;
   color: #999;
 }
+.multi-table__empty-small {
+  padding: 20px 0;
+}
+.multi-table__empty-large {
+  padding: 60px 0;
+}
 
 .empty-text {
   font-size: 14px;
+}
+.empty-text__small {
+  font-size: 12px;
+}
+.empty-text__large {
+  font-size: 16px;
 }
 
 /* 滚动条 */
@@ -908,9 +1218,9 @@ defineExpose({
 .custom-checkbox .checkmark {
   width: 16px;
   height: 16px;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--table-selector-border-color, #d9d9d9);
   border-radius: 3px;
-  background-color: #fff;
+  background-color: var(--table-selector-color,#fff);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -918,13 +1228,13 @@ defineExpose({
 }
 
 .custom-checkbox input:checked~.checkmark {
-  background-color: #1890ff;
-  border-color: #1890ff;
+  background-color: var(--table-selector-checked-color, #1890ff);
+  border-color: var(--table-selector-checked-color, #1890ff);
 }
 
 .custom-checkbox input:checked~.checkmark::after {
   content: '';
-  display: block;
+  display: inline-block;
   width: 5px;
   height: 9px;
   border: solid #fff;
@@ -935,20 +1245,25 @@ defineExpose({
 
 /* 半选状态 */
 .custom-checkbox input:indeterminate~.checkmark {
-  background-color: #1890ff;
-  border-color: #1890ff;
+  background-color: var(--table-selector-checked-color, #1890ff);
+  border-color: var(--table-selector-checked-color, #1890ff);
 }
 
 .custom-checkbox input:indeterminate~.checkmark::after {
   content: '';
-  display: block;
+  display: inline-block;
   width: 8px;
   height: 2px;
   background-color: #fff;
 }
+.custom-checkbox input:disabled,
+.custom-checkbox input:disabled~.checkmark {
+  background-color: #f5f7fa;
+  cursor: not-allowed;
+}
 
-.custom-checkbox:hover .checkmark {
-  border-color: #1890ff;
+.custom-checkbox input:not(:disabled):hover~.checkmark {
+  border-color: var(--table-selector-checked-color, #1890ff);
 }
 
 /* ====== 自定义 Radio ====== */
@@ -975,9 +1290,9 @@ defineExpose({
 .custom-radio .radiomark {
   width: 16px;
   height: 16px;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--table-selector-border-color, #d9d9d9);
   border-radius: 50%;
-  background-color: #fff;
+  background-color: var(--table-selector-color, #fff);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -985,19 +1300,23 @@ defineExpose({
 }
 
 .custom-radio input:checked~.radiomark {
-  border-color: #1890ff;
+  border-color: var(--table-selector-checked-color, #1890ff);
 }
 
 .custom-radio input:checked~.radiomark::after {
   content: '';
-  display: block;
+  display: inline-block;
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: #1890ff;
+  background-color: var(--table-selector-checked-color, #1890ff);
+}
+.custom-radio input:disabled {
+  background-color: #f5f7fa;
+  cursor: not-allowed;
 }
 
-.custom-radio:hover .radiomark {
-  border-color: #1890ff;
+.custom-radio input:not(:disabled):hover~ .radiomark {
+  border-color: var(--table-selector-checked-color, #1890ff);
 }
 </style>

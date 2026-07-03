@@ -22,8 +22,23 @@
       </button>
     </div>
 
-    <MultiTable :columns="columns" :data="tableData" :selectable="selectable" :selectMode="selectMode"
-      v-model:selectedRowKeys="selectedRowKeys" @selection-change="onSelectionChange">
+    <MultiTable
+      :columns="columns"
+      :data="tableData"
+      :selectable="selectable"
+      :selectMode="selectMode"
+      headerCellBg="#ebfaf3"
+      :stripe="false"
+      click-row-to-select
+      v-model:selectedRowKeys="selectedRowKeys"
+      @selection-change="onSelectionChange"
+      :selectable-props="(row: Record<string, unknown>) => { return row.id === 1 }"
+      rowHoverBg="#fef2eb"
+      theme="#26d97a"
+      showSummary
+      summary="合计"
+    >
+      <template #header>表头插槽</template>
       <!-- 表头插槽 -->
       <template #header_purchaseNo="{ column }">
         <span style="color: #1890ff; font-weight: bold;">🔖 {{ column.title }}</span>
@@ -98,7 +113,7 @@ const selectMode = ref<'radio' | 'checkbox'>('checkbox')
 const selectedRowKeys = ref<(string | number)[]>([])
 
 const columns: ColumnConfig[] = [
-  { dataIndex: 'name', title: '名目', fixed: 'left', width: 100 },
+  { dataIndex: 'name', title: '名目', width: 100 },
   { dataIndex: 'purchaseNo', title: '采购单号', fixed: 'left', width: 100 },
   { dataIndex: 'inDate', title: '入库日期', width: 90, resizable: true },
   { dataIndex: 'supplierName', title: '供应商名称', width: 180, resizable: true },
@@ -138,7 +153,11 @@ const columns: ColumnConfig[] = [
   { dataIndex: 'operation', title: '操作', fixed: 'right', width: 150, align: 'center' },
 ]
 
-const tableData = ref([
+const tableData = ref<TableRow[]>([
+
+])
+
+const mockData = [
   {
     id: 1,
     name: '采购单',
@@ -210,7 +229,14 @@ const tableData = ref([
     inputInvoiceStatusName: '未收票',
     inputInvoiceDate: '-',
   },
-])
+]
+
+for (let i = 0; i < 100; i++) {
+  tableData.value.push({
+    ...mockData[i % mockData.length],
+    id: i + 1,
+  })
+}
 
 function onSelectionChange(selectedRows: TableRow[], keys: (string | number)[]) {
   console.log('选中行变化:', selectedRows, keys)
