@@ -1,5 +1,5 @@
 import { computed, type Ref } from 'vue'
-import type { ColumnConfig, FlatColumn, HeaderRow, LeafColumn } from './types'
+import type { ColumnConfig, FlatColumn, HeaderRow, LeafColumn, IndexColumnConfig } from './types'
 
 // 获取嵌套最大深度
 function getMaxDepth(columns: ColumnConfig[]): number {
@@ -43,6 +43,7 @@ function buildHeaderRows(
         _path: currentPath,
         _realWidth: widthOverrides.value[col.dataIndex] ?? col.width ?? 120,
         _isSelection: col.dataIndex === '__selection__',
+        _isDataIndex: col.dataIndex === '__index__',
         _parentDataIndex: path.length > 0 ? path[path.length - 1] : undefined,
       }
 
@@ -76,11 +77,21 @@ function getLeafColumns(columns: ColumnConfig[]): LeafColumn[] {
 export function useColumns(
   columns: Ref<ColumnConfig[]>,
   widthOverrides: Ref<Record<string, number>>,
-  selectable: Ref<boolean>
+  selectable: Ref<boolean>,
+  indexColumnConfig: IndexColumnConfig
 ) {
   // 动态注入选择列
   const actualColumns = computed(() => {
     const cols = [...columns.value]
+    if (indexColumnConfig.showIndex.value) {
+      cols.unshift({
+        dataIndex: '__index__',
+        title: '序号',
+        width: indexColumnConfig.indexColumnWidth.value || 80,
+        fixed: 'left',
+        align: 'center',
+      })
+    }
     if (selectable.value) {
       cols.unshift({
         dataIndex: '__selection__',

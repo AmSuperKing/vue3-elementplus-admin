@@ -8,6 +8,7 @@
     }"
     :style="tableConfigStyle"
   >
+    <!-- 表题头 -->
     <div v-if="$slots.header" class="multi-table-header">
       <slot name="header"></slot>
     </div>
@@ -15,8 +16,16 @@
       <div class="multi-table-container" ref="containerRef" @scroll="onScroll">
         <table class="multi-table" :style="{ minWidth: totalWidth + 'px' }" cellpadding="0" cellspacing="0">
           <!-- 表头 -->
-          <thead class="multi-table__header">
-            <tr v-for="(row, rowIndex) in headerRows" :key="'hr-' + rowIndex" class="multi-table__header-row">
+          <thead v-if="props.showHeader" class="multi-table__header">
+            <tr
+              v-for="(row, rowIndex) in headerRows"
+              :key="'hr-' + rowIndex"
+              :class="[
+                'multi-table__header-row',
+                typeof props.headerRowClassName === 'function' ? props.headerRowClassName(row, rowIndex, headerRows) : props.headerRowClassName
+              ]"
+              :style="typeof props.headerRowStyle === 'function' ? props.headerRowStyle(row, rowIndex, headerRows) : props.headerRowStyle"
+            >
               <th
                 v-for="(cell, cellIdx) in row.cells"
                 :key="cell.dataIndex"
@@ -33,8 +42,9 @@
                   { 'is-fixed-right': cell.fixed === 'right' },
                   { 'is-last-column': cell.dataIndex === lastColumnKey },
                   resizing && resizeColIndex === cell.dataIndex ? 'is-resizing' : '',
+                  typeof props.headerCellClassName === 'function' ? props.headerCellClassName(cell, cellIdx, row, rowIndex, headerRows) : props.headerCellClassName
                 ]"
-                :style="getHeaderCellStyle(cell)"
+                :style="getHeaderCellStyle(cell, cellIdx, row, rowIndex, headerRows)"
               >
                 <div class="th-content">
                   <!-- 选择列表头 -->
@@ -48,6 +58,13 @@
                       />
                       <span class="checkmark"></span>
                     </label>
+                  </template>
+
+                  <!-- 索引列表头 -->
+                  <template v-if="cell._isDataIndex">
+                    <slot name="header-data-index">
+                      <span class="th-title">{{ cell.title }}</span>
+                    </slot>
                   </template>
 
                   <!-- 正常表头插槽 -->
@@ -90,14 +107,18 @@
               v-for="expandedRow in expandedRows"
               :key="'row-' + expandedRow.originalIndex + '-' + expandedRow.subRowIndex"
               class="multi-table__row"
-              :class="{
+              :class="[
+               {
                 'is-stripe': props.stripe && expandedRow.originalIndex % 2 === 1,
                 'is-selected': isSelected(expandedRow.originalRow),
                 'is-row-hover': hoverRowGroup === expandedRow.groupKey,
-              }"
+               },
+               typeof props.rowClassName === 'function' ? props.rowClassName(expandedRow.originalRow, expandedRow.originalIndex, expandedRow, expandedRows) : props.rowClassName
+              ]"
+              :style="typeof props.rowStyle === 'function' ? props.rowStyle(expandedRow.originalRow, expandedRow.originalIndex, expandedRow, expandedRows) : props.rowStyle"
               @click="onRowClick(expandedRow.originalRow, expandedRow.originalIndex)"
               @mouseenter="handleRowMouseEnter(expandedRow.groupKey, expandedRow.originalIndex, expandedRow.originalRow)"
-              @mouseleave="handleRowMouseLeave( expandedRow.originalIndex, expandedRow.originalRow)"
+              @mouseleave="handleRowMouseLeave(expandedRow.originalIndex, expandedRow.originalRow)"
             >
               <template v-for="col in leafColumns" :key="col.dataIndex + '-' + expandedRow.originalIndex">
                 <td
@@ -116,9 +137,12 @@
                     { 'is-object-cell': isObjectValue(resolveCellValue(expandedRow, col)) },
                     { 'is-hover-cell': hoverRowGroup === expandedRow.groupKey },
                     { 'is-last-column': col.dataIndex === lastColumnKey },
+                    typeof props.rowCellClassName === 'function' ? props.rowCellClassName(col, leafColumns, expandedRow, expandedRows) : props.rowCellClassName
                   ]"
-                  :style="getCellStyle(col)"
-                  @click="col.dataIndex === '__selection__' ? $event.stopPropagation() : null"
+                  :style="getCellStyle(col, leafColumns, expandedRow, expandedRows)"
+                  @click="onCellClick($event, col, expandedRow)"
+                  @mouseenter="onCellMouseEnter(col, expandedRow)"
+                  @mouseleave="onCellMouseLeave(col, expandedRow)"
                 >
                   <div class="td-content">
                     <!-- 选择列单元格 -->
@@ -142,6 +166,12 @@
                         />
                         <span class="radiomark"></span>
                       </label>
+                    </template>
+
+                    <template v-else-if="col.dataIndex === '__index__'">
+                      <slot name="index" :row="expandedRow.originalRow" :index="expandedRow.originalIndex">
+                        <span>{{ props.rowIndexFormat ? props.rowIndexFormat(expandedRow.originalIndex, expandedRow.originalRow) : expandedRow.originalIndex + 1 }}</span>
+                      </slot>
                     </template>
 
                     <!-- 正常单元格插槽 -->
@@ -198,7 +228,7 @@
       </div>
 
       <!-- 总结行 -->
-      <div v-if="props.showSummary" class="multi-table__summary">
+      <div v-if="props.showSummary && props.summaryFitTableContentWith" class="multi-table__summary">
         <slot name="summary">
           <div class="multi-table__summary-text">{{ props.summary }}</div>
         </slot>
@@ -209,15 +239,24 @@
         v-if="leftFixedLeaves.length > 0"
         class="fixed-shadow fixed-shadow--left"
         :class="{ 'has-shadow': scrollLeft > 1 }"
-        :style="{ left: leftFixedWidth + 'px' }"
+        :style="{ width: leftFixedWidth + 'px' }"
       />
       <div
         v-if="rightFixedLeaves.length > 0"
         class="fixed-shadow fixed-shadow--right"
         :class="{ 'has-shadow': hasRightScroll }"
-        :style="{ right: rightFixedWidth + scrollbarWidth + 'px' }"
+        :style="{ width: rightFixedWidth + scrollbarWidth + 'px' }"
       />
     </div>
+
+    <!-- 总结行 -->
+    <div v-if="props.showSummary && !props.summaryFitTableContentWith" class="multi-table__summary">
+      <slot name="summary">
+        <div class="multi-table__summary-text">{{ props.summary }}</div>
+      </slot>
+    </div>
+
+    <!-- 表尾 -->
     <div v-if="$slots.footer" class="multi-table-footer">
       <slot name="footer"></slot>
     </div>
@@ -225,21 +264,33 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref, toRef, useId } from 'vue'
-import type { ColumnConfig, LeafColumn, FlatColumn } from './types'
+import { computed, onBeforeUnmount, ref, toRef, useId, watch, type CSSProperties } from 'vue'
+import type { ColumnConfig, LeafColumn, FlatColumn, HeaderRow } from './types'
 import { useColumns } from './useColumns'
 import { useResizable } from './useResizable'
+import { hexToRgba, rgbaToHex6 } from './colorUtils'
 
 const props = withDefaults(
   defineProps<{
     columns: ColumnConfig[]
     data: Record<string, unknown>[]
     rowKey?: string
+    height?: number | string
+    maxHeight?: number | string
     stripe?: boolean
     stripeColor?: string
     border?: boolean
+    showHeader?: boolean
     headerRowBg?: string
     headerCellBg?: string
+    headerRowClassName?: string | ((row: HeaderRow, rowIndex: number, rows: HeaderRow[]) => string)
+    headerRowStyle?: CSSProperties | ((row: HeaderRow, rowIndex: number, rows: HeaderRow[]) => CSSProperties)
+    headerCellClassName?: string | ((column: FlatColumn, colIndex: number, row: HeaderRow, rowIndex: number, rows: HeaderRow[]) => string)
+    headerCellStyle?: CSSProperties | ((cell: FlatColumn, cellIndex: number, row: HeaderRow,  rowIndex: number, rows: HeaderRow[]) => CSSProperties)
+    rowClassName?: string | ((row: Record<string, unknown>, rowIndex: number, expandedRow: ExpandedRow, expandedRows: ExpandedRow[]) => string)
+    rowStyle?: CSSProperties | ((row: Record<string, unknown>, rowIndex: number, expandedRow: ExpandedRow, expandedRows: ExpandedRow[]) => CSSProperties)
+    rowCellClassName?: string | ((column: LeafColumn, cols: LeafColumn[], row: ExpandedRow, rows: ExpandedRow[]) => string)
+    rowCellStyle?: CSSProperties | ((column: LeafColumn, cols: LeafColumn[], row: ExpandedRow, rows: ExpandedRow[]) => CSSProperties)
     borderColor?: string
     selectorColor?: string
     selectorBorderColor?: string
@@ -254,29 +305,46 @@ const props = withDefaults(
     selectable?: boolean
     selectMode?: 'radio' | 'checkbox'
     selectedRowKeys?: (string | number)[]
+    showIndex?: boolean
+    rowIndexFormat?: (index: number, row: Record<string, unknown>) => string | number
+    indexColumnWidth?: number
     showSummary?: boolean
     summary?: string
+    summaryFitTableContentWith?: boolean
     selectableProps?: (row: Record<string, unknown>) => boolean
+    cellTextEllipsis?: boolean
   }>(),
   {
     rowKey: 'id',
     stripe: true,
+    showHeader: true,
     border: true,
     size: 'default',
     clickRowToSelect: false,
     selectable: false,
     selectMode: 'radio',
     selectedRowKeys: () => [],
+    showIndex: false,
+    indexColumnWidth: 80,
+    summaryFitTableContentWith: false,
+    cellTextEllipsis: true,
   }
 )
 
 const emit = defineEmits<{
   (e: 'update:selectedRowKeys', keys: (string | number)[]): void
   (e: 'selection-change', selectedRows: Record<string, unknown>[], selectedRowKeys: (string | number)[]): void
+  (e: 'select', selectedRow: Record<string, unknown>): void
+  (e: 'select-all', selectedRows: Record<string, unknown>[]): void
   (e: 'row-click', row: Record<string, unknown>, rowIndex: number): void
   (e: 'row-dblclick', row: Record<string, unknown>, rowIndex: number): void
   (e: 'row-mouseenter', row: Record<string, unknown>, rowIndex: number): void
   (e: 'row-mouseleave', row: Record<string, unknown>, rowIndex: number): void
+  (e: 'cell-click', cellInfo: Record<string, unknown>, row: Record<string, unknown>): void
+  (e: 'cell-dblclick', cellInfo: Record<string, unknown>, row: Record<string, unknown>): void
+  (e: 'cell-mouseenter', cellInfo: Record<string, unknown>, row: Record<string, unknown>): void
+  (e: 'cell-mouseleave', cellInfo: Record<string, unknown>, row: Record<string, unknown>): void
+  (e: 'scroll', scrollEvent: Event): void
 }>()
 
 const tableId = useId() // 用于 radio name 唯一性
@@ -297,6 +365,8 @@ const {
 // 列处理
 const columnsRef = toRef(props, 'columns')
 const selectableRef = toRef(props, 'selectable')
+const showIndexRef = toRef(props, 'showIndex')
+const indexColumnWidthRef =  toRef(props, 'indexColumnWidth')
 const {
   headerRows,
   leafColumns,
@@ -305,73 +375,10 @@ const {
   rightFixedLeaves,
   lastColumnKey,
   getLeftOffset,
-  // getRightOffset,
-} = useColumns(columnsRef, widthOverrides, selectableRef)
+  getRightOffset,
+} = useColumns(columnsRef, widthOverrides, selectableRef, { showIndex: showIndexRef, indexColumnWidth: indexColumnWidthRef })
 
 const tableData = computed(() => props.data || [])
-
-/**
- * HEX 颜色转 rgba
- * @param {string} hex - HEX 颜色值，如 '#1890ff'、'1890ff'、'#fff'
- * @param {number} alpha - 透明度，范围 0~1，默认 1
- * @returns {string} rgba 字符串，如 'rgba(24, 144, 255, 0.5)'
- */
-function hexToRgba(hex: string, alpha: number = 1) {
-  // 去除 # 前缀
-  hex = hex.replace(/^#/, '');
-
-  // 支持 3 位缩写（如 fff → ffffff）
-  if (hex.length === 3) {
-    hex = hex.split('').map(c => c + c).join('');
-  }
-
-  // 支持 4 位缩写（如 fffa → ffffffaa）
-  if (hex.length === 4) {
-    hex = hex.split('').map(c => c + c).join('');
-  }
-
-  // 解析 RGB
-  const r = parseInt(hex.substring(0, 2), 16);
-  const g = parseInt(hex.substring(2, 4), 16);
-  const b = parseInt(hex.substring(4, 6), 16);
-
-  // 如果 HEX 自带透明度（8位），则优先使用
-  let a = alpha;
-  if (hex.length === 8) {
-    a = parseInt(hex.substring(6, 8), 16) / 255;
-  }
-
-  return `rgba(${r}, ${g}, ${b}, ${+a.toFixed(3)})`;
-}
-
-function rgbaToHex6(rgba: string, bgHex: string = "#ffffff"): string {
-  const match = rgba.match(
-    /rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*([\d.]+))?\s*\)/i
-  );
-
-  if (!match || match[1] === undefined || match[2] === undefined || match[3] === undefined) {
-    throw new Error(`无效的 RGBA 颜色值: ${rgba}`);
-  }
-
-  const r = parseInt(match[1], 10);
-  const g = parseInt(match[2], 10);
-  const b = parseInt(match[3], 10);
-  const a = match[4] !== undefined ? parseFloat(match[4]) : 1;
-
-  // 解析背景色
-  const bgR = parseInt(bgHex.slice(1, 3), 16);
-  const bgG = parseInt(bgHex.slice(3, 5), 16);
-  const bgB = parseInt(bgHex.slice(5, 7), 16);
-
-  // Alpha 合成：foreground * alpha + background * (1 - alpha)
-  const blend = (fg: number, bg: number) =>
-    Math.round(fg * a + bg * (1 - a));
-
-  const toHex = (n: number) =>
-    Math.min(255, Math.max(0, n)).toString(16).padStart(2, "0");
-
-  return `#${toHex(blend(r, bgR))}${toHex(blend(g, bgG))}${toHex(blend(b, bgB))}`;
-}
 
 const tableConfigStyle = computed(() => {
   const style: Record<string, string> = {}
@@ -394,16 +401,34 @@ const tableConfigStyle = computed(() => {
   }
   applyStyle('--table-header-bg', props.headerRowBg)
   applyStyle('--table-header-cell-bg', props.headerCellBg)
-  applyStyle('--table-selector-border-color', props.selectorBorderColor)
+  // applyStyle('--table-selector-border-color', props.selectorBorderColor)
   applyStyle('--table-selector-color', props.selectorColor)
   applyStyle('--table-row-stripe-color', props.stripeColor)
   applyStyle('--table-row-hover-bg', props.rowHoverBg)
   applyStyle('--table-row-selected-bg', props.highlightSlectedRow ? props.highlightSlectedColor : undefined)
 
+  if (props.height) {
+    style['--table-container-height'] =  typeof props.height === 'number' ? `${props.height}px` : props.height
+  }
+  if (props.maxHeight) {
+    style['--table-container-max-height'] = typeof props.maxHeight === 'number' ? `${props.maxHeight}px` : props.maxHeight
+  }
   if (props.borderColor) style['--table-border-color'] = props.borderColor
   if (props.fixedColumnBg) style['--table-fixed-column-bg'] = props.fixedColumnBg
   if (props.clickRowToSelect) style['--table-row-cursor'] = 'pointer'
+  if (props.selectorBorderColor) style['--table-selector-border-color'] = props.selectorBorderColor
   if (!props.border) style.border = 'none'
+
+  if (!props.cellTextEllipsis) {
+    style['--cell-overflow'] = 'auto'
+    style['--cell-text-overflow'] = 'visible'
+    style['--cell-white-space'] = 'normal'
+    style['--cell-work-break'] = 'break-all'
+  } else {
+    style['--cell-overflow'] = 'hidden'
+    style['--cell-text-overflow'] = 'ellipsis'
+    style['--cell-white-space'] = 'nowrap'
+  }
 
   return style
 })
@@ -603,6 +628,7 @@ function toggleSelection(row: Record<string, unknown>) {
       newKeys = [...selectedKeys.value, key];
     }
   }
+  emit('select', row);
   emitUpdate(newKeys);
 }
 
@@ -619,6 +645,9 @@ function toggleSelectAll() {
   const newKeys = isAllSelected.value
     ? selectedKeys.value.filter(key => !selectableKeys.includes(key))
     : [...new Set([...selectedKeys.value, ...selectableKeys])];
+
+  const selectedRows = tableData.value.filter((row) => newKeys.includes(getRowKey(row)));
+  emit('select-all', selectedRows);
 
   emitUpdate(newKeys);
 }
@@ -647,6 +676,72 @@ function onRowClick(row: Record<string, unknown>, index: number) {
       clickTimer = null;
     }, 300);
   }
+}
+
+// ================= Cell 事件逻辑 =================
+let cellClickTimer: ReturnType<typeof setTimeout> | null = null;
+
+function onCellClick(e: MouseEvent, col: LeafColumn, expandedRow: ExpandedRow) {
+  // 选择列的点击已由内部 input 处理，阻止冒泡后不再重复触发
+  if (col.dataIndex === '__selection__') return;
+
+  const cellValue = resolveCellValue(expandedRow, col);
+  const cellInfo = {
+    column: col,
+    value: cellValue,
+    dataIndex: col.dataIndex,
+    rowIndex: expandedRow.originalIndex
+  };
+
+  if (cellClickTimer) {
+    clearTimeout(cellClickTimer);
+    cellClickTimer = null;
+    emit('cell-dblclick', cellInfo, expandedRow.originalRow);
+  } else {
+    cellClickTimer = setTimeout(() => {
+      emit('cell-click', cellInfo, expandedRow.originalRow);
+      cellClickTimer = null;
+    }, 300);
+  }
+}
+
+// Cell 鼠标进出防抖定时器
+let cellEnterTimer: ReturnType<typeof setTimeout> | null = null;
+let cellLeaveTimer: ReturnType<typeof setTimeout> | null = null;
+
+function onCellMouseEnter(col: LeafColumn, expandedRow: ExpandedRow) {
+  if (cellLeaveTimer) {
+    clearTimeout(cellLeaveTimer);
+    cellLeaveTimer = null;
+  }
+  if (cellEnterTimer) {
+    clearTimeout(cellEnterTimer);
+  }
+  cellEnterTimer = setTimeout(() => {
+    const cellInfo = {
+      column: col,
+      value: resolveCellValue(expandedRow, col),
+      dataIndex: col.dataIndex,
+      rowIndex: expandedRow.originalIndex
+    };
+    emit('cell-mouseenter', cellInfo, expandedRow.originalRow);
+  }, DEBOUNCE_DELAY);
+}
+
+function onCellMouseLeave(col: LeafColumn, expandedRow: ExpandedRow) {
+  if (cellEnterTimer) {
+    clearTimeout(cellEnterTimer);
+    cellEnterTimer = null;
+  }
+  cellLeaveTimer = setTimeout(() => {
+    const cellInfo = {
+      column: col,
+      value: resolveCellValue(expandedRow, col),
+      dataIndex: col.dataIndex,
+      rowIndex: expandedRow.originalIndex
+    };
+    emit('cell-mouseleave', cellInfo, expandedRow.originalRow);
+  }, DEBOUNCE_DELAY);
 }
 
 // ================= 样式逻辑 =================
@@ -681,13 +776,20 @@ const hasRightScroll = computed(() => {
   return el.scrollWidth - scrollLeft.value - el.clientWidth > 1
 })
 
+let tableScrollTimer: ReturnType<typeof setTimeout> | null = null
+const SCROLL_EMIT_DELAY = 100
 function onScroll(e: Event) {
   const target = e.target as HTMLElement
   scrollLeft.value = target.scrollLeft
-  console.log('scroll', e)
+  if (tableScrollTimer) {
+    clearTimeout(tableScrollTimer)
+  }
+  tableScrollTimer = setTimeout(() => {
+    emit('scroll', e)
+  }, SCROLL_EMIT_DELAY)
 }
 
-function getHeaderCellStyle(cell: FlatColumn) {
+function getHeaderCellStyle(cell: FlatColumn, cellIndex: number, row: HeaderRow, rowIndex: number, rows: HeaderRow[]) {
   const style: Record<string, string> = {
     textAlign: cell.align || 'left',
   }
@@ -706,7 +808,7 @@ function getHeaderCellStyle(cell: FlatColumn) {
   if (cell.fixed === 'left') {
     style.position = 'sticky'
     style.left = getLeftOffset(cell.dataIndex) + 'px'
-    style.zIndex = '12'
+    style.zIndex = '5'
   } else if (cell.fixed === 'right') {
     style.position = 'sticky'
     style.right = (() => {
@@ -720,13 +822,23 @@ function getHeaderCellStyle(cell: FlatColumn) {
       }
       return offset + 'px'
     })()
-    style.zIndex = '12'
+    style.zIndex = '5'
   }
 
-  return style
+  let userConfigHeaderCellStyle: CSSProperties = {}
+  if (props.headerCellStyle) {
+    if (typeof props.headerCellStyle === 'function') {
+      userConfigHeaderCellStyle = props.headerCellStyle(cell, cellIndex, row, rowIndex, rows)
+    }
+    if (Object.prototype.toString.call(props.headerCellStyle)=== '[object Object]') {
+      userConfigHeaderCellStyle = props.headerCellStyle as CSSProperties
+    }
+  }
+
+  return { ...style, ...userConfigHeaderCellStyle }
 }
 
-function getCellStyle(col: LeafColumn) {
+function getCellStyle(col: LeafColumn, cols: LeafColumn[], row: ExpandedRow, rows: ExpandedRow[]) {
   const width = getEffectiveWidth(col.dataIndex, col.width ?? 120)
   const style: Record<string, string> = {
     width: width + 'px',
@@ -760,7 +872,17 @@ function getCellStyle(col: LeafColumn) {
     style.zIndex = '2'
   }
 
-  return style
+  let userConfigCellStyle: CSSProperties = {}
+  if (props.rowCellStyle) {
+    if (typeof props.rowCellStyle === 'function') {
+      userConfigCellStyle = props.rowCellStyle(col, cols, row, rows)
+    }
+    if (Object.prototype.toString.call(props.rowCellStyle)=== '[object Object]') {
+      userConfigCellStyle = props.rowCellStyle as CSSProperties
+    }
+  }
+
+  return { ...style, ...userConfigCellStyle}
 }
 
 function formatCellValue(value: unknown): string {
@@ -808,16 +930,173 @@ function handleRowMouseLeave(rowIndex: number, row: Record<string, unknown>) {
   }, DEBOUNCE_DELAY)
 }
 
+// ================= Expose =================
+
+/**
+ * 获取当前选中的行数据
+ */
+function getSelectionRows(): Record<string, unknown>[] {
+  return tableData.value.filter((row) => selectedKeys.value.includes(getRowKey(row)))
+}
+
+/**
+ * 获取半选状态的行数据
+ * 注意：在 checkbox 模式下，通常只有"全选框"有半选状态。
+ * 此方法返回那些"被禁用(selectableProps=true)"且"未被选中"的行，
+ * 或者根据你的业务需求，可调整为返回部分子级被选中的父级行（若支持树形）。
+ * 当前基于扁平表格逻辑，返回所有不可选但可能影响全选状态的行作为参考。
+ */
+function getHalfSelectionRows(): Record<string, unknown>[] {
+  if (props.selectMode !== 'checkbox') return []
+
+  // 在多选模式下，半选通常指：存在已选行，但未全部选中
+  // 如果业务上需要获取导致半选的特定行（例如禁用的行），可使用以下逻辑：
+  const isHalf = isIndeterminate.value
+  if (!isHalf) return []
+
+  // 返回当前已选中的行作为半选上下文，或根据实际需求调整
+  // 这里提供标准的 Element Plus 兼容行为：返回当前已选行
+  return getSelectionRows()
+}
+
+/**
+ * 切换某一行的选中状态
+ * @param row 要操作的行数据
+ * @param selected 可选，直接设置选中(true)或取消(false)。不传则 toggle
+ */
+function toggleRowSelection(row: Record<string, unknown>, selected?: boolean): void {
+  if (!row || !props.selectable) return
+
+  // 检查是否禁用选择
+  if (props.selectableProps && props.selectableProps(row)) return
+
+  const key = getRowKey(row)
+  const currentSelected = selectedKeys.value.includes(key)
+
+  // 确定目标状态
+  const targetState = selected !== undefined ? selected : !currentSelected
+
+  // 如果状态未改变，直接返回
+  if (targetState === currentSelected) return
+
+  let newKeys: (string | number)[]
+  if (props.selectMode === 'radio') {
+    // 单选模式：设置为选中则替换，取消则清空
+    newKeys = targetState ? [key] : []
+  } else {
+    // 多选模式
+    newKeys = targetState
+      ? [...selectedKeys.value, key]
+      : selectedKeys.value.filter((k) => k !== key)
+  }
+
+  emitUpdate(newKeys)
+}
+
+/**
+ * 用于单选模式，设定某一行为选中行
+ * @param row 要选中的行数据，不传参数则取消当前高亮/选中
+ */
+function setCurrentRow(row?: Record<string, unknown>): void {
+  if (props.selectMode !== 'radio') {
+    console.warn('[MultiTable] setCurrentRow is only available in radio select mode.')
+    return
+  }
+
+  if (!row) {
+    emitUpdate([])
+    return
+  }
+
+  // 检查是否禁用
+  if (props.selectableProps && props.selectableProps(row)) return
+
+  const key = getRowKey(row)
+  if (!selectedKeys.value.includes(key)) {
+    emitUpdate([key])
+  }
+}
+
+/**
+ * 滚动到指定坐标
+ * @param options 包含 top 和 left 的滚动位置对象
+ */
+function scrollTo(options: { top?: number; left?: number }): void {
+  containerRef.value?.scrollTo({
+    top: options.top ?? 0,
+    left: options.left ?? 0,
+    behavior: 'smooth'
+  })
+}
+
+/**
+ * 设置垂直滚动位置
+ * @param top 垂直滚动像素值
+ */
+function setScrollTop(top: number): void {
+  if (containerRef.value) {
+    containerRef.value.scrollTop = top
+  }
+}
+
+/**
+ * 设置水平滚动位置
+ * @param left 水平滚动像素值
+ */
+function setScrollLeft(left: number): void {
+  if (containerRef.value) {
+    containerRef.value.scrollLeft = left
+    // 同步更新内部 scrollLeft 响应式变量，确保固定列阴影正确显示
+    scrollLeft.value = left
+  }
+}
+
+const tableContext = {
+  headerRows,
+  leafColumns,
+  totalWidth,
+  leftFixedLeaves,
+  rightFixedLeaves,
+  lastColumnKey,
+  getLeftOffset,
+  getRightOffset,
+}
+
+const clearAllTimer = () => {
+  if (enterTimer) clearTimeout(enterTimer)
+  if (leaveTimer) clearTimeout(leaveTimer)
+  if (cellClickTimer) clearTimeout(cellClickTimer);
+  if (cellEnterTimer) clearTimeout(cellEnterTimer);
+  if (cellLeaveTimer) clearTimeout(cellLeaveTimer);
+}
+
+watch(
+  () => props.data,
+  () => {
+    scrollTo({ top: 0, left: 0 })
+  },
+  {
+    deep: true
+  }
+)
+
 defineExpose({
   getEffectiveWidth,
   widthOverrides,
   toggleSelectAll,
   clearSelection: () => emitUpdate([]),
+  getSelectionRows,
+  toggleRowSelection,
+  getHalfSelectionRows,
+  setCurrentRow,
+  scrollTo,
+  setScrollTop,
+  setScrollLeft,
+  tableContext
 })
 
 onBeforeUnmount(() => {
-  if (enterTimer) clearTimeout(enterTimer)
-  if (leaveTimer) clearTimeout(leaveTimer)
+  clearAllTimer()
 })
 </script>
 
@@ -853,7 +1132,8 @@ onBeforeUnmount(() => {
   width: 100%;
   overflow: auto;
   position: relative;
-  max-height: 600px;
+  height: var(--table-container-height);
+  max-height: var(--table-container-max-height, 600px);
 }
 
 .multi-table {
@@ -882,9 +1162,10 @@ onBeforeUnmount(() => {
   font-weight: 600;
   background-color: var(--table-header-cell-bg, #f5f5f5);
   position: relative;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: var(--cell-white-space, nowrap);
+  overflow: var(--cell-overflow, hidden);
+  text-overflow: var(--cell-text-overflow, ellipsis);
+  word-break: var(--cell-work-break);
   box-sizing: border-box;
 }
 .multi-table__th-small {
@@ -931,8 +1212,9 @@ onBeforeUnmount(() => {
 }
 
 .th-title {
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow: var(--cell-overflow, hidden);;
+  text-overflow: var(--cell-text-overflow, ellipsis);
+  word-break: var(--cell-work-break);
   font-weight: 500;
 }
 
@@ -961,7 +1243,7 @@ onBeforeUnmount(() => {
 }
 
 .multi-table__th.is-resizing {
-  background-color: var(--table-th-resizing-color, #e6f7ff) !important;
+  background-color: var(--table-th-resizing-color, #e6f7ff);
 }
 
 /* 数据行 */
@@ -970,7 +1252,7 @@ onBeforeUnmount(() => {
 }
 
 .multi-table__row.is-row-hover {
-  background-color: var(--table-row-hover-bg, #f5f7fa) !important;
+  background-color: var(--table-row-hover-bg, #f5f7fa);
   transition: background-color .3s;
 }
 
@@ -979,19 +1261,19 @@ onBeforeUnmount(() => {
 }
 
 .multi-table__row.is-selected {
-  background-color: var(--table-row-selected-bg) !important;
+  background-color: var(--table-row-selected-bg);
 }
 
 .multi-table__row.is-selected .multi-table__td {
   background-color: var(--table-row-selected-bg);
 }
 .multi-table__row.is-row-hover:not(.is-selected) .multi-table__td {
-  background-color: var(--table-row-hover-bg) !important;
+  background-color: var(--table-row-hover-bg);
   transition: background-color .3s;
 }
 
 .multi-table__row.is-stripe.is-row-hover {
-  background-color: var(--table-row-hover-bg, #f5f7fa) !important;
+  background-color: var(--table-row-hover-bg, #f5f7fa);
   transition: background-color .3s;
 }
 
@@ -999,9 +1281,10 @@ onBeforeUnmount(() => {
   padding: 10px 16px;
   border-bottom: 1px solid var(--table-border-color, #f0f0f0);
   border-right: 1px solid var(--table-border-color, #f0f0f0);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: var(--cell-white-space, nowrap);
+  overflow: var(--cell-overflow, hidden);;
+  text-overflow: var(--cell-text-overflow, ellipsis);
+  word-break: var(--cell-work-break);
   box-sizing: border-box;
   background-color: inherit;
 }
@@ -1055,20 +1338,21 @@ onBeforeUnmount(() => {
 
 .multi-table__row.is-row-hover:not(.is-selected) .multi-table__td.is-fixed-left,
 .multi-table__row.is-row-hover:not(.is-selected) .multi-table__td.is-fixed-right {
-  background-color: var(--table-row-hover-bg, #f5f7fa) !important;
+  background-color: var(--table-row-hover-bg, #f5f7fa);
 }
 
 .multi-table__row.is-selected .multi-table__td.is-fixed-left,
 .multi-table__row.is-selected .multi-table__td.is-fixed-right,
 .multi-table__row.is-selected.is-row-hover .multi-table__td.is-fixed-left,
 .multi-table__row.is-selected.is-row-hover .multi-table__td.is-fixed-right {
-  background-color: var(--table-row-selected-bg) !important;
+  background-color: var(--table-row-selected-bg);
   opacity: 1;
 }
 
 .td-content {
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow: var(--cell-overflow, hidden);;
+  text-overflow: var(--cell-text-overflow, ellipsis);
+  word-break: var(--cell-work-break);
 }
 
 /* 对象单元格 */
@@ -1109,12 +1393,13 @@ onBeforeUnmount(() => {
 }
 
 .fixed-shadow--left {
-  width: 12px;
-  box-shadow: 5px 0 5px -2px rgba(0, 0, 0, 0.1);
+  left: 0;
+  box-shadow: 4px 0 8px rgba(0, 0, 0, 0.08);
 }
 
 .fixed-shadow--right {
-  background: linear-gradient(to left, rgba(0, 0, 0, 0.1), transparent);
+  right: 0;
+  box-shadow: -4px 0 8px rgba(0, 0, 0, 0.08);
 }
 
 .fixed-shadow.has-shadow {
@@ -1202,7 +1487,8 @@ multi-table__summary-large {
   position: relative;
   width: 18px;
   height: 18px;
-  margin: 0 auto;
+  margin: 4px auto;
+  overflow: hidden;
 }
 
 .custom-checkbox input {
@@ -1237,7 +1523,8 @@ multi-table__summary-large {
   display: inline-block;
   width: 5px;
   height: 9px;
-  border: solid #fff;
+  border-style: solid;
+  border-color: #fff;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
   margin-bottom: 2px;

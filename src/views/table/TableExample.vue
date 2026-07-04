@@ -37,6 +37,10 @@
       theme="#26d97a"
       showSummary
       summary="合计"
+      showIndex
+      :rowIndexFormat="(index: number, row:Record<string, unknown>) => index"
+      :headerRowStyle="(rowContextKey, idx) => { return {'--header-test': 'var(--test-class-info)'} }"
+      :cell-text-ellipsis="false"
     >
       <template #header>表头插槽</template>
       <!-- 表头插槽 -->
@@ -114,7 +118,7 @@ const selectedRowKeys = ref<(string | number)[]>([])
 
 const columns: ColumnConfig[] = [
   { dataIndex: 'name', title: '名目', width: 100 },
-  { dataIndex: 'purchaseNo', title: '采购单号', fixed: 'left', width: 100 },
+  { dataIndex: 'purchaseNo', title: '采购单号', fixed: 'left', width: 150 },
   { dataIndex: 'inDate', title: '入库日期', width: 90, resizable: true },
   { dataIndex: 'supplierName', title: '供应商名称', width: 180, resizable: true },
   { dataIndex: 'orderSourceName', title: '采购订单来源', width: 90, resizable: true },
