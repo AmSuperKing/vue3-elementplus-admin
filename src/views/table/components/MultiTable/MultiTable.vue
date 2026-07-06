@@ -1441,42 +1441,46 @@ multi-table__summary-large {
 }
 
 /* 滚动条 */
-.multi-table-container {
-  scrollbar-width: thin;
-  scrollbar-color: #d9d9d9 #f5f5f5;
+@supports (-webkit-appearance: none) {
+  .multi-table-container::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    background: transparent;
+  }
+
+  .multi-table-container::-webkit-scrollbar-track {
+    background: #f5f5f5;
+    border-radius: 4px;
+  }
+
+  .multi-table-container::-webkit-scrollbar-thumb {
+    background: #d9d9d9;
+    border-radius: 4px;
+    border: none;
+    min-height: 20px;
+  }
+
+  .multi-table-container::-webkit-scrollbar-thumb:hover {
+    background: #bfbfbf !important;
+  }
+
+  .multi-table-container::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+  .multi-table-container::-webkit-resizer {
+    background: transparent;
+  }
+  .multi-table-container::-webkit-scrollbar-button {
+    display: none;
+  }
+}
+@-moz-document url-prefix() {
+  .multi-table-container {
+    scrollbar-width: thin;
+    scrollbar-color: #d9d9d9 #f5f5f5;
+  }
 }
 
-.multi-table-container::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-  background: transparent;
-}
-
-.multi-table-container::-webkit-scrollbar-track {
-  background: #f5f5f5;
-  border-radius: 4px;
-}
-
-.multi-table-container::-webkit-scrollbar-thumb {
-  background: #d9d9d9;
-  border-radius: 4px;
-  border: none;
-  min-height: 20px;
-}
-
-.multi-table-container::-webkit-scrollbar-thumb:hover {
-  background: #bfbfbf !important;
-}
-
-.multi-table-container::-webkit-scrollbar-corner {
-  background: transparent;
-}
-.multi-table-container::-webkit-resizer {
-  background: transparent;
-}
-.multi-table-container::-webkit-scrollbar-button {
-  display: none;
-}
 
 /* ====== 自定义 Checkbox ====== */
 .custom-checkbox {

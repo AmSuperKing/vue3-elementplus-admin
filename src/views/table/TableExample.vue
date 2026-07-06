@@ -104,6 +104,22 @@
         </div>
       </template>
     </MultiTable>
+    <CusPagination
+      v-model:current-page="page"
+      v-model:page-size="size"
+      :total="200"
+      :page-sizes="[10, 20, 50, 100]"
+      show-total
+      show-sizes
+      show-jumper
+      background
+      @current-change="onPageChange"
+      @size-change="onSizeChange"
+      @change="onChange"
+      size="large"
+      theme="#26d97a"
+      class="mt-20"
+    />
   </div>
 </template>
 
@@ -111,6 +127,7 @@
 import { ref } from 'vue'
 import MultiTable from './components/MultiTable/MultiTable.vue'
 import type { ColumnConfig } from './components/MultiTable/types'
+import CusPagination from './components/CusPagination/CusPagination.vue'
 
 const selectable = ref(true)
 const selectMode = ref<'radio' | 'checkbox'>('checkbox')
@@ -284,6 +301,14 @@ function getStatusColor(status: string): string {
     default: return '#999'
   }
 }
+
+
+const page = ref(1)
+const size = ref(10)
+
+const onPageChange = (val: number) => console.log('current-change:', val)
+const onSizeChange = (val: number) => console.log('size-change:', val)
+const onChange = (cp: number, ps: number) => console.log('change:', cp, ps)
 </script>
 
 <style scoped>
