@@ -1,0 +1,89 @@
+.cus-scrollbar {
+  --scrollbar-size: 6px;
+  --cus-scrollbar-primary: #909399;
+  --cus-scrollbar-opacity: .3;
+  --cus-scrollbar-bg-color: var(--cus-scrollbar-primary);
+  --cus-scrollbar-hover-opacity: .5;
+  --cus-scrollbar-hover-bg-color: var(--cus-scrollbar-primary);
+  --cus-scrollbar-active-opacity: .7;
+  --cus-scrollbar-active-bg-color: var(--cus-scrollbar-primary);
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+
+  &__wrap {
+    overflow: scroll;
+    height: 100%;
+
+    &--hidden-default {
+      scrollbar-width: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+  }
+
+  &__view {
+    // 由使用者控制
+  }
+
+  &__bar {
+    position: absolute;
+    z-index: 1;
+    border-radius: 4px;
+    bottom: 2px;
+    right: 2px;
+
+    &.is-vertical {
+      top: 2px;
+      width: var(--scrollbar-size, 6px);
+      &>div {
+        width: 100%;
+      }
+    }
+
+    &.is-horizontal {
+      left: 2px;
+      height: var(--scrollbar-size, 6px);
+      &>div {
+        height: 100%;
+      }
+    }
+  }
+
+  &__thumb {
+    cursor: pointer;
+    border-radius: inherit;
+    background-color: var(--cus-scrollbar-bg-color, var(--cus-scrollbar-primary));
+    width: 0;
+    height: 0;
+    transition: var(--cus-transition-duration) background-color;
+    opacity: var(--cus-scrollbar-opacity, .3);
+    display: block;
+    position: relative;
+
+    &:hover {
+      background-color: var(--cus-scrollbar-hover-bg-color, var(--cus-scrollbar-primary));
+      opacity: var(--cus-scrollbar-hover-opacity, .5)
+    }
+
+    &:active {
+      background-color: var(--cus-scrollbar-active-bg-color, var(--cus-scrollbar-primary));
+      opacity: var(--cus-scrollbar-active-opacity, .5)
+    }
+  }
+}
+
+.cus-scrollbar-fade-enter-active {
+  transition: opacity .34s ease-out
+}
+
+.cus-scrollbar-fade-leave-active {
+  transition: opacity .12s ease-out
+}
+
+.cus-scrollbar-fade-enter-from,
+.cus-scrollbar-fade-leave-active {
+  opacity: 0
+}

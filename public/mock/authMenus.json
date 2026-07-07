@@ -166,6 +166,27 @@
       ]
     },
     {
+      "path": "/components",
+      "name": "components",
+      "component": "Layout",
+      "meta": {
+        "title": "Vue3组件",
+        "icon": "Sunset"
+      },
+      "hidden": false,
+      "children": [
+        {
+          "path": "/components/scrollbar",
+          "name": "Menu",
+          "meta": {
+            "title": "自定义滚动条",
+            "icon": "Grid"
+          },
+          "hidden": false
+        }
+      ]
+    },
+    {
       "path": "/icons",
       "name": "icons",
       "component": "Layout",

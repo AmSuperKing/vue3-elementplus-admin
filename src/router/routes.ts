@@ -134,6 +134,23 @@ const routes = [
     ]
   },
   {
+    path: '/components',
+    name: 'components',
+    redirect: '/components/scrollbar',
+    component: Layout,
+    meta: { title: '组件', icon: 'Sunset' },
+    hidden: false,
+    children: [
+      {
+        path: 'scrollbar',
+        name: 'scrollbar',
+        meta: { title: '自定义滚动条', icon: 'Menu' },
+        hidden: false,
+        component: () => import(/* webpackChunkName: "ScrollbarUsageExample" */  '@/views/scrollbar/UsageExample.vue')
+      }
+    ]
+  },
+  {
     path: '/icons',
     name: 'icons',
     redirect: '/icons/list',
