@@ -79,24 +79,6 @@ const containerRef = ref<HTMLDivElement>()
 const tagsRef = ref<HTMLUListElement>()
 const tabsRefs = useTemplateRefsList<HTMLLIElement>()
 
-onMounted(() => {
-  setTags(route)
-  if (tagsRef.value) {
-    new HorizontalScroll(tagsRef.value)
-  }
-  document.body.addEventListener('click', closeMenu)
-})
-
-watch(route, (newVal: RouteLocationNormalizedLoaded) => {
-  setTags(newVal)
-  const index = tagsList.list.findIndex((item: TagsItem) => item.path === newVal.fullPath)
-  nextTick(() => {
-    if (index !== -1 && tabsRefs.value[index]) {
-      selectNavTab(tabsRefs.value[index])
-    }
-  })
-})
-
 const setTags = (route: RouteLocationNormalizedLoaded) => {
   if (!route || !route.meta?.title) return
   tagsList.setTagsItem({
@@ -159,6 +141,8 @@ const selectNavTab = (dom: HTMLElement) => {
     tagsRef.value.scrollTo(dom.offsetLeft, 0)
   } else if (scrollLeft > tagsRef.value.scrollLeft) {
     tagsRef.value.scrollTo(scrollLeft, 0)
+  } else {
+    dom.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' })
   }
 }
 
@@ -206,6 +190,32 @@ const closeCurrTag = (tag: TagsItem) => {
   if (index === -1) return
   closeTags(index)
 }
+
+watch(route, (newVal: RouteLocationNormalizedLoaded) => {
+  setTags(newVal)
+  const index = tagsList.list.findIndex((item: TagsItem) => item.path === newVal.fullPath)
+  nextTick(() => {
+    if (index !== -1 && tabsRefs.value[index]) {
+      selectNavTab(tabsRefs.value[index])
+    }
+  })
+})
+
+onMounted(() => {
+  setTags(route)
+  if (tagsRef.value) {
+    new HorizontalScroll(tagsRef.value)
+  }
+  document.body.addEventListener('click', closeMenu)
+
+  // 初次加载自动滚动到 active 标签
+  nextTick(() => {
+    const index = tagsList.list.findIndex((item: TagsItem) => item.path === route.fullPath)
+    if (index !== -1 && tabsRefs.value[index]) {
+      tabsRefs.value[index].scrollIntoView({ block: 'nearest', inline: 'nearest' })
+    }
+  })
+})
 </script>
 
 <style lang="scss" scoped>
@@ -254,7 +264,7 @@ $dark-text: #666;
 }
 
 .tags-li-item {
-  display: inline-block;
+  display: inline-flex;
   flex-shrink: 0;
   position: relative;
   margin: 4px 6px 0 6px;
@@ -270,7 +280,7 @@ $dark-text: #666;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
   transition: all 0.3s ease-in;
-  background-color: #fff;
+  background-color: $tagsBg;
 
   &::before {
     content: '';
@@ -279,7 +289,7 @@ $dark-text: #666;
     bottom: 0;
     width: 0;
     height: 0;
-    border-bottom: 6px solid #fff;
+    border-bottom: 6px solid $tagsBg;
     border-top: 6px solid transparent;
     border-right: 6px solid transparent;
     border-left: 6px solid transparent;
@@ -294,7 +304,7 @@ $dark-text: #666;
     bottom: 0;
     width: 0;
     height: 0;
-    border-bottom: 6px solid #fff;
+    border-bottom: 6px solid $tagsBg;
     border-top: 6px solid transparent;
     border-right: 6px solid transparent;
     border-left: 6px solid transparent;
