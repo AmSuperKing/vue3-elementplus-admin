@@ -16,7 +16,7 @@
     >
       <component
         :is="tag"
-        :class="['el-scrollbar__view', viewClass]"
+        :class="['cus-scrollbar__view', viewClass]"
         :style="viewStyle"
       >
         <slot />
