@@ -3,7 +3,7 @@
 
     <!-- ① 基础纵向滚动 -->
     <div class="mb-20" style="border: 1px solid #f0f0f0; border-radius: 6px;">
-      <Scrollbar height="300px" @scroll="onScroll">
+      <Scrollbar height="300px" @scroll="onScroll" @end-reached="handleEndReached">
         <div v-for="i in 50" :key="i" style="padding: 10px; border-bottom: 1px solid #eee;">
           列表项 {{ i }}
         </div>
@@ -12,7 +12,7 @@
 
     <!-- ② 横向滚动 -->
     <div class="mtb-20" style="border: 1px solid #f0f0f0; border-radius: 6px;">
-      <Scrollbar>
+      <Scrollbar @end-reached="handleEndReached">
         <div style="display: flex;">
             <div v-for="i in 3" :key="i" style="min-width: 2000px; white-space: nowrap; padding: 10px;flex: 1">
             这是一段很长的横向滚动内容，用来测试横向滚动条的功能是否正常工作。这是一段很长的横向滚动内容，用来测试横向滚动条的功能是否正常工作。这是一段很长的横向滚动内容，用来测试横向滚动条的功能是否正常工作。
@@ -23,7 +23,7 @@
 
     <!-- ③ 始终可见 -->
     <div class="mtb-20" style="border: 1px solid #f0f0f0; border-radius: 6px;">
-      <Scrollbar height="200px" :always="true">
+      <Scrollbar height="200px" :always="true" @end-reached="handleEndReached">
         <div v-for="i in 20" :key="i" style="padding: 8px;">
           滚动条始终可见 - 项目 {{ i }}
         </div>
@@ -40,6 +40,7 @@
       <Scrollbar
         ref="scrollbarRef"
         height="200px"
+         @end-reached="handleEndReached"
       >
         <div v-for="i in 40" :key="i" style="padding: 8px;">
           程序化滚动 - 项目 {{ i }}
@@ -57,7 +58,16 @@ import type { ScrollbarInstance } from './components/Scrollbar/types'
 const scrollbarRef = ref<ScrollbarInstance>()
 
 function onScroll({ scrollTop, scrollLeft }: { scrollTop: number; scrollLeft: number }) {
-  console.log('scrollTop:', scrollTop, 'scrollLeft:', scrollLeft)
+  console.log('-scrollTop:-', scrollTop, '-scrollLeft:-', scrollLeft)
+}
+
+function handleEndReached({ direction, scrollTop, scrollLeft }: {
+    direction: { vertical: boolean; horizontal: boolean };
+    scrollTop: number;
+    scrollLeft: number;
+  }) {
+  console.log('--------------handleEndReached----------')
+  console.log('direction:', direction, 'scrollTop:', scrollTop, 'scrollLeft:', scrollLeft)
 }
 
 function scrollToTop() {

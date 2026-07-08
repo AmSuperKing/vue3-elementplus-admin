@@ -26,23 +26,19 @@ import {
   type Ref,
   type CSSProperties,
 } from 'vue'
-import type { BarConfig } from './types'
+import type { BarProps, BarConfig } from './types'
 import { scrollbarContextKey } from './useScrollbar'
 import "./scrollbar.scss"
 
 const props = withDefaults(
-  defineProps<{
-    vertical: boolean
-    always: boolean
-    minSize: number
-  }>(),
+  defineProps<BarProps>(),
   {
     always: false,
     minSize: 20,
   }
 )
 
-// ✅ 注入中增加 scrollTop / scrollLeft
+// 从父组件注入的上下文
 const scrollbarContext = inject<{
   scrollbarRef: Ref<HTMLElement | undefined>
   wrapRef: Ref<HTMLElement | undefined>
@@ -58,10 +54,12 @@ const barRef = ref<HTMLElement>()
 const thumbRef = ref<HTMLElement>()
 const visible = ref(false)
 const cursorDown = ref(false)
+/** 拖拽时记录的 thumb 内点击偏移 */
 const thumbClickOffset = ref(0)
 
 let hideTimer: ReturnType<typeof setTimeout> | null = null
 
+  // 根据方向返回配置
 const barConfig = computed<BarConfig>(() => {
   if (props.vertical) {
     return {
@@ -92,7 +90,7 @@ const barConfig = computed<BarConfig>(() => {
 })
 
 /**
- * 核心修复：thumbStyle 依赖响应式的 scrollTop / scrollLeft
+ * 滑块样式：thumbStyle 依赖响应式的 scrollTop / scrollLeft
  * 当用户滚动时，handleScroll 更新这些 ref → 触发此 computed 重新计算
  */
 const thumbStyle = computed<CSSProperties>(() => {
@@ -108,7 +106,7 @@ const thumbStyle = computed<CSSProperties>(() => {
   // 没有溢出，不需要滚动条
   if (scrollSize <= clientSize) return { display: 'none' }
 
-  // ✅ 关键修复：读取响应式的滚动位置，建立依赖关系！
+  // 读取响应式的滚动位置，建立依赖关系
   const currentScroll = props.vertical
     ? scrollbarContext.scrollTop.value
     : scrollbarContext.scrollLeft.value
@@ -136,12 +134,14 @@ const thumbStyle = computed<CSSProperties>(() => {
 //  点击轨道滚动
 // ========================
 function clickTrackHandler(e: MouseEvent) {
+  // 如果点击的是 thumb 自身，不处理
   if (e.target === thumbRef.value) return
   if (!thumbRef.value || !barRef.value) return
 
   const config = barConfig.value
   const barEl = barRef.value
 
+  // 点击位置相对于轨道的坐标
   const barRect = barEl.getBoundingClientRect()
   const clickPos = e[config.mouseKey] - barRect[config.rectOffset]
 
@@ -169,6 +169,7 @@ function startDrag(e: MouseEvent) {
 
   if (!thumbRef.value) return
 
+  // 记录鼠标在 thumb 内的点击偏移（相对于 thumb 左上角）
   const thumbRect = thumbRef.value.getBoundingClientRect()
   thumbClickOffset.value = e[config.mouseKey] - thumbRect[config.rectOffset]
 }
@@ -180,8 +181,10 @@ function mouseMoveDocumentHandler(e: MouseEvent) {
   const barEl = barRef.value
   const thumbEl = thumbRef.value
 
+  // 鼠标相对于轨道的位置
   const barRect = barEl.getBoundingClientRect()
   const mousePos = e[config.mouseKey] - barRect[config.rectOffset]
+  // 减去拖拽开始时记录的 thumb 内偏移，得到 thumb 左上角应在的位置
   const thumbPos = mousePos - thumbClickOffset.value
 
   const wrap = scrollbarContext.wrapRef.value
@@ -271,7 +274,7 @@ watch(
 watch(
   () => scrollbarContext.wrapRef.value,
   (el) => {
-    if (wrapEl) unbindWrapEvents(wrapEl)
+    if (wrapEl) unbindWrapEvents(wrapEl) // 先解绑旧的
     wrapEl = el ?? null
     if (wrapEl && !props.always) {
       bindWrapEvents(wrapEl)

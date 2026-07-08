@@ -39,39 +39,25 @@
 </template>
 
 <script setup lang="ts">
-import { computed, type CSSProperties } from 'vue'
+import { computed } from 'vue'
 import Bar from './Bar.vue'
 import { useScrollbar } from './useScrollbar'
+import type { ScrollbarProps, ScrollbarEmits } from './types'
 import "./scrollbar.scss"
 
 const props = withDefaults(
-  defineProps<{
-    height?: string | number
-    maxHeight?: string | number
-    native?: boolean
-    wrapStyle?: CSSProperties
-    wrapClass?: string | string[]
-    viewStyle?: CSSProperties
-    viewClass?: string | string[]
-    noresize?: boolean
-    always?: boolean
-    minSize?: number
-    id?: string
-    class?: string
-    tag?: string
-  }>(),
+  defineProps<ScrollbarProps>(),
   {
     native: false,
     noresize: false,
     always: false,
     minSize: 20,
     tag: 'div',
+    distance: 0
   }
 )
 
-const emit = defineEmits<{
-  (e: 'scroll', payload: { scrollTop: number; scrollLeft: number }): void
-}>()
+const emit = defineEmits<ScrollbarEmits>()
 
 const className = computed(() => props.class)
 
@@ -86,7 +72,7 @@ const {
   update,
 } = useScrollbar(
   props,
-  emit as (event: 'scroll', payload: { scrollTop: number; scrollLeft: number }) => void
+  emit
 )
 
 defineExpose({

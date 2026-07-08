@@ -28,6 +28,17 @@ export interface ScrollbarProps {
   class?: string
   /** 视图的元素标签 */
   tag?: string
+  /** 距离底部/右部的触发距离 */
+  distance?: number
+}
+
+export interface ScrollbarEmits {
+  (e: 'scroll', payload: { scrollTop: number; scrollLeft: number }): void
+  (e: 'end-reached', payload: {
+    direction: { vertical: boolean; horizontal: boolean };
+    scrollTop: number;
+    scrollLeft: number;
+  }): void
 }
 
 /** Scrollbar 暴露的方法 */
@@ -49,6 +60,7 @@ export type BarDirection = 'vertical' | 'horizontal'
 
 /** Bar 组件 Props */
 export interface BarProps {
+  vertical?: boolean
   always: boolean
   minSize: number
 }
