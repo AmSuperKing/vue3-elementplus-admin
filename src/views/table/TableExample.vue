@@ -38,6 +38,7 @@
       showSummary
       summary="合计"
       showIndex
+      size="large"
       :rowIndexFormat="(index: number, row:Record<string, unknown>) => index"
       :headerRowStyle="(rowContextKey, idx) => { return {'--header-test': 'var(--test-class-info)'} }"
       :cell-text-ellipsis="false"
@@ -116,7 +117,7 @@
       @current-change="onPageChange"
       @size-change="onSizeChange"
       @change="onChange"
-      size="large"
+      size="small"
       theme="#26d97a"
       class="mt-20"
     />
@@ -134,10 +135,10 @@ const selectMode = ref<'radio' | 'checkbox'>('checkbox')
 const selectedRowKeys = ref<(string | number)[]>([])
 
 const columns: ColumnConfig[] = [
-  { dataIndex: 'name', title: '名目', width: 100 },
+  { dataIndex: 'name', title: '名目', width: 100, fixed: 'left', },
   { dataIndex: 'purchaseNo', title: '采购单号', fixed: 'left', width: 150 },
   { dataIndex: 'inDate', title: '入库日期', width: 90, resizable: true },
-  { dataIndex: 'supplierName', title: '供应商名称', width: 180, resizable: true },
+  { dataIndex: 'supplierName', title: '供应商名称', width: 180, resizable: true, fixed: 'left', },
   { dataIndex: 'orderSourceName', title: '采购订单来源', width: 90, resizable: true },
   { dataIndex: 'goodsSourceTypeName', title: '产品来源', width: 80, resizable: true },
   {

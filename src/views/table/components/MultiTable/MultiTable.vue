@@ -3,8 +3,8 @@
   <div
     class="multi-table-layout"
     :class="{
-      'multi-table-wrapper__small': props.size === 'small',
-      'multi-table-wrapper__large': props.size === 'large'
+      'multi-table-layout__small': props.size === 'small',
+      'multi-table-layout__large': props.size === 'large'
     }"
     :style="tableConfigStyle"
   >
@@ -49,7 +49,15 @@
                 <div class="th-content">
                   <!-- 选择列表头 -->
                   <template v-if="cell._isSelection">
-                    <label v-if="selectMode === 'checkbox'" class="custom-checkbox" @click.stop>
+                    <label
+                      v-if="selectMode === 'checkbox'"
+                      :class="[
+                        'custom-checkbox',
+                        { 'custom-checkbox-small': props.size === 'small' },
+                        { 'custom-checkbox-large': props.size === 'large' }
+                      ]"
+                      @click.stop
+                    >
                       <input
                         type="checkbox"
                         :checked="isAllSelected"
@@ -147,7 +155,15 @@
                   <div class="td-content">
                     <!-- 选择列单元格 -->
                     <template v-if="col.dataIndex === '__selection__'">
-                      <label v-if="selectMode === 'checkbox'" class="custom-checkbox" @click.stop>
+                      <label
+                        v-if="selectMode === 'checkbox'"
+                        :class="[
+                          'custom-checkbox',
+                          { 'custom-checkbox-small': props.size === 'small' },
+                          { 'custom-checkbox-large': props.size === 'large' }
+                        ]"
+                        @click.stop
+                      >
                         <input
                           type="checkbox"
                           :checked="isSelected(expandedRow.originalRow)"
@@ -156,7 +172,15 @@
                         />
                         <span class="checkmark"></span>
                       </label>
-                      <label v-else class="custom-radio" @click.stop>
+                      <label
+                        v-else
+                        :class="[
+                          'custom-radio',
+                          { 'custom-radio-small': props.size === 'small' },
+                          { 'custom-radio-large': props.size === 'large' }
+                        ]"
+                        @click.stop
+                      >
                         <input
                           type="radio"
                           :name="`radio_${tableId}`"
@@ -238,7 +262,7 @@
       <div
         v-if="leftFixedLeaves.length > 0"
         class="fixed-shadow fixed-shadow--left"
-        :class="{ 'has-shadow': scrollLeft > 1 }"
+        :class="{ 'has-shadow': scrollLeft >= leftFixedWidth / 2 }"
         :style="{ width: leftFixedWidth + 'px' }"
       />
       <div
@@ -420,7 +444,7 @@ const tableConfigStyle = computed(() => {
   if (!props.border) style.border = 'none'
 
   if (!props.cellTextEllipsis) {
-    style['--cell-overflow'] = 'auto'
+    style['--cell-overflow'] = 'inherit'
     style['--cell-text-overflow'] = 'visible'
     style['--cell-white-space'] = 'normal'
     style['--cell-work-break'] = 'break-all'
@@ -1389,7 +1413,7 @@ onBeforeUnmount(() => {
   pointer-events: none;
   z-index: 5;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.12s ease;
 }
 
 .fixed-shadow--left {
@@ -1494,6 +1518,14 @@ multi-table__summary-large {
   margin: 4px auto;
   overflow: hidden;
 }
+.custom-checkbox-large {
+  width: 22px;
+  height: 22px;
+}
+.custom-checkbox-small {
+  width: 14px;
+  height: 14px;
+}
 
 .custom-checkbox input {
   position: absolute;
@@ -1515,6 +1547,14 @@ multi-table__summary-large {
   align-items: center;
   justify-content: center;
   transition: all 0.2s;
+}
+.custom-checkbox-large .checkmark {
+  width: 20px;
+  height: 20px;
+}
+.custom-checkbox-small .checkmark {
+  width: 12px;
+  height: 12px;
 }
 
 .custom-checkbox input:checked~.checkmark {
@@ -1566,6 +1606,15 @@ multi-table__summary-large {
   position: relative;
   width: 18px;
   height: 18px;
+  margin: 4px auto;
+}
+.custom-radio-large {
+  width: 22px;
+  height: 22px;
+}
+.custom-radio-small {
+  width: 14px;
+  height: 14px;
 }
 
 .custom-radio input {
@@ -1589,6 +1638,14 @@ multi-table__summary-large {
   justify-content: center;
   transition: all 0.2s;
 }
+.custom-radio-large .radiomark {
+  width: 20px;
+  height: 20px;
+}
+.custom-radio-small .radiomark {
+  width: 12px;
+  height: 12px;
+}
 
 .custom-radio input:checked~.radiomark {
   border-color: var(--table-selector-checked-color, #1890ff);
@@ -1602,6 +1659,15 @@ multi-table__summary-large {
   border-radius: 50%;
   background-color: var(--table-selector-checked-color, #1890ff);
 }
+.custom-radio-large input:checked~.radiomark::after {
+  width: 10px;
+  height: 10px;
+}
+.custom-radio-small input:checked~.radiomark::after {
+  width: 6px;
+  height: 6px;
+}
+
 .custom-radio input:disabled {
   background-color: #f5f7fa;
   cursor: not-allowed;
