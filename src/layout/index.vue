@@ -14,10 +14,12 @@
         <TagsView />
       </div>
 
-      <div class="content-container">
-        <AppMain />
-        <el-backtop target=".content-container" style="z-index: 1999;" />
-      </div>
+      <el-scrollbar>
+        <div class="content-container">
+          <AppMain />
+          <el-backtop target=".content-container" style="z-index: 1999;" />
+        </div>
+      </el-scrollbar>
     </div>
   </div>
 </template>
@@ -185,23 +187,10 @@ onBeforeUnmount(() => {
   overflow-x: hidden;
   padding: 10px;
   background: $contentBg;
-
+  scrollbar-width: none;
   &::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: rgba(144, 147, 153, 0.3);
-    border-radius: 3px;
-
-    &:hover {
-      background-color: rgba(144, 147, 153, 0.5);
-    }
-  }
-
-  &::-webkit-scrollbar-track {
-    background-color: transparent;
+    display: none;
+    width: 0;
   }
 }
 

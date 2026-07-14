@@ -12,11 +12,11 @@ const iconProps = {
   },
   size: {
     type: String,
-    default: '18px',
+    default: '',
   },
   color: {
     type: String,
-    default: 'inherit',
+    default: 'currentColor',
   },
 }
 
@@ -27,7 +27,7 @@ export default defineComponent({
     const iconStyle = computed((): CSSProperties => {
       const { size, color } = props
       // 优化：防止 size 为空或非字符串导致 replace 报错
-      const s = size ? `${size.replace('px', '')}px` : '18px'
+      const s = size ? `${size.replace('px', '')}px` : 'inherit'
       return {
         fontSize: s,
         color: color,

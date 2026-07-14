@@ -22,11 +22,11 @@ defineOptions({
 
 const props = withDefaults(defineProps<IconProps>(), {
   name: '',
-  size: '18px',
-  color: '#666666',
+  size: 'inherit',
+  color: 'currentColor',
 })
 
-const s = `${props.size.replace('px', '')}px`
+const s = `${props.size ? props.size.replace('px', '') + 'px' : 'inherit'}`
 const iconName = computed(() => `#${props.name}`)
 const iconStyle = computed((): CSSProperties => {
   return {
