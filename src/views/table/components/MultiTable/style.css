@@ -1,0 +1,379 @@
+.multi-table-layout {
+  position: relative;
+  width: 100%;
+  border: 1px solid var(--table-border-color, #e8e8e8);
+  border-radius: 4px;
+  font-size: 14px;
+  color: #333;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+.multi-table-layout__small {
+  font-size: 12px;
+}
+.multi-table-layout__large {
+  font-size: 16px;
+}
+.multi-table-header {
+  border-bottom: 1px solid var(--table-border-color, #e8e8e8);
+}
+.multi-table-footer {
+  border-top: 1px solid var(--table-border-color, #e8e8e8);
+}
+.multi-table-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.multi-table-container {
+  width: 100%;
+  overflow: auto;
+  position: relative;
+  height: var(--table-container-height);
+  max-height: var(--table-container-max-height, 600px);
+}
+
+.multi-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+  width: max-content;
+  min-width: 100%;
+}
+
+/* 表头 */
+.multi-table__header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.multi-table__header-row {
+  background-color: var(--table-header-bg, #fafafa);
+}
+
+.multi-table__th {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--table-border-color, #e8e8e8);
+  border-right: 1px solid  var(--table-border-color, #e8e8e8);
+  font-weight: 600;
+  background-color: var(--table-header-cell-bg, #f5f5f5);
+  position: relative;
+  white-space: var(--cell-white-space, nowrap);
+  overflow: var(--cell-overflow, hidden);
+  text-overflow: var(--cell-text-overflow, ellipsis);
+  word-break: var(--cell-work-break);
+  box-sizing: border-box;
+}
+.multi-table__th-small {
+  padding: 6px 8px;
+}
+.multi-table__th-large {
+  padding: 16px 20px;
+}
+
+
+.multi-table__th.is-last-column {
+  border-right: none;
+}
+
+.multi-table__th.is-leaf {
+  background-color: var(--table-header-cell-bg, #f5f5f5);
+}
+
+.multi-table__th.align-center {
+  text-align: center;
+  justify-content: center;
+}
+
+.multi-table__th.align-right {
+  text-align: right;
+  justify-content: flex-end;
+}
+
+.multi-table__th.is-selection-th {
+  padding: 12px 8px;
+}
+.multi-table__th.is-selection-th-small {
+  padding: 6px 4px;
+}
+.multi-table__th.is-selection-th-large {
+  padding: 16px 12px;
+}
+
+.th-content {
+  display: flex;
+  align-items: center;
+  justify-content: inherit;
+  min-height: 22px;
+}
+
+.th-title {
+  overflow: var(--cell-overflow, hidden);;
+  text-overflow: var(--cell-text-overflow, ellipsis);
+  word-break: var(--cell-work-break);
+  font-weight: 500;
+}
+
+/* 拖拽手柄 */
+.resize-handle {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  cursor: col-resize;
+  z-index: 2;
+  transition: background-color 0.2s;
+}
+.resize-handle-small {
+  width: 3px;
+}
+.resize-handle-large {
+  width: 6px;
+}
+
+.resize-handle:hover,
+.resize-handle.active {
+  background-color: var(--table-primary-color, #1890ff);
+  opacity: 0.6;
+}
+
+.multi-table__th.is-resizing {
+  background-color: var(--table-th-resizing-color, #e6f7ff);
+}
+
+/* 数据行 */
+.multi-table__row {
+  cursor: var(--table-row-cursor, default);
+}
+
+.multi-table__row.is-row-hover {
+  background-color: var(--table-row-hover-bg, #f5f7fa);
+  transition: background-color .3s;
+}
+
+.multi-table__row.is-stripe {
+  background-color: var(--table-row-stripe-color, #fafafa);
+}
+
+.multi-table__row.is-selected {
+  background-color: var(--table-row-selected-bg);
+}
+
+.multi-table__row.is-selected .multi-table__td {
+  background-color: var(--table-row-selected-bg);
+}
+.multi-table__row.is-row-hover:not(.is-selected) .multi-table__td {
+  background-color: var(--table-row-hover-bg);
+  transition: background-color .3s;
+}
+
+.multi-table__row.is-stripe.is-row-hover {
+  background-color: var(--table-row-hover-bg, #f5f7fa);
+  transition: background-color .3s;
+}
+
+.multi-table__td {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--table-border-color, #f0f0f0);
+  border-right: 1px solid var(--table-border-color, #f0f0f0);
+  white-space: var(--cell-white-space, nowrap);
+  overflow: var(--cell-overflow, hidden);;
+  text-overflow: var(--cell-text-overflow, ellipsis);
+  word-break: var(--cell-work-break);
+  box-sizing: border-box;
+  background-color: inherit;
+}
+.multi-table__td-small {
+  padding: 5px 8px;
+}
+.multi-table__td-large {
+  padding: 14px 20px;
+}
+
+.multi-table__td.is-last-column {
+  border-right: none;
+}
+
+.multi-table__td.align-center {
+  text-align: center;
+}
+
+.multi-table__td.is-selection-td {
+  padding: 10px 8px;
+}
+.multi-table__td.is-selection-td__small {
+  padding: 5px 4px;
+}
+.multi-table__td.is-selection-td__large {
+  padding: 14px 12px;
+}
+
+.multi-table__td.is-hover-cell,
+.multi-table__row.is-row-hover:not(.is-row-hover) .multi-table__td {
+  background-color: var(--table-row-hover-bg, #f5f7fa);
+}
+
+/* 固定列 */
+.multi-table__td.is-fixed-left,
+.multi-table__td.is-fixed-right {
+  background-color: var(--table-fixed-column-bg, #fff);
+  z-index: 3;
+}
+
+.multi-table__th.is-fixed-left,
+.multi-table__th.is-fixed-right {
+  z-index: 3;
+  background-color: var(--table-header-cell-bg, #f5f5f5);
+}
+
+.multi-table__row.is-stripe .multi-table__td.is-fixed-left,
+.multi-table__row.is-stripe .multi-table__td.is-fixed-right {
+  background-color: var(--table-row-stripe-color, #fafafa);
+}
+
+.multi-table__row.is-row-hover:not(.is-selected) .multi-table__td.is-fixed-left,
+.multi-table__row.is-row-hover:not(.is-selected) .multi-table__td.is-fixed-right {
+  background-color: var(--table-row-hover-bg, #f5f7fa);
+}
+
+.multi-table__row.is-selected .multi-table__td.is-fixed-left,
+.multi-table__row.is-selected .multi-table__td.is-fixed-right,
+.multi-table__row.is-selected.is-row-hover .multi-table__td.is-fixed-left,
+.multi-table__row.is-selected.is-row-hover .multi-table__td.is-fixed-right {
+  background-color: var(--table-row-selected-bg);
+  opacity: 1;
+}
+
+.td-content {
+  overflow: var(--cell-overflow, hidden);;
+  text-overflow: var(--cell-text-overflow, ellipsis);
+  word-break: var(--cell-work-break);
+}
+
+/* 对象单元格 */
+.multi-table__td.is-object-cell .td-content {
+  white-space: normal;
+  overflow: visible;
+}
+
+.object-cell {
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.object-field {
+  display: flex;
+  gap: 4px;
+}
+
+.object-key {
+  color: #999;
+  flex-shrink: 0;
+}
+
+.object-val {
+  color: #333;
+}
+
+/* 固定列阴影 */
+.fixed-shadow {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+
+.fixed-shadow--left {
+  left: 0;
+  box-shadow: 4px 0 8px rgba(0, 0, 0, 0.08);
+}
+
+.fixed-shadow--right {
+  right: 0;
+  box-shadow: -4px 0 8px rgba(0, 0, 0, 0.08);
+}
+
+.fixed-shadow.has-shadow {
+  opacity: 1;
+}
+
+/* 总结行 */
+.multi-table__summary {
+  font-size: 14px;
+}
+multi-table__summary-small {
+  font-size: 12px;
+}
+multi-table__summary-large {
+  font-size: 16px;
+}
+
+/* 空数据 */
+.multi-table__empty {
+  text-align: center;
+  padding: 40px 0;
+  color: #999;
+}
+.multi-table__empty-small {
+  padding: 20px 0;
+}
+.multi-table__empty-large {
+  padding: 60px 0;
+}
+
+.empty-text {
+  font-size: 14px;
+}
+.empty-text__small {
+  font-size: 12px;
+}
+.empty-text__large {
+  font-size: 16px;
+}
+
+/* 滚动条 */
+@supports (-webkit-appearance: none) {
+  .multi-table-container::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    background: transparent;
+  }
+
+  .multi-table-container::-webkit-scrollbar-track {
+    background: #f5f5f5;
+    border-radius: 4px;
+  }
+
+  .multi-table-container::-webkit-scrollbar-thumb {
+    background: #d9d9d9;
+    border-radius: 4px;
+    border: none;
+    min-height: 20px;
+  }
+
+  .multi-table-container::-webkit-scrollbar-thumb:hover {
+    background: #bfbfbf !important;
+  }
+
+  .multi-table-container::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+  .multi-table-container::-webkit-resizer {
+    background: transparent;
+  }
+  .multi-table-container::-webkit-scrollbar-button {
+    display: none;
+  }
+}
+@-moz-document url-prefix() {
+  .multi-table-container {
+    scrollbar-width: thin;
+    scrollbar-color: #d9d9d9 #f5f5f5;
+  }
+}

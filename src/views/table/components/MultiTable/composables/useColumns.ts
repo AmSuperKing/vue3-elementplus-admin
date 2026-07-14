@@ -1,5 +1,5 @@
 import { computed, type Ref } from 'vue'
-import type { ColumnConfig, FlatColumn, HeaderRow, LeafColumn, IndexColumnConfig } from './types'
+import type { ColumnConfig, FlatColumn, HeaderRow, LeafColumn, IndexColumnConfig } from '../types'
 
 // 获取嵌套最大深度
 function getMaxDepth(columns: ColumnConfig[]): number {
