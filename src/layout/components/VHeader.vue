@@ -10,111 +10,38 @@
     </div>
 
     <div class="logo hidden-md-and-down">{{ settings.pageTitle }}</div>
+
     <div class="header-right">
       <div class="right-content">
-        <div class="btn-bell hidden-sm-and-down">
-          <el-tooltip effect="dark" :content="message ? `有${message}条未读消息` : `消息中心`" placement="bottom">
-            <el-icon :color="variablesList.textColor" @click="handleBellClick">
-              <Bell />
-            </el-icon>
-          </el-tooltip>
-          <span v-if="message" class="btn-bell-badge" />
-        </div>
-
+        <VMessageCenter />
         <Screenfull id="screenfull" class="screenfull-btn hidden-sm-and-down" />
-
-        <div class="header-search hidden-sm-and-down">
-          <el-tooltip effect="dark" content="搜索菜单" placement="bottom">
-            <div id="menu-search" class="search-input" @click="showMenuSearchDialog">
-              <el-icon class="search-icon">
-                <Search />
-              </el-icon>
-              <span class="search-placeholder">Search</span>
-            </div>
-          </el-tooltip>
-        </div>
-
-        <div class="user-avator hidden-sm-and-down">
-          <img :src="userAvator" />
-        </div>
-        <el-dropdown id="user-setting" class="user-name" trigger="click" @command="handleCommand">
-          <span class="el-dropdown-link">
-            {{ userInfo.userNameCn || '尊敬的用户' }}
-            <el-icon :color="variablesList.textColor">
-              <CaretBottom />
-            </el-icon>
-          </span>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item command="user">我的设置</el-dropdown-item>
-              <el-dropdown-item divided command="loginout">退出登录</el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
+        <VMenuSearch />
+        <VUserMenu />
       </div>
     </div>
-
-    <el-dialog v-model="menuSearchVisible" width="420px" draggable destroy-on-close :show-close="false">
-      <MenuSearch style="margin-top: -25px" @to-detail="handleToDetailPage" />
-    </el-dialog>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
-import { useUserInfoStore } from '@/stores/userInfo'
+import { onMounted} from 'vue'
 import { useSidebarStore } from '@/stores/sidebar'
 import { settings } from '@/settings'
-import variables from '@/assets/styles/variables.module.scss'
-import MenuSearch from './VMenuSearch.vue'
+import VMessageCenter from './VMessageCenter.vue'
 import Screenfull from '@/components/Screenfull/index.vue'
-import userAvator from '@/assets/imgs/avatar.png'
+import VMenuSearch from './VMenuSearch.vue'
+import VUserMenu from './VUserMenu.vue'
 
-const userInfo = useUserInfoStore()
 const sidebar = useSidebarStore()
-const variablesList = computed(() => variables)
-
-const message = ref(2)
 
 const collapseChage = () => {
   sidebar.toggleCollappse()
 }
-
-const menuSearchVisible = ref(false)
 
 onMounted(() => {
   if (document.body.clientWidth < 1500) {
     collapseChage()
   }
 })
-
-const router = useRouter()
-
-type DropdownCommand = 'user' | 'loginout'
-
-const handleCommand = (command: DropdownCommand) => {
-  if (command === 'loginout') {
-    userInfo.resetInfo()
-    router.push('/login')
-  } else if (command === 'user') {
-    router.push('/userWork/userCenter')
-  }
-}
-
-const handleBellClick = () => {
-  ElMessage.info('developing...')
-}
-
-const showMenuSearchDialog = () => {
-  menuSearchVisible.value = true
-}
-
-const handleToDetailPage = (data: MenuRoute) => {
-  menuSearchVisible.value = false
-  router.push(data.path)
-}
 </script>
 
 <style lang="scss" scoped>
@@ -171,27 +98,6 @@ const handleToDetailPage = (data: MenuRoute) => {
   }
 }
 
-.btn-bell {
-  position: relative;
-  width: 24px;
-  padding-top: 5px;
-  margin-right: 15px;
-  text-align: center;
-  border-radius: 15px;
-  cursor: pointer;
-
-  .btn-bell-badge {
-    position: absolute;
-    right: 0;
-    top: -2px;
-    width: 8px;
-    height: 8px;
-    border-radius: 4px;
-    background: #ff3232;
-    color: $textColor;
-  }
-}
-
 .screenfull-btn {
   display: inline-block;
   margin-right: 15px;
@@ -201,67 +107,5 @@ const handleToDetailPage = (data: MenuRoute) => {
   &:hover {
     color: $headerText;
   }
-}
-
-.header-search {
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  .search-input {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 25px;
-    width: 72px;
-    padding: 2px 4px;
-    color: var(--el-color-primary);
-    border-radius: 8px;
-    border: 1px solid var(--el-color-primary);
-    background-color: #fff;
-    transition: color 0.5s;
-    cursor: pointer;
-
-    &:hover .search-placeholder {
-      font-weight: 800;
-    }
-
-    .search-icon {
-      font-size: 16px;
-      margin-right: 5px;
-    }
-
-    .search-placeholder {
-      font-size: 13px;
-      font-weight: 500;
-    }
-  }
-}
-
-.user-avator {
-  margin-left: 20px;
-
-  & img {
-    display: block;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-  }
-}
-
-.user-name {
-  margin-left: 10px;
-}
-
-.el-dropdown-link {
-  max-width: 120px;
-  overflow: hidden;
-  color: $textColor;
-  cursor: pointer;
-}
-
-.el-dropdown-menu__item {
-  text-align: center;
 }
 </style>

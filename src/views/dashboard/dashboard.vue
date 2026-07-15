@@ -14,7 +14,7 @@
           </div>
           <div class="date-item">
             <Icon name="Clock" />
-            <span>{{ currentTime }}</span>
+            <span class="time-display">{{ currentTime }}</span>
           </div>
         </div>
       </div>
@@ -577,6 +577,11 @@ onBeforeUnmount(() => {
 
       span {
         font-weight: 500;
+      }
+
+      .time-display {
+        display: inline-block;
+        font-variant-numeric: tabular-nums;
       }
     }
   }

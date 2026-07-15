@@ -1,5 +1,5 @@
 <template>
-  <span>
+  <span class="fullscreen-btn">
     <Icon :name="isFullscreen ? 'svg-exit-fullscreen' : 'svg-fullscreen'" :color="props.color" @click="onClick" />
   </span>
 </template>
@@ -50,4 +50,8 @@ onBeforeUnmount(() => {
 })
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.fullscreen-btn {
+  cursor: pointer;
+}
+</style>

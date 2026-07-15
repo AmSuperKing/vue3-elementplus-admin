@@ -1,6 +1,6 @@
 <!-- TableExample.vue -->
 <template>
-  <div id="app" style="padding: 20px;">
+  <div style="padding: 20px;">
     <h2>📊 多维表格组件示例</h2>
 
     <!-- 控制面板 -->
