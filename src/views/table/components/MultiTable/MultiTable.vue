@@ -4,7 +4,8 @@
     class="multi-table-layout"
     :class="{
       'multi-table-layout__small': props.size === 'small',
-      'multi-table-layout__large': props.size === 'large'
+      'multi-table-layout__large': props.size === 'large',
+      'multi-table-layout--highlight-selected': props.highlightSlectedRow
     }"
     :style="styleMethods.tableConfigStyle.value"
   >

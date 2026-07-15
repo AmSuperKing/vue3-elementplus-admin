@@ -34,6 +34,7 @@
       @selection-change="onSelectionChange"
       :selectable-props="(row: Record<string, unknown>) => { return row.id === 1 }"
       rowHoverBg="#fef2eb"
+      :highlightSlectedRow="false"
       theme="#26d97a"
       showSummary
       summary="合计"

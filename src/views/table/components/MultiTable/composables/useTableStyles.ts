@@ -36,6 +36,7 @@ export function useTableStyles(
     applyStyle('--table-row-hover-bg', props.rowHoverBg)
     applyStyle('--table-row-selected-bg', props.highlightSlectedRow ? props.highlightSlectedColor : undefined)
 
+
     if (props.height) style['--table-container-height'] = typeof props.height === 'number' ? `${props.height}px` : props.height
     if (props.maxHeight) style['--table-container-max-height'] = typeof props.maxHeight === 'number' ? `${props.maxHeight}px` : props.maxHeight
     if (props.borderColor) style['--table-border-color'] = props.borderColor

@@ -4,7 +4,8 @@
     class="multi-table-layout"
     :class="{
       'multi-table-layout__small': props.size === 'small',
-      'multi-table-layout__large': props.size === 'large'
+      'multi-table-layout__large': props.size === 'large',
+      'multi-table-layout--highlight-selected': props.highlightSlectedRow
     }"
     :style="tableConfigStyle"
   >
@@ -429,7 +430,7 @@ const tableConfigStyle = computed(() => {
   applyStyle('--table-selector-color', props.selectorColor)
   applyStyle('--table-row-stripe-color', props.stripeColor)
   applyStyle('--table-row-hover-bg', props.rowHoverBg)
-  applyStyle('--table-row-selected-bg', props.highlightSlectedRow ? props.highlightSlectedColor : undefined)
+  applyStyle('--table-row-selected-bg', props.highlightSlectedRow ? props.highlightSlectedColor : 'inherit')
 
   if (props.height) {
     style['--table-container-height'] =  typeof props.height === 'number' ? `${props.height}px` : props.height
@@ -1277,28 +1278,38 @@ onBeforeUnmount(() => {
 
 .multi-table__row.is-row-hover {
   background-color: var(--table-row-hover-bg, #f5f7fa);
-  transition: background-color .3s;
+  transition: background-color .12s;
 }
 
 .multi-table__row.is-stripe {
   background-color: var(--table-row-stripe-color, #fafafa);
 }
 
-.multi-table__row.is-selected {
+/* 选中行高亮：仅当外层容器启用 highlightSlectedRow 时应用 */
+.multi-table-layout--highlight-selected .multi-table__row.is-selected {
   background-color: var(--table-row-selected-bg);
 }
 
-.multi-table__row.is-selected .multi-table__td {
+.multi-table-layout--highlight-selected .multi-table__row.is-selected .multi-table__td {
   background-color: var(--table-row-selected-bg);
 }
 .multi-table__row.is-row-hover:not(.is-selected) .multi-table__td {
   background-color: var(--table-row-hover-bg);
-  transition: background-color .3s;
+  transition: background-color .12s;
+}
+/* 未启用 highlightSlectedRow 时，选中行 hover 也需显示 rowHoverBg */
+.multi-table-layout:not(.multi-table-layout--highlight-selected) .multi-table__row.is-selected.is-row-hover {
+  background-color: var(--table-row-hover-bg);
+  transition: background-color .12s;
+}
+.multi-table-layout:not(.multi-table-layout--highlight-selected) .multi-table__row.is-selected.is-row-hover .multi-table__td {
+  background-color: var(--table-row-hover-bg);
+  transition: background-color .12s;
 }
 
 .multi-table__row.is-stripe.is-row-hover {
   background-color: var(--table-row-hover-bg, #f5f7fa);
-  transition: background-color .3s;
+  transition: background-color .12s;
 }
 
 .multi-table__td {
@@ -1365,12 +1376,17 @@ onBeforeUnmount(() => {
   background-color: var(--table-row-hover-bg, #f5f7fa);
 }
 
-.multi-table__row.is-selected .multi-table__td.is-fixed-left,
-.multi-table__row.is-selected .multi-table__td.is-fixed-right,
-.multi-table__row.is-selected.is-row-hover .multi-table__td.is-fixed-left,
-.multi-table__row.is-selected.is-row-hover .multi-table__td.is-fixed-right {
+.multi-table-layout--highlight-selected .multi-table__row.is-selected .multi-table__td.is-fixed-left,
+.multi-table-layout--highlight-selected .multi-table__row.is-selected .multi-table__td.is-fixed-right,
+.multi-table-layout--highlight-selected .multi-table__row.is-selected.is-row-hover .multi-table__td.is-fixed-left,
+.multi-table-layout--highlight-selected .multi-table__row.is-selected.is-row-hover .multi-table__td.is-fixed-right {
   background-color: var(--table-row-selected-bg);
   opacity: 1;
+}
+/* 未启用 highlightSlectedRow 时，固定列在选中行 hover 时也显示 rowHoverBg */
+.multi-table-layout:not(.multi-table-layout--highlight-selected) .multi-table__row.is-selected.is-row-hover .multi-table__td.is-fixed-left,
+.multi-table-layout:not(.multi-table-layout--highlight-selected) .multi-table__row.is-selected.is-row-hover .multi-table__td.is-fixed-right {
+  background-color: var(--table-row-hover-bg);
 }
 
 .td-content {
