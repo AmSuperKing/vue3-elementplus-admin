@@ -69,17 +69,17 @@ export function useSummary(
     }
 
     // 2) 默认：首列展示 label，其它列自动求和
-    let labelPlaced = false
+    // let labelPlaced = false
     for (const col of leafColumns.value) {
       if (col.dataIndex === '__selection__' || col.dataIndex === '__index__') {
         result[col.dataIndex] = ''
         continue
       }
-      if (!labelPlaced) {
-        result[col.dataIndex] = props.summary ?? '合计'
-        labelPlaced = true
-        continue
-      }
+      // if (!labelPlaced) {
+      //   result[col.dataIndex] = props.summary ?? '合计'
+      //   labelPlaced = true
+      //   continue
+      // }
 
       let sum = 0
       let hasValue = false
@@ -103,6 +103,22 @@ export function useSummary(
       }
 
       result[col.dataIndex] = hasValue && allNumeric ? formatSum(sum, maxPrecision, anyThousandsSep) : ''
+    }
+
+    let firstColKey = null;
+    const resultKeys = Object.keys(result)
+    for (const key of resultKeys) {
+      if (key !== '__selection__' && key !== '__index__') {
+        firstColKey = key
+        break
+      }
+    }
+    if (firstColKey) {
+      // 判断第一个 key 的值是否为"空值"
+      const isEmpty = result[firstColKey] === null || result[firstColKey] === undefined || result[firstColKey] === ''
+      if (isEmpty) {
+        result[firstColKey] = props.summary ?? '合计';
+      }
     }
     return result
   })
