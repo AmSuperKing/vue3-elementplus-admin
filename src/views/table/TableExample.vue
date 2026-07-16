@@ -27,20 +27,20 @@
       :data="tableData"
       :selectable="selectable"
       :selectMode="selectMode"
-      headerCellBg="#ebfaf3"
-      :stripe="false"
+      headerCellBg="#fafafa"
+      :stripe="true"
       click-row-to-select
       v-model:selectedRowKeys="selectedRowKeys"
       @selection-change="onSelectionChange"
+      @sort-change="onSortChange"
       :selectable-props="(row: Record<string, unknown>) => { return row.id === 1 }"
-      rowHoverBg="#fef2eb"
+      rowHoverBg="#f5f7fa"
       :highlightSlectedRow="false"
-      theme="#26d97a"
       showSummary
       summary="合计"
       showIndex
-      size="large"
-      :rowIndexFormat="(index: number, row:Record<string, unknown>) => index"
+      size="small"
+      :rowIndexFormat="(index: number, row:Record<string, unknown>) => `${index + 1}`.padStart(2, '0')"
       :headerRowStyle="(rowContextKey, idx) => { return {'--header-test': 'var(--test-class-info)'} }"
       :cell-text-ellipsis="false"
     >
@@ -138,7 +138,7 @@ const selectedRowKeys = ref<(string | number)[]>([])
 const columns: ColumnConfig[] = [
   { dataIndex: 'name', title: '名目', width: 100, fixed: 'left', },
   { dataIndex: 'purchaseNo', title: '采购单号', fixed: 'left', width: 150 },
-  { dataIndex: 'inDate', title: '入库日期', width: 90, resizable: true },
+  { dataIndex: 'inDate', title: '入库日期', width: 120, resizable: true, sortable: true },
   { dataIndex: 'supplierName', title: '供应商名称', width: 180, resizable: true, fixed: 'left', },
   { dataIndex: 'orderSourceName', title: '采购订单来源', width: 90, resizable: true },
   { dataIndex: 'goodsSourceTypeName', title: '产品来源', width: 80, resizable: true },
@@ -151,8 +151,8 @@ const columns: ColumnConfig[] = [
       { dataIndex: 'goodsSourceTypeName', title: '产品来源', resizable: true, align: 'center' },
       { dataIndex: 'goodNo', title: '产品编码', resizable: true },
       { dataIndex: 'goodArea', title: '销售城市', resizable: true },
-      { dataIndex: 'goodPrice', title: '价格', resizable: true },
-      { dataIndex: 'goodGcoss', title: '利润', resizable: true },
+      { dataIndex: 'goodPrice', title: '价格', resizable: true, sortable: true },
+      { dataIndex: 'goodGcoss', title: '利润', resizable: true, sortable: true },
     ]
   },
   {
@@ -163,16 +163,16 @@ const columns: ColumnConfig[] = [
     align: 'right',
     children: [
       { dataIndex: 'name', title: '费用名称', resizable: true, align: 'center' },
-      { dataIndex: 'baseCommission', title: '基础费', resizable: true },
-      { dataIndex: 'extraCommission', title: '提成费', resizable: true },
+      { dataIndex: 'baseCommission', title: '基础费', resizable: true, sortable: true },
+      { dataIndex: 'extraCommission', title: '提成费', resizable: true, sortable: true },
     ]
   },
-  { dataIndex: 'totalGrossProfitAmount', title: '采购总毛利', width: 100, resizable: true },
+  { dataIndex: 'totalGrossProfitAmount', title: '采购总毛利', width: 150, resizable: true, sortable: true },
   { dataIndex: 'salesmanName', title: '采购员', width: 80, resizable: true },
-  { dataIndex: 'totalPurchaseAmount', title: '采购总金额', width: 80, resizable: true },
-  { dataIndex: 'paidAmount', title: '已付金额', width: 80, resizable: true },
-  { dataIndex: 'inputInvoiceStatusName', title: '进项票状态', width: 80, resizable: true },
-  { dataIndex: 'inputInvoiceDate', title: '进项票日期', width: 120, resizable: true },
+  { dataIndex: 'totalPurchaseAmount', title: '采购总金额', width: 150, resizable: true, sortable: true },
+  { dataIndex: 'paidAmount', title: '已付金额', width: 100, resizable: true, sortable: true },
+  { dataIndex: 'inputInvoiceStatusName', title: '进项票状态', width: 100, resizable: true },
+  { dataIndex: 'inputInvoiceDate', title: '进项票日期', width: 120, resizable: true, sortable: true },
   { dataIndex: 'operation', title: '操作', fixed: 'right', width: 150, align: 'center' },
 ]
 
@@ -263,6 +263,10 @@ for (let i = 0; i < 100; i++) {
 
 function onSelectionChange(selectedRows: TableRow[], keys: (string | number)[]) {
   console.log('选中行变化:', selectedRows, keys)
+}
+
+function onSortChange(dataIndex: string, order: 'asc' | 'desc' | null) {
+  console.log('排序变化:', dataIndex, order)
 }
 
 interface TableRow {

@@ -25,12 +25,17 @@
           { 'is-fixed-left': cell.fixed === 'left' },
           { 'is-fixed-right': cell.fixed === 'right' },
           { 'is-last-column': cell.dataIndex === lastColumnKey },
+          { 'is-sortable': cell._isLeaf && cell.sortable && !cell._isSelection && !cell._isDataIndex },
+          { [`is-sort-${getSortOrder(cell.dataIndex)}`]: cell._isLeaf && cell.sortable && !!getSortOrder(cell.dataIndex) },
           resizing && resizeColIndex === cell.dataIndex ? 'is-resizing' : '',
           typeof headerCellClassName === 'function' ? headerCellClassName(cell, cellIdx, row, rowIndex, headerRows) : headerCellClassName
         ]"
         :style="getHeaderCellStyle(cell, cellIdx, row, rowIndex, headerRows)"
       >
-        <div class="th-content">
+        <div
+          class="th-content"
+          @click="onHeaderClick(cell, $event)"
+        >
           <!-- 选择列表头 -->
           <SelectionHeader
             v-if="cell._isSelection"
@@ -57,6 +62,21 @@
           >
             <span class="th-title">{{ cell.title }}</span>
           </slot>
+
+          <!-- 排序图标 -->
+          <span
+            v-if="cell._isLeaf && cell.sortable && !cell._isSelection && !cell._isDataIndex"
+            class="sort-caret-wrapper"
+          >
+            <span
+              class="sort-caret sort-caret--asc"
+              :class="{ active: getSortOrder(cell.dataIndex) === 'asc' }"
+            />
+            <span
+              class="sort-caret sort-caret--desc"
+              :class="{ active: getSortOrder(cell.dataIndex) === 'desc' }"
+            />
+          </span>
         </div>
 
         <!-- 列拖拽手柄 -->
@@ -76,7 +96,7 @@
 
 <script setup lang="ts">
 import type { CSSProperties } from 'vue'
-import type { FlatColumn, HeaderRow } from './types'
+import type { FlatColumn, HeaderRow, SortOrder } from './types'
 import SelectionHeader from './SelectionHeader.vue'
 import "./style.css"
 
@@ -96,9 +116,20 @@ defineProps<{
   getHeaderCellStyle: (cell: FlatColumn, cellIndex: number, row: HeaderRow, rowIndex: number, rows: HeaderRow[]) => CSSProperties
   onResizeMouseDown: (e: MouseEvent, dataIndex: string, width: number) => void
   getEffectiveWidth: (dataIndex: string, defaultWidth: number) => number
+  getSortOrder: (dataIndex: string) => SortOrder
 }>()
 
-defineEmits<{
+const emit = defineEmits<{
   (e: 'toggleSelectAll'): void
+  (e: 'headerSort', dataIndex: string): void
 }>()
+
+function onHeaderClick(cell: FlatColumn, event: MouseEvent) {
+  // 排序仅在叶子列 + sortable + 非选择/序号列上触发
+  if (!cell._isLeaf || !cell.sortable || cell._isSelection || cell._isDataIndex) return
+  // 若点击目标位于 resize-handle 上，交给拖拽逻辑处理
+  const target = event.target as HTMLElement
+  if (target && target.closest && target.closest('.resize-handle')) return
+  emit('headerSort', cell.dataIndex)
+}
 </script>

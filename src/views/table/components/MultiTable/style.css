@@ -106,6 +106,7 @@
   align-items: center;
   justify-content: inherit;
   min-height: 22px;
+  width: 100%;
 }
 
 .th-title {
@@ -327,6 +328,79 @@ multi-table__summary-small {
 }
 multi-table__summary-large {
   font-size: 16px;
+}
+
+/* 总结行 tfoot（列对齐 + sticky 底部） */
+.multi-table__summary-tfoot {
+  position: sticky;
+  bottom: 0;
+  z-index: 4;
+  background-color: var(--table-summary-bg, #fafafa);
+}
+.multi-table__summary-row {
+  background-color: var(--table-summary-bg, #fafafa);
+}
+.multi-table__summary-td {
+  padding: 10px 16px;
+  font-weight: 600;
+  color: var(--table-summary-color, #333);
+  background-color: var(--table-summary-bg, #fafafa);
+  border-top: 1px solid var(--table-border-color, #e8e8e8);
+  border-bottom: none;
+}
+.multi-table__summary-td-small {
+  padding: 5px 8px;
+}
+.multi-table__summary-td-large {
+  padding: 14px 20px;
+}
+/* 固定列 summary 保持背景不透明 */
+.multi-table__summary-td.is-fixed-left,
+.multi-table__summary-td.is-fixed-right {
+  background-color: var(--table-summary-bg, #fafafa);
+  z-index: 5;
+}
+
+/* 排序相关 */
+.multi-table__th.is-sortable {
+  cursor: pointer;
+  user-select: none;
+}
+.multi-table__th.is-sortable:hover .th-title {
+  color: var(--table-primary-color, #1890ff);
+}
+.multi-table__th.is-sort-asc .sort-caret--asc,
+.multi-table__th.is-sort-desc .sort-caret--desc {
+  /* 高亮颜色已在 .sort-caret.active 中处理，此处可预留扩展位 */
+}
+.sort-caret-wrapper {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 18px;
+  margin-left: 6px;
+  flex-shrink: 0;
+}
+.sort-caret {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  transition: border-color .15s ease;
+}
+.sort-caret--asc {
+  border-bottom: 5px solid #c0c4cc;
+  margin-bottom: 2px;
+}
+.sort-caret--asc.active {
+  border-bottom-color: var(--table-primary-color, #1890ff);
+}
+.sort-caret--desc {
+  border-top: 5px solid #c0c4cc;
+}
+.sort-caret--desc.active {
+  border-top-color: var(--table-primary-color, #1890ff);
 }
 
 /* 空数据 */

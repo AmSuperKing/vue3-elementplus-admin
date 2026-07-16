@@ -16,9 +16,15 @@ interface ColumnConfig {
   width?: number;         // 列宽（默认 120）
   fixed?: 'left' | 'right'; // 固定位置
   resizable?: boolean;    // 是否允许拖拽调整宽度
+  sortable?: boolean;     // 是否开启排序（仅对叶子列生效）
   align?: 'left' | 'center' | 'right'; // 对齐方式
   children?: ColumnConfig[]; // 子列配置（用于多级表头）
 }
+```
+
+### SortOrder (排序方向)
+```ts
+type SortOrder = 'asc' | 'desc' | null
 ```
 
 ### FlatColumn (内部扁平化列)
@@ -80,9 +86,10 @@ interface FlatColumn extends ColumnConfig {
 | `showIndex`                  | `boolean`                         | `false`     | 是否显示序号列                          |
 | `indexColumnWidth`           | `number`                          | `80`        | 序号列宽度                              |
 | `rowIndexFormat`             | `(index, row) => string | number` | -           | 自定义序号格式化                        |
-| `showSummary`                | `boolean`                         | -           | 是否显示总结行                          |
-| `summary`                    | `string`                          | -           | 总结文本内容                            |
-| `summaryFitTableContentWith` | `boolean`                         | `false`     | 总结行是否跟随表格内容宽度              |
+| `showSummary`                | `boolean`                         | -           | 是否显示总结行                            |
+| `summary`                    | `string`                          | -           | 总结行首列的标签文本（默认合计）    |
+| `summaryFitTableContentWith` | `boolean`                         | `false`     | 总结行自定义 slot 是否跟随表格内容宽度 |
+| `summaryMethod`              | `(leaf, rows) => Record`          | -           | 自定义总结计算：返回 dataIndex → 值 |
 | `headerRowClassName`         | `string | Function`               | -           | 表头行自定义类名                        |
 | `headerRowStyle`             | `CSSProperties | Function`        | -           | 表头行自定义样式                        |
 | `headerCellClassName`        | `string | Function`               | -           | 表头单元格自定义类名                    |
@@ -120,6 +127,7 @@ interface FlatColumn extends ColumnConfig {
 | `cell-mouseenter`        | `(cellInfo, row)`                 | 鼠标进入单元格               |
 | `cell-mouseleave`        | `(cellInfo, row)`                 | 鼠标离开单元格               |
 | `scroll`                 | `(event: Event)`                  | 表格滚动（100ms 节流）       |
+| `sort-change`            | `(dataIndex, order)`              | 排序变更（order: 'asc' \| 'desc' \| null） |
 
 > **cellInfo 结构**: `{ column: LeafColumn, value: unknown, dataIndex: string, rowIndex: number }`
 
@@ -147,6 +155,11 @@ interface FlatColumn extends ColumnConfig {
 | `getEffectiveWidth`    | `(dataIndex, defaultWidth)` | `number`      | 获取列的实际宽度（含拖拽覆盖）                               |
 | `widthOverrides`       | -                           | `Ref<Record>` | 列宽拖拽覆盖值的响应式对象                                   |
 | `tableContext`         | -                           | `Object`      | 暴露内部表格上下文（headerRows, leafColumns, totalWidth 等） |
+| `getSortOrder`         | `(dataIndex)`               | `SortOrder`   | 获取指定列当前排序状态                              |
+| `toggleSort`           | `(dataIndex)`               | `void`        | 手动切换指定列的排序状态 (null->asc->desc->null)      |
+| `clearSort`            | `(dataIndex?)`              | `void`        | 清除指定列或所有列的排序状态                        |
+| `sortStates`           | -                           | `Ref<Record>` | 当前所有列的排序状态                                |
+| `summaryCells`         | -                           | `Ref<Record>` | 当前总结行各列的实际文本                          |
 
 ### 使用示例
 
@@ -190,6 +203,7 @@ function getSelected() {
 | `header_${dataIndex}`        | `{ column, row, depth, index }` | 自定义表头内容（多级表头格式为 `parent_child`） |
 | `cell_${dataIndex}`          | `{ row, column, value, index }` | 自定义单元格内容                                |
 | `cell_${dataIndex}_${field}` | `{ value, row }`                | 对象值字段的自定义渲染                          |
+| `summary_${dataIndex}`       | `{ column, value }`             | 总结行指定列的自定义内容                        |
 
 
 
@@ -199,12 +213,15 @@ function getSelected() {
 
 ## 📝 注意事项
 
-1. 子行展开：当 `columns` 中配置了 `children` 且对应数据为数组时，组件自动将该行展开为多行子行展示。
-2. 列拖拽：需在列配置中设置 `resizable: true`，最小拖拽宽度为 `50px`。
-3. 防抖机制：行/单元格的 `click`、`mouseenter`、`mouseleave` 及 `scroll` 事件均内置防抖/节流，避免高频触发。
-4. 主题色：设置 `theme` 后会自动生成 **5.5%** 透明度的衍生色作为默认背景，各独立颜色属性优先级高于主题色。
-5. Radio name 唯一性：组件内部使用 `useId()` 生成唯一 ID，确保多实例共存时 radio 互不干扰。
-6. 当前表格组件原理是对数据进行展开拓屏进行达到渲染多维嵌套数据的效果，本质还是`table`的`rowspan`和`colspan`处理。不支持展开行功能，不支持树形渲染显示效果；未实现节点懒加载与大数据量的虚拟滚动。
+1. 子行展开：当 `columns` 中配置了 `children` 且对应数据为数组时，组件自动将该行展开为多行子行展示（折叠行数据渲染）。
+2. 属性数据渲染：当 `columns` 中配置了 `children` 且对应数据为普通对象时，各子列从父对象上读取同名属性。以上两种方式可以共存。
+3. 列拖拽：需在列配置中设置 `resizable: true`，最小拖拽宽度为 `50px`。
+4. 排序：在叶子列配置中设置 `sortable: true`，表头会出现双三角图标。点击顺序：`null → asc → desc → null`。各列排序状态相互独立互不影响，仅将当前变化列通过 `sort-change` 事件抛出（一般交给服务端处理排序）。
+5. 总结行：`showSummary` 开启后默认以 `<tfoot>` 形式列对齐渲染，sticky 底部。首列展示 `summary` label，其余各列自动求和（支持千分位/小数/负号），非数字列自动留空；可通过 `summary_${dataIndex}` 插槽覆盖单列，或使用 `summaryMethod` 接管全部计算；传入 `#summary` slot 则回退为旧版单行横向内容（兼容）。
+6. 防抖机制：行/单元格的 `click`、`mouseenter`、`mouseleave` 及 `scroll` 事件均内置防抖/节流，避免高频触发。
+7. 主题色：设置 `theme` 后会自动生成 **5.5%** 透明度的衍生色作为默认背景，各独立颜色属性优先级高于主题色。
+8. Radio name 唯一性：组件内部使用 `useId()` 生成唯一 ID，确保多实例共存时 radio 互不干扰。
+9. 当前表格组件原理是对数据进行展开拓屏达到渲染多维嵌套数据的效果，本质还是`table`的`rowspan`和`colspan`处理。未实现节点懒加载与大数据量的虚拟滚动。
 
 
 

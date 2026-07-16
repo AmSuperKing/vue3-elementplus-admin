@@ -40,9 +40,12 @@ export interface MultiTableProps {
   showSummary?: boolean
   summary?: string
   summaryFitTableContentWith?: boolean
+  summaryMethod?: (leafColumns: LeafColumn[], expandedRows: ExpandedRow[]) => Record<string, string | number>
   selectableProps?: (row: Record<string, unknown>) => boolean
   cellTextEllipsis?: boolean
 }
+
+export type SortOrder = 'asc' | 'desc' | null
 
 export interface MultiTableEvent {
   (e: 'update:selectedRowKeys', keys: (string | number)[]): void
@@ -58,6 +61,7 @@ export interface MultiTableEvent {
   (e: 'cell-mouseenter', cellInfo: Record<string, unknown>, row: Record<string, unknown>): void
   (e: 'cell-mouseleave', cellInfo: Record<string, unknown>, row: Record<string, unknown>): void
   (e: 'scroll', scrollEvent: Event): void
+  (e: 'sort-change', dataIndex: string, order: SortOrder): void
 }
 
 export interface ColumnConfig {
@@ -66,6 +70,7 @@ export interface ColumnConfig {
   width?: number
   fixed?: 'left' | 'right'
   resizable?: boolean
+  sortable?: boolean
   align?: 'left' | 'center' | 'right'
   children?: ColumnConfig[]
 }
