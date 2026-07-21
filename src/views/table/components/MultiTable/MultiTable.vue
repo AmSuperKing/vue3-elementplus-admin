@@ -142,6 +142,9 @@ const props = withDefaults(
     indexColumnWidth: 80,
     summaryFitTableContentWith: false,
     cellTextEllipsis: true,
+    collapsibleSubRow: false,
+    defaultSubRowExpanded: false,
+    expandColumnWidth: 44,
   }
 )
 
@@ -160,13 +163,16 @@ const columnsRef = toRef(props, 'columns')
 const selectableRef = toRef(props, 'selectable')
 const showIndexRef = toRef(props, 'showIndex')
 const indexColumnWidthRef = toRef(props, 'indexColumnWidth')
-const columnMethods = useColumns(columnsRef, resizableMethods.widthOverrides, selectableRef, { showIndex: showIndexRef, indexColumnWidth: indexColumnWidthRef })
+const collapsibleRef = toRef(props, 'collapsibleSubRow')
+const defaultSubRowExpandedRef = toRef(props, 'defaultSubRowExpanded')
+const expandColumnWidthRef = toRef(props, 'expandColumnWidth')
+const columnMethods = useColumns(columnsRef, resizableMethods.widthOverrides, selectableRef, { showIndex: showIndexRef, indexColumnWidth: indexColumnWidthRef }, collapsibleRef, expandColumnWidthRef)
 
 // 3. 选择逻辑
 const selectionMethods = useSelection(tableData, props, emit)
 
 // 4. 子行展开逻辑
-const expandMethods = useRowExpand(tableData, columnsRef, selectionMethods.getRowKey)
+const expandMethods = useRowExpand(tableData, columnsRef, selectionMethods.getRowKey, collapsibleRef, defaultSubRowExpandedRef)
 
 // 4.1 排序逻辑（每列独立状态）
 const sortMethods = useSort(emit)
@@ -260,6 +266,7 @@ const rowEvents = {
   cellMouseEnter: eventMethods.onCellMouseEnter,
   cellMouseLeave: eventMethods.onCellMouseLeave,
   toggleSelection: selectionMethods.toggleSelection,
+  toggleExpand: expandMethods.toggleRowExpand,
 }
 
 // ================= Expose =================
@@ -308,6 +315,10 @@ defineExpose({
   clearSort: sortMethods.clearSort,
   // 总结行相关
   summaryCells: summaryMethods.summaryCells,
+  // 子行折叠/展开相关
+  isRowExpanded: expandMethods.isRowExpanded,
+  toggleRowExpand: expandMethods.toggleRowExpand,
+  setAllExpanded: expandMethods.setAllExpanded,
   scrollTo,
   setScrollTop,
   setScrollLeft,

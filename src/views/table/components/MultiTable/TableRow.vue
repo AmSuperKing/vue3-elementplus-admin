@@ -40,9 +40,23 @@
         @mouseleave="$emit('cellMouseLeave', col, expandedRow)"
       >
         <div class="td-content">
+          <!-- 折叠/展开列 -->
+          <template v-if="col.dataIndex === '__expand__'">
+            <button
+              v-if="expandedRow.collapsible"
+              type="button"
+              class="multi-table__expand-btn"
+              :class="{ 'is-expanded': expandedRow.expanded }"
+              :title="expandedRow.expanded ? '收起' : `展开（共 ${expandedRow.realTotalSubRows} 项）`"
+              @click.stop="$emit('toggleExpand', expandedRow.originalRow)"
+            >
+              <span class="multi-table__expand-caret"></span>
+            </button>
+          </template>
+
           <!-- 选择列 -->
           <SelectionCell
-            v-if="col.dataIndex === '__selection__'"
+            v-else-if="col.dataIndex === '__selection__'"
             :size="size"
             :select-mode="selectMode"
             :is-selected="typeof isSelected === 'function' ? isSelected(expandedRow.originalRow) : isSelected"
@@ -124,5 +138,6 @@ defineEmits<{
   (e: 'cellMouseEnter', col: LeafColumn, expandedRow: ExpandedRow): void
   (e: 'cellMouseLeave', col: LeafColumn, expandedRow: ExpandedRow): void
   (e: 'toggleSelection', row: Record<string, unknown>): void
+  (e: 'toggleExpand', row: Record<string, unknown>): void
 }>()
 </script>

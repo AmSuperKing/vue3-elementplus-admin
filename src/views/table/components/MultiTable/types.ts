@@ -43,6 +43,12 @@ export interface MultiTableProps {
   summaryMethod?: (leafColumns: LeafColumn[], expandedRows: ExpandedRow[]) => Record<string, string | number>
   selectableProps?: (row: Record<string, unknown>) => boolean
   cellTextEllipsis?: boolean
+  /** 是否允许折叠/展开由数组渲染出的子行（子行过多时可折叠以便阅读） */
+  collapsibleSubRow?: boolean
+  /** 开启折叠时，子行默认是否展开（默认 false，即默认折叠只展示首行） */
+  defaultSubRowExpanded?: boolean
+  /** 折叠/展开列宽度 */
+  expandColumnWidth?: number
 }
 
 export type SortOrder = 'asc' | 'desc' | null
@@ -106,6 +112,13 @@ export interface ExpandedRow {
   originalRow: Record<string, unknown>
   originalIndex: number
   subRowIndex: number
+  /** 实际渲染的子行数（折叠时为 1），用于单元格 rowspan 计算 */
   totalSubRows: number
+  /** 数组数据真实的子行总数（不受折叠影响），用于展示与判断是否可折叠 */
+  realTotalSubRows: number
+  /** 当前行组是否可折叠（开启折叠且真实子行数 > 1） */
+  collapsible: boolean
+  /** 当前行组是否处于展开状态 */
+  expanded: boolean
   subRowDataMap: Record<string, Record<string, unknown> | undefined>
 }

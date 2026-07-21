@@ -87,7 +87,9 @@ export function useColumns(
   columns: Ref<ColumnConfig[]>,
   widthOverrides: Ref<Record<string, number>>,
   selectable: Ref<boolean>,
-  indexColumnConfig: IndexColumnConfig
+  indexColumnConfig: IndexColumnConfig,
+  collapsible?: Ref<boolean>,
+  expandColumnWidth?: Ref<number>
 ) {
   // 动态注入选择列
   const actualColumns = computed(() => {
@@ -106,6 +108,16 @@ export function useColumns(
         dataIndex: '__selection__',
         title: '',
         width: 50,
+        fixed: 'left',
+        align: 'center',
+      })
+    }
+    // 折叠/展开列置于最左侧，固定左列
+    if (collapsible?.value) {
+      cols.unshift({
+        dataIndex: '__expand__',
+        title: '',
+        width: expandColumnWidth?.value || 44,
         fixed: 'left',
         align: 'center',
       })

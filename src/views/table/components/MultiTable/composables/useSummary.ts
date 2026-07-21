@@ -72,7 +72,7 @@ export function useSummary(
     // 2) 默认：首列展示 label，其它列自动求和
     for (const col of leafColumns.value) {
       const colKey = getLeafColKey(col)
-      if (col.dataIndex === '__selection__' || col.dataIndex === '__index__') {
+      if (col.dataIndex === '__selection__' || col.dataIndex === '__index__' || col.dataIndex === '__expand__') {
         result[colKey] = ''
         continue
       }
@@ -104,7 +104,7 @@ export function useSummary(
     let firstColKey = null;
     const resultKeys = Object.keys(result)
     for (const key of resultKeys) {
-      if (key !== '__selection__' && key !== '__index__') {
+      if (key !== '__selection__' && key !== '__index__' && key !== '__expand__') {
         firstColKey = key
         break
       }

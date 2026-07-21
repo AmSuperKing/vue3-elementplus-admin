@@ -221,6 +221,33 @@
   padding: 14px 12px;
 }
 
+/* 折叠/展开列 */
+.multi-table__expand-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--table-primary-color, #1890ff);
+}
+
+.multi-table__expand-caret {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 5px 0 5px 7px;
+  border-color: transparent transparent transparent currentColor;
+  transition: transform 0.2s ease;
+}
+
+.multi-table__expand-btn.is-expanded .multi-table__expand-caret {
+  transform: rotate(90deg);
+}
+
 .multi-table__td.is-hover-cell,
 .multi-table__row.is-row-hover:not(.is-row-hover) .multi-table__td {
   background-color: var(--table-row-hover-bg, #f5f7fa);
