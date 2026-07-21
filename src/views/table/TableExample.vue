@@ -38,15 +38,17 @@
       :highlightSlectedRow="false"
       showSummary
       summary="合计"
+      summaryFitTableContentWidth
       showIndex
       size="small"
       collapsibleSubRow
-      :default-sub-row-expanded="false"
+      :default-sub-row-expanded="true"
       :rowIndexFormat="(index: number, row:Record<string, unknown>) => `${index + 1}`.padStart(2, '0')"
       :headerRowStyle="(rowContextKey, idx) => { return {'--header-test': 'var(--test-class-info)'} }"
       :cell-text-ellipsis="false"
     >
       <template #header>表头插槽</template>
+      <template #footer>表尾插槽</template>
       <!-- 表头插槽 -->
       <template #header_purchaseNo="{ column }">
         <span style="color: #1890ff; font-weight: bold;">🔖 {{ column.title }}</span>

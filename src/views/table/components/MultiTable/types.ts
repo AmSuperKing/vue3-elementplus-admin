@@ -39,7 +39,7 @@ export interface MultiTableProps {
   indexColumnWidth?: number
   showSummary?: boolean
   summary?: string
-  summaryFitTableContentWith?: boolean
+  summaryFitTableContentWidth?: boolean
   summaryMethod?: (leafColumns: LeafColumn[], expandedRows: ExpandedRow[]) => Record<string, string | number>
   selectableProps?: (row: Record<string, unknown>) => boolean
   cellTextEllipsis?: boolean

@@ -233,6 +233,7 @@
   background: transparent;
   cursor: pointer;
   color: var(--table-primary-color, #1890ff);
+  color: color-mix(in srgb, var(--table-primary-color, #1890ff) 80%, white);
 }
 
 .multi-table__expand-caret {

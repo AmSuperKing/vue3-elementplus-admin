@@ -253,7 +253,7 @@
       </div>
 
       <!-- 总结行 -->
-      <div v-if="props.showSummary && props.summaryFitTableContentWith" class="multi-table__summary">
+      <div v-if="props.showSummary && props.summaryFitTableContentWidth" class="multi-table__summary">
         <slot name="summary">
           <div class="multi-table__summary-text">{{ props.summary }}</div>
         </slot>
@@ -275,7 +275,7 @@
     </div>
 
     <!-- 总结行 -->
-    <div v-if="props.showSummary && !props.summaryFitTableContentWith" class="multi-table__summary">
+    <div v-if="props.showSummary && !props.summaryFitTableContentWidth" class="multi-table__summary">
       <slot name="summary">
         <div class="multi-table__summary-text">{{ props.summary }}</div>
       </slot>
@@ -335,7 +335,7 @@ const props = withDefaults(
     indexColumnWidth?: number
     showSummary?: boolean
     summary?: string
-    summaryFitTableContentWith?: boolean
+    summaryFitTableContentWidth?: boolean
     selectableProps?: (row: Record<string, unknown>) => boolean
     cellTextEllipsis?: boolean
   }>(),
@@ -351,7 +351,7 @@ const props = withDefaults(
     selectedRowKeys: () => [],
     showIndex: false,
     indexColumnWidth: 80,
-    summaryFitTableContentWith: false,
+    summaryFitTableContentWidth: false,
     cellTextEllipsis: true,
   }
 )

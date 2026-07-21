@@ -88,7 +88,7 @@ interface FlatColumn extends ColumnConfig {
 | `rowIndexFormat`             | `(index, row) => string | number` | -           | 自定义序号格式化                        |
 | `showSummary`                | `boolean`                         | -           | 是否显示总结行                            |
 | `summary`                    | `string`                          | -           | 总结行首列的标签文本（默认合计）    |
-| `summaryFitTableContentWith` | `boolean`                         | `false`     | 总结行自定义 slot 是否跟随表格内容宽度 |
+| `summaryFitTableContentWidth` | `boolean`                         | `false`     | 总结行自定义 slot 是否跟随表格内容宽度 |
 | `summaryMethod`              | `(leaf, rows) => Record`          | -           | 自定义总结计算：返回 dataIndex → 值 |
 | `headerRowClassName`         | `string | Function`               | -           | 表头行自定义类名                        |
 | `headerRowStyle`             | `CSSProperties | Function`        | -           | 表头行自定义样式                        |

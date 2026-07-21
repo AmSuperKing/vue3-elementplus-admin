@@ -79,7 +79,7 @@
       </div>
 
       <!-- 总结行（内部：自定义 slot 充满宽度） -->
-      <div v-if="props.showSummary && props.summaryFitTableContentWith && $slots.summary" class="multi-table__summary">
+      <div v-if="props.showSummary && props.summaryFitTableContentWidth && $slots.summary" class="multi-table__summary">
         <slot name="summary"></slot>
       </div>
 
@@ -99,7 +99,7 @@
     </div>
 
     <!-- 总结行 (外部：自定义 slot 且非充满宽度时) -->
-    <div v-if="props.showSummary && !props.summaryFitTableContentWith && $slots.summary" class="multi-table__summary">
+    <div v-if="props.showSummary && !props.summaryFitTableContentWidth && $slots.summary" class="multi-table__summary">
       <slot name="summary"></slot>
     </div>
 
@@ -140,7 +140,7 @@ const props = withDefaults(
     selectedRowKeys: () => [],
     showIndex: false,
     indexColumnWidth: 80,
-    summaryFitTableContentWith: false,
+    summaryFitTableContentWidth: false,
     cellTextEllipsis: true,
     collapsibleSubRow: false,
     defaultSubRowExpanded: false,
@@ -205,7 +205,7 @@ const styleMethods = useTableStyles(
 const summaryMethods = useSummary(
   props,
   columnMethods.leafColumns,
-  expandMethods.expandedRows,
+  expandMethods.fullExpandedRows,
   expandMethods.resolveCellValue,
   expandMethods.shouldRenderCell
 )
