@@ -366,7 +366,7 @@ multi-table__summary-large {
   cursor: pointer;
   user-select: none;
 }
-.multi-table__th.is-sortable:hover .th-title {
+.multi-table__th.is-sortable .th-content:hover .th-title {
   color: var(--table-primary-color, #1890ff);
 }
 .multi-table__th.is-sort-asc .sort-caret--asc,
