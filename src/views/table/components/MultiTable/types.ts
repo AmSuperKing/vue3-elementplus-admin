@@ -41,6 +41,16 @@ export interface MultiTableProps {
   summary?: string
   summaryFitTableContentWidth?: boolean
   summaryMethod?: (leafColumns: LeafColumn[], expandedRows: ExpandedRow[]) => Record<string, string | number>
+  /**
+   * 需要统计的列：
+   *  - 不传：默认统计所有可解析为数值的列。
+   *  - 传入数组时，每一项为对应列的字段 key：
+   *      · 顶层列：直接使用 dataIndex 字符串，如 'paidAmount'。
+   *      · 子列：使用 [父列dataIndex, 子列dataIndex] 数组形式，以区分父级行与子行，
+   *        如 ['commissionDetail', 'baseCommission']。
+   *  - 若指定列对应数据非数值，则忽略（该列不显示统计值）。
+   */
+  summaryColumns?: (string | string[])[]
   selectableProps?: (row: Record<string, unknown>) => boolean
   cellTextEllipsis?: boolean
   /** 是否允许折叠/展开由数组渲染出的子行（子行过多时可折叠以便阅读） */

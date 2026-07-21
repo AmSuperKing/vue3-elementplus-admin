@@ -232,8 +232,6 @@
   border: none;
   background: transparent;
   cursor: pointer;
-  color: var(--table-primary-color, #1890ff);
-  color: color-mix(in srgb, var(--table-primary-color, #1890ff) 80%, white);
 }
 
 .multi-table__expand-caret {
@@ -241,7 +239,7 @@
   height: 0;
   border-style: solid;
   border-width: 5px 0 5px 7px;
-  border-color: transparent transparent transparent currentColor;
+  border-color: transparent transparent transparent var(--table-primary-color, #1890ff);
   transition: transform 0.2s ease;
 }
 

@@ -50,7 +50,9 @@
               :title="expandedRow.expanded ? '收起' : `展开（共 ${expandedRow.realTotalSubRows} 项）`"
               @click.stop="$emit('toggleExpand', expandedRow.originalRow)"
             >
-              <span class="multi-table__expand-caret"></span>
+              <slot name="expand-icon" :expanded="expandedRow.expanded">
+                <span class="multi-table__expand-caret"></span>
+              </slot>
             </button>
           </template>
 

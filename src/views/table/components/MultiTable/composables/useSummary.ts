@@ -41,9 +41,21 @@ function formatSum(sum: number, precision: number, hasThousandsSep: boolean): st
 }
 
 /**
+ * 将 summaryColumns 中的一项归一化为叶子列唯一 key，与 getLeafColKey 保持一致：
+ *  - 字符串：顶层列 dataIndex。
+ *  - 数组 [父列dataIndex, 子列dataIndex]：拼接为 "父.子"。
+ */
+function normalizeSummaryKey(item: string | string[]): string {
+  if (Array.isArray(item)) return item.filter((s) => s !== undefined && s !== null && s !== '').join('.')
+  return item
+}
+
+/**
  * 生成 summary 行内容。规则：
- *  - selection / index 列：留空。
+ *  - selection / index / expand 列：留空。
  *  - 首个可用列：显示 label（props.summary，默认 "合计"）。
+ *  - 统计列范围：未配置 summaryColumns 时统计所有可解析为数值的列；
+ *    配置后仅统计命中的列（顶层列用字段名，子列用 [父,子] 数组）。
  *  - 其余列：所有值均能解析为数字则求和输出，否则留空。
  *  - 数值格式（小数位、千分位）继承源数据中的最大精度与格式。
  *  - 使用 shouldRenderCell 判断哪些行参与计算（避免非数组父列的子行重复计入）。
@@ -70,9 +82,20 @@ export function useSummary(
     }
 
     // 2) 默认：首列展示 label，其它列自动求和
+    // 若配置了 summaryColumns，则仅统计命中的列；否则统计所有可数值化的列。
+    const allowedKeys = Array.isArray(props.summaryColumns)
+      ? new Set(props.summaryColumns.map(normalizeSummaryKey))
+      : null
+
     for (const col of leafColumns.value) {
       const colKey = getLeafColKey(col)
       if (col.dataIndex === '__selection__' || col.dataIndex === '__index__' || col.dataIndex === '__expand__') {
+        result[colKey] = ''
+        continue
+      }
+
+      // 指定了统计列且当前列未命中：不统计
+      if (allowedKeys && !allowedKeys.has(colKey)) {
         result[colKey] = ''
         continue
       }
