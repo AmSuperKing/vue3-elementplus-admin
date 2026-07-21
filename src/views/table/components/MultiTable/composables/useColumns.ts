@@ -59,6 +59,15 @@ function buildHeaderRows(
   return rows
 }
 
+/**
+ * 生成叶子列的唯一 key。
+ * 由于不同父列下的子列可能存在相同的 dataIndex（如顶层 name 与 commissionDetail.name），
+ * 仅用 dataIndex 作为标识会产生冲突，需拼接父列 dataIndex 保证唯一。
+ */
+export function getLeafColKey(col: LeafColumn): string {
+  return col._parentDataIndex ? `${col._parentDataIndex}.${col.dataIndex}` : col.dataIndex
+}
+
 // 获取叶子列
 function getLeafColumns(columns: ColumnConfig[]): LeafColumn[] {
   const leaves: LeafColumn[] = []

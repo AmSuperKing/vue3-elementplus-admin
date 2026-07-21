@@ -1,6 +1,7 @@
 // useSummary.ts
 import { computed, type Ref } from 'vue'
 import type { LeafColumn, ExpandedRow, MultiTableProps } from '../types'
+import { getLeafColKey } from './useColumns'
 
 /**
  * 尝试将原始单元格值解析为数字。
@@ -63,23 +64,18 @@ export function useSummary(
       const custom = props.summaryMethod(leafColumns.value, expandedRows.value) || {}
       for (const col of leafColumns.value) {
         const v = custom[col.dataIndex]
-        result[col.dataIndex] = v === undefined || v === null ? '' : String(v)
+        result[getLeafColKey(col)] = v === undefined || v === null ? '' : String(v)
       }
       return result
     }
 
     // 2) 默认：首列展示 label，其它列自动求和
-    // let labelPlaced = false
     for (const col of leafColumns.value) {
+      const colKey = getLeafColKey(col)
       if (col.dataIndex === '__selection__' || col.dataIndex === '__index__') {
-        result[col.dataIndex] = ''
+        result[colKey] = ''
         continue
       }
-      // if (!labelPlaced) {
-      //   result[col.dataIndex] = props.summary ?? '合计'
-      //   labelPlaced = true
-      //   continue
-      // }
 
       let sum = 0
       let hasValue = false
@@ -102,7 +98,7 @@ export function useSummary(
         if (parsed.hasThousandsSep) anyThousandsSep = true
       }
 
-      result[col.dataIndex] = hasValue && allNumeric ? formatSum(sum, maxPrecision, anyThousandsSep) : ''
+      result[colKey] = hasValue && allNumeric ? formatSum(sum, maxPrecision, anyThousandsSep) : ''
     }
 
     let firstColKey = null;

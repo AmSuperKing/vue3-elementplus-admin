@@ -23,9 +23,9 @@
           <slot
             :name="`summary_${col.dataIndex}`"
             :column="col"
-            :value="summaryCells[col.dataIndex]"
+            :value="summaryCells[getLeafColKey(col)]"
           >
-            <span>{{ summaryCells[col.dataIndex] }}</span>
+            <span>{{ summaryCells[getLeafColKey(col)] }}</span>
           </slot>
         </div>
       </td>
@@ -36,6 +36,7 @@
 <script setup lang="ts">
 import type { CSSProperties } from 'vue'
 import type { LeafColumn } from './types'
+import { getLeafColKey } from './composables/useColumns'
 import "./style.css"
 
 defineProps<{
