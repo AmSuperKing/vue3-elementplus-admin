@@ -171,7 +171,7 @@
       "component": "Layout",
       "meta": {
         "title": "Vue3组件",
-        "icon": "Sunset"
+        "icon": "svg-vue"
       },
       "hidden": false,
       "children": [
@@ -181,6 +181,15 @@
           "meta": {
             "title": "自定义滚动条",
             "icon": "Grid"
+          },
+          "hidden": false
+        },
+        {
+          "path": "/components/noticeBar",
+          "name": "noticeBar",
+          "meta": {
+            "title": "通知栏",
+            "icon": "Bell"
           },
           "hidden": false
         }

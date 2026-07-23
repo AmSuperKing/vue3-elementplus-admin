@@ -138,7 +138,7 @@ const routes = [
     name: 'components',
     redirect: '/components/scrollbar',
     component: Layout,
-    meta: { title: '组件', icon: 'Sunset' },
+    meta: { title: '组件', icon: 'svg-vue' },
     hidden: false,
     children: [
       {
@@ -147,6 +147,13 @@ const routes = [
         meta: { title: '自定义滚动条', icon: 'Menu' },
         hidden: false,
         component: () => import(/* webpackChunkName: "ScrollbarUsageExample" */  '@/views/scrollbar/UsageExample.vue')
+      },
+      {
+        path: 'noticeBar',
+        name: 'NoticeBar',
+        meta: { title: '通知栏', icon: 'Bell' },
+        hidden: false,
+        component: () => import(/* webpackChunkName: "NoticeBarUsageExample" */  '@/views/component/noticeBar/example.vue')
       }
     ]
   },
