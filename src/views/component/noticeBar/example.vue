@@ -4,25 +4,37 @@
       <!-- 基础横向滚动 -->
       <NoticeBar text="这是一条很长的通知文本内容，用于测试横向滚动效果展示，当内容超出容器宽度时会自动滚动播放。" class="mtb-20" @click="onClick" />
 
+      <!-- 数组文本会逐条横向滚动，每条滚完后再滚下一条，循环往复 -->
+      <NoticeBar
+        :text="[
+          '通知一：系统将于今晚维护，请及时保存工作，如有疑问请联系管理员',
+          '通知二：这是一条很长的通知文本内容，用于测试横向滚动效果展示，当内容超出容器宽度时会自动滚动播放。',
+          '通知三：这是一条很长的通知文本内容，用于测试横向滚动效果展示，当内容超出容器宽度时会自动滚动播放。',
+        ]"
+        class="mtb-20"
+      />
+
+      <!-- 单条文本行为不变 -->
+      <NoticeBar text="单条通知文本" :showLeftIcon="false" class="mtb-20" />
+
       <!-- 多条消息纵向逐条滚动 -->
       <NoticeBar
-        :text="['通知一：系统维护公告', '通知二：新版本已发布', '通知三：活动即将开始']"
-        :height="40"
+        direction="vertical"
+        :text="[
+          '通知一：系统将于今晚维护，请及时保存工作，如有疑问请联系管理员',
+          '通知二：这是一条很长的通知文本内容，用于测试纵向滚动效果展示，当内容超出容器宽度时会自动滚动播放。',
+          '通知三：这是一条很长的通知文本内容，用于测试纵向滚动效果展示，当内容超出容器宽度时会自动滚动播放。',
+        ]"
+        :height="20"
         class="mtb-20"
-         @click="onClick"
+        @click="onClick"
       />
 
       <!-- 可关闭模式 -->
-      <NoticeBar
-        mode="closeable"
-        text="这是一条可关闭的通知消息"
-        class="mtb-20"
-         @click="onClick"
-        @close="onClose"
-      />
+      <NoticeBar mode="closeable" text="这是一条可关闭的通知消息" class="mtb-20" @click="onClick" @close="onClose" />
 
       <!-- 链接模式 + 自定义左侧图标 -->
-      <NoticeBar mode="link" text="点击查看详情"  class="mtb-20"  @click="onClick">
+      <NoticeBar mode="link" text="点击查看详情" class="mtb-20" @click="onClick">
         <template #left-icon>
           <span>🔔</span>
         </template>
@@ -37,7 +49,7 @@
         :delay="0.5"
         pausedable
         class="mtb-20"
-         @click="onClick"
+        @click="onClick"
       />
 
       <!-- 禁用滚动 + 文本换行 -->
@@ -47,7 +59,7 @@
         wrapable
         :height="60"
         class="mtb-20"
-         @click="onClick"
+        @click="onClick"
       />
     </div>
   </div>

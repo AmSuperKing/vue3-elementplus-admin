@@ -38,9 +38,9 @@
         class="cus-notice-bar__content--horizontal"
         :class="{ 'cus-notice-bar__content--wrapable': wrapable && !scrolling }"
         :style="contentStyle"
-        @animationiteration="onAnimationIteration"
+        @animationiteration="onHorizontalAnimationIteration"
       >
-        <slot>{{ displayText }}</slot>
+        <slot>{{ currentHorizontalText }}</slot>
       </div>
 
       <!-- 纵向滚动 -->
@@ -52,12 +52,14 @@
         @animationiteration="onAnimationIteration"
       >
         <template v-if="textList.length > 1">
-          <span
+          <div
             v-for="(item, index) in verticalDisplayList"
             :key="`v-${index}`"
             class="cus-notice-bar__vertical-item"
             :style="{ height: heightStr, lineHeight: heightStr }"
-          >{{ item }}</span>
+          >
+            <span class="cus-notice-bar__vertical-item-text">{{ item }}</span>
+          </div>
         </template>
         <template v-else>
           <slot>{{ displayText }}</slot>
@@ -153,6 +155,18 @@ const visible = ref(true)
 const scrolling = ref(false)
 const animationName = ref('')
 
+/* ========== 横向逐条滚动相关 ========== */
+const horizontalIndex = ref(0)
+let horizontalTimer: ReturnType<typeof setTimeout> | null = null
+// ★ 标记是否正在等待切换下一条（防止 animationiteration 重复触发切换）
+let isTransitioning = false
+
+const currentHorizontalText = computed(() => {
+  const list = textList.value
+  if (list.length === 0) return ''
+  return list[horizontalIndex.value % list.length]
+})
+
 /* ========== 计算属性 ========== */
 const isHorizontal = computed(() => props.direction === 'horizontal')
 
@@ -236,11 +250,27 @@ function injectKeyframes(name: string, css: string) {
   animationName.value = name
 }
 
-/* ========== 横向滚动 ========== */
-function startHorizontalScroll() {
+/* ========== 清除横向逐条定时器 ========== */
+function clearHorizontalTimer() {
+  if (horizontalTimer !== null) {
+    clearTimeout(horizontalTimer)
+    horizontalTimer = null
+  }
+  isTransitioning = false
+}
+
+/* ========== 横向滚动（单条） ========== */
+function startHorizontalScrollForItem() {
   const wrap = wrapRef.value
   const content = contentRef.value
   if (!wrap || !content) return
+
+  // ★ 先确保移除旧动画，避免残留
+  removeDynamicKeyframes()
+
+  // ★ 强制 reflow，确保浏览器在注入新 @keyframes 前已经应用了"无动画"状态
+  // 这是消除"闪现"的关键步骤
+  void content.offsetWidth
 
   const wrapWidth = wrap.offsetWidth
   const contentWidth = content.scrollWidth
@@ -250,7 +280,8 @@ function startHorizontalScroll() {
     (props.scrollable !== false && contentWidth > wrapWidth)
 
   if (!shouldScroll) {
-    removeDynamicKeyframes()
+    // 文本不溢出：不需要滚动动画，但仍需逐条切换
+    scheduleNextHorizontalItem(2000)
     return
   }
 
@@ -266,9 +297,83 @@ function startHorizontalScroll() {
   `
   injectKeyframes(animName, keyframes)
   scrolling.value = true
+  isTransitioning = false
 
   nextTick(() => {
-    contentRef.value?.style.setProperty('--cus-notice-bar-duration', `${duration}s`)
+    if (contentRef.value) {
+      contentRef.value.style.setProperty('--cus-notice-bar-duration', `${duration}s`)
+    }
+  })
+}
+
+/**
+ * 切换到下一条横向文本
+ * ★ 核心改动：切换前先移除动画，等 DOM 更新后再启动新动画，消除闪现
+ */
+function switchToNextHorizontalItem() {
+  const list = textList.value
+  if (list.length <= 1) return
+
+  // 1. 立即标记为过渡中，阻止后续 animationiteration 重复触发
+  isTransitioning = true
+
+  // 2. 立即移除旧动画（在文本切换之前！）
+  removeDynamicKeyframes()
+
+  // 3. 更新索引 → Vue 响应式更新 DOM 文本内容
+  horizontalIndex.value = (horizontalIndex.value + 1) % list.length
+
+  // 4. 等 DOM 更新完毕后，测量新文本宽度并启动新动画
+  nextTick(() => {
+    startHorizontalScrollForItem()
+  })
+}
+
+/**
+ * 安排延时切换（用于文本不溢出的场景）
+ */
+function scheduleNextHorizontalItem(delayMs: number) {
+  clearHorizontalTimer()
+  const list = textList.value
+  if (list.length <= 1) return
+
+  isTransitioning = true
+  horizontalTimer = setTimeout(() => {
+    horizontalTimer = null
+    switchToNextHorizontalItem()
+  }, delayMs)
+}
+
+/* ========== 横向滚动动画迭代回调 ========== */
+function onHorizontalAnimationIteration() {
+  emit('replay')
+  // ★ 关键：防止重复触发
+  if (isTransitioning) return
+  const list = textList.value
+  if (list.length <= 1) return
+
+  // 滚完一轮后，短暂停顿再切换下一条
+  // ★ 在延时开始前就暂停动画，防止在等待期间出现闪现
+  if (contentRef.value) {
+    contentRef.value.style.animationPlayState = 'paused'
+  }
+  scheduleNextHorizontalItem(500)
+}
+
+/* ========== 横向滚动入口 ========== */
+function startHorizontalScroll() {
+  clearHorizontalTimer()
+  const list = textList.value
+
+  if (list.length <= 1) {
+    horizontalIndex.value = 0
+    startHorizontalScrollForItem()
+    return
+  }
+
+  horizontalIndex.value = 0
+  nextTick(() => {
+    startHorizontalScrollForItem()
   })
 }
 
@@ -311,11 +416,11 @@ function startVerticalScroll() {
     return
   }
 
-  /* ---------- 多条文本：逐条向上切换（修正版） ---------- */
+  /* ---------- 多条文本：逐条向上切换 ---------- */
   const count = textList.value.length
 
   // 每条消息停留时间（秒）
-  const pauseTime = 2
+  const pauseTime = 3
   // 滚动一条高度的时间（秒）
   const scrollTime = itemH / speedNum.value
   // 每步总时间
@@ -382,6 +487,8 @@ function startVerticalScroll() {
 async function startScroll() {
   await nextTick()
   removeDynamicKeyframes()
+  clearHorizontalTimer()
+  horizontalIndex.value = 0
   if (isHorizontal.value) {
     startHorizontalScroll()
   } else {
@@ -456,6 +563,7 @@ onMounted(() => {
 })
 onBeforeUnmount(() => {
   removeDynamicKeyframes()
+  clearHorizontalTimer()
 })
 </script>
 
@@ -536,5 +644,11 @@ onBeforeUnmount(() => {
   align-items: center;
   flex-shrink: 0;
   white-space: nowrap;
+}
+.cus-notice-bar__vertical-item-text {
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>
