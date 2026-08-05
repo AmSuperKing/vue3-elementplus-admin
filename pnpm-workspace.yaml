@@ -1,0 +1,9 @@
+allowBuilds:
+  '@enzedonline/quill-blot-formatter2': true
+  '@logicflow/core': true
+  '@parcel/watcher': true
+  core-js: true
+  es5-ext: true
+  esbuild: true
+  vue-demi: true
+  x-data-spreadsheet: true
