@@ -628,6 +628,7 @@ const vClickOutside = {
   outline: none;
   font-size: 13px;
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 .cus-pagination__jumper input::-webkit-inner-spin-button,
 .cus-pagination__jumper input::-webkit-outer-spin-button {

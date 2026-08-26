@@ -6,7 +6,7 @@
     <el-dropdown id="user-setting" class="user-name" trigger="click" @command="handleCommand">
       <span class="el-dropdown-link">
         {{ userInfo.userNameCn || '尊敬的用户' }}
-        <el-icon :color="variablesList.textColor">
+        <el-icon>
           <CaretBottom />
         </el-icon>
       </span>
@@ -21,17 +21,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserInfoStore } from '@/stores/userInfo'
-import variables from '@/assets/styles/variables.module.scss'
 import userAvator from '@/assets/imgs/avatar.png'
 
 type DropdownCommand = 'user' | 'loginout'
 
 const router = useRouter()
 const userInfo = useUserInfoStore()
-const variablesList = computed(() => variables)
 
 const handleCommand = (command: DropdownCommand) => {
   if (command === 'loginout') {
@@ -44,8 +41,6 @@ const handleCommand = (command: DropdownCommand) => {
 </script>
 
 <style lang="scss" scoped>
-@use '@/assets/styles/variables.scss' as *;
-
 .user-menu {
   display: flex;
   align-items: center;
@@ -70,7 +65,7 @@ const handleCommand = (command: DropdownCommand) => {
 .el-dropdown-link {
   max-width: 120px;
   overflow: hidden;
-  color: $textColor;
+  color: var(--text-color-primary);
   cursor: pointer;
 }
 

@@ -143,7 +143,7 @@ const compressImage = async () => {
 .preview-box {
   margin-top: 15px;
   padding: 10px;
-  background: #f5f7fa;
+  background: var(--bg-color);
   border-radius: 4px;
   text-align: center;
   display: flex;
@@ -156,13 +156,13 @@ const compressImage = async () => {
 .progress-box {
   margin: 15px 0;
   padding: 10px;
-  background: #ecf5ff;
+  background: var(--el-color-primary);
   border-radius: 4px;
 }
 .progress-text {
   margin-top: 8px;
   font-size: 12px;
-  color: #606266;
+  color: var(--text-color-regular);
   text-align: center;
 }
 </style>

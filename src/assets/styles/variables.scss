@@ -1,20 +1,20 @@
-$loginBg: #ace0f9;
+$loginBg: var(--login-bg);
 
-$headerBg: #ebf1f6;
-$headerText: #606266;
+$headerBg: var(--header-bg);
+$headerText: var(--header-text);
 
-$menuBg: #545c64;
-$menuText: #fff;
-$menuActiveText: #409eff;
-$subMenuBorder: #545c64;
-$menuActiveBg: #434a50;
+$menuBg: var(--menu-bg);
+$menuText: var(--menu-text);
+$menuActiveText: var(--menu-active-text);
+$subMenuBorder: var(--sub-menu-border);
+$menuActiveBg: var(--menu-active-bg);
 
-$tagsContainerBg: #fff;
-$tagsBg: #ebf5ff;
-$tagActiveText: #20a0ff;
+$tagsContainerBg: var(--tags-container-bg);
+$tagsBg: var(--tags-bg);
+$tagActiveText: var(--tag-active-text);
 
-$contentBg: #fff;
+$contentBg: var(--content-bg);
 
-$textColor: #606266;
-$blueColor: #20a0ff;
-$theme-color: #409eff;
+$textColor: var(--text-color);
+$blueColor: var(--blue-color);
+$theme-color: var(--theme-color);

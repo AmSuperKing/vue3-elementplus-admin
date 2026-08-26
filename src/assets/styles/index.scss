@@ -5,3 +5,48 @@
 @use './padding.scss' as *;
 @use './width.scss' as *;
 @use './height.scss' as *;
+
+// CSS 变量定义（亮色模式默认值）
+:root {
+  // 全局颜色变量 - 亮色模式默认
+  --bg-color: #ffffff;
+  --bg-color-page: #f2f3f5;
+  --bg-color-overlay: #ffffff;
+  --text-color-primary: #303133;
+  --text-color-regular: #606266;
+  --text-color-secondary: #909399;
+  --text-color-placeholder: #a8abb2;
+  --text-disabled: #c0c4cc;
+  --border-color: #dcdfe6;
+  --border-color-light: #e4e7ed;
+  --border-color-lighter: #ebeef5;
+  --border-color-extra-light: #f2f6fc;
+  --fill-color: #f0f2f5;
+  --fill-color-light: #f5f7fa;
+  --fill-color-lighter: #fafafa;
+  --fill-color-extra-light: #fcfcfc;
+  --mask-color: rgba(0, 0, 0, 0.6);
+  --box-shadow-color: rgba(0, 0, 0, 0.12);
+  --box-shadow-color-light: rgba(0, 0, 0, 0.06);
+
+  // 自定义组件亮色变量
+  --header-bg: #ffffff;
+  --header-text: #606266;
+  --menu-bg: #e7ecf3;
+  --menu-text: #ffffff;
+  --menu-active-text: #409eff;
+  --sub-menu-border: #545c64;
+  --menu-active-bg: #434a50;
+
+  --tags-container-bg: #ffffff;
+  --tags-bg: #ebf5ff;
+  --tag-active-text: #20a0ff;
+
+  --content-bg: #ffffff;
+
+  // 登录页背景
+  --login-bg: #ace0f9;
+
+  // 侧边栏头部
+  --sidebar-header-bg: #fafafa;
+}

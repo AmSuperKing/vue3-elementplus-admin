@@ -219,17 +219,14 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-@use '@/assets/styles/variables.scss' as *;
-$dark-text: #666;
-
 .tags {
   position: relative;
   height: 34px;
   overflow: hidden;
-  background: $tagsContainerBg;
+  background: var(--tags-container-bg);
   padding-right: 120px;
-  border-bottom: 1px solid #e3e3e3;
-  box-shadow: 0px 7px 7px -7px #dfdfdf;
+  border-bottom: 1px solid var(--el-border-color-lighter);
+  box-shadow: 0px 7px 7px -7px var(--el-border-color-lighter);
 
   & .tags-ul {
     display: flex;
@@ -274,13 +271,13 @@ $dark-text: #666;
   cursor: pointer;
   height: 30px;
   line-height: 30px;
-  background: #fff;
+  background: var(--tags-bg);
   vertical-align: middle;
-  color: $dark-text;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
   transition: all 0.3s ease-in;
-  background-color: $tagsBg;
+  background-color: var(--tags-bg);
+  color: var(--tag-text);
 
   &::before {
     content: '';
@@ -289,7 +286,7 @@ $dark-text: #666;
     bottom: 0;
     width: 0;
     height: 0;
-    border-bottom: 6px solid $tagsBg;
+    border-bottom: 6px solid var(--tags-bg);
     border-top: 6px solid transparent;
     border-right: 6px solid transparent;
     border-left: 6px solid transparent;
@@ -304,7 +301,7 @@ $dark-text: #666;
     bottom: 0;
     width: 0;
     height: 0;
-    border-bottom: 6px solid $tagsBg;
+    border-bottom: 6px solid var(--tags-bg);
     border-top: 6px solid transparent;
     border-right: 6px solid transparent;
     border-left: 6px solid transparent;
@@ -314,20 +311,24 @@ $dark-text: #666;
 
   &:hover::before,
   &:hover::after {
-    border-bottom-color: $tagsBg;
+    border-bottom-color: var(--tags-bg);
   }
 }
 
 .tags-li-item:not(.active):hover {
-  background: $tagsBg;
+  background: var(--tags-bg);
+  .tags-li-title,
+  .tags-icon-content {
+    color: var(--tag-active-text);
+  }
 }
 
 .active {
-  background: $tagsBg;
+  background: var(--tags-bg);
 
   &::before,
   &::after {
-    border-bottom-color: $tagsBg;
+    border-bottom-color: var(--tags-bg);
   }
 }
 
@@ -338,13 +339,13 @@ $dark-text: #666;
   white-space: nowrap;
   text-overflow: ellipsis;
   margin-right: 2px;
-  color: $dark-text;
+  color: var(--tag-text);
 }
 
 .tags-li-item.active {
   .tags-li-title,
   .tags-icon-content {
-    color: $tagActiveText;
+    color: var(--tag-active-text);
   }
 }
 
@@ -352,10 +353,11 @@ $dark-text: #666;
   display: inline-block;
   height: 23px;
 
+
   &:hover {
     .tags-icon-content {
       color: #fff;
-      background-color: $tagActiveText;
+      background-color: var(--tag-active-text);
     }
 
     .el-icon {
@@ -369,7 +371,7 @@ $dark-text: #666;
 }
 
 .tags-icon-content {
-  color: $dark-text;
+  color: var(--tag-text);
   top: 3px;
   left: 8px;
   border-radius: 3px;
@@ -388,10 +390,10 @@ $dark-text: #666;
   z-index: 10;
 
   &:hover {
-    background-color: $tagsBg;
+    background-color: var(--tags-bg);
 
     .close-btn {
-      color: $tagActiveText;
+      color: var(--tag-active-text);
     }
   }
 
@@ -438,8 +440,8 @@ $dark-text: #666;
     cursor: pointer;
 
     &:hover {
-      color: $tagActiveText;
-      background-color: $tagsBg;
+      color: var(--tag-active-text);
+      background-color: var(--tags-bg);
     }
 
     &-icon {

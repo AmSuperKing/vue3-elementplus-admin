@@ -28,7 +28,7 @@ const goBack = () => {
   flex-direction: column;
   width: 100%;
   height: 100%;
-  background: #f3f3f3;
+  background: var(--bg-color);
   box-sizing: border-box;
 }
 .error-code {
@@ -42,7 +42,7 @@ const goBack = () => {
 }
 .error-desc {
   font-size: 30px;
-  color: #777;
+  color: var(--text-color-secondary);
 }
 .error-handle {
   margin-top: 30px;

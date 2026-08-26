@@ -107,8 +107,6 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss" scoped>
-@use '@/assets/styles/variables.scss' as *;
-
 .layout-container {
   display: flex;
   width: 100%;
@@ -119,7 +117,7 @@ onBeforeUnmount(() => {
 
 .sidebar-wrapper {
   height: 100%;
-  background-color: $menuBg;
+  background-color: var(--menu-bg);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1000;
 }
@@ -175,7 +173,7 @@ onBeforeUnmount(() => {
 .header-container {
   flex-shrink: 0;
   width: 100%;
-  background-color: #fff;
+  background-color: var(--header-bg);
   box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
   z-index: 999;
 }
@@ -185,7 +183,7 @@ onBeforeUnmount(() => {
   width: 100%;
   height: 100%;
   padding: 10px;
-  background: $contentBg;
+  background: var(--content-bg);
   scrollbar-width: none;
   &::-webkit-scrollbar {
     display: none;

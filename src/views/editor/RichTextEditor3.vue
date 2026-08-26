@@ -74,12 +74,12 @@ const onFileDelete = (id: string, url: string, type: string) => {
 .plugins-tips {
   margin-bottom: 15px;
   padding: 20px;
-  background-color: #e7ecf3;
-  color: #444;
+  background-color: var(--bg-color);
+  color: var(--text-color-regular);
 }
 
 .rich-text-editor {
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   overflow: hidden;
 }

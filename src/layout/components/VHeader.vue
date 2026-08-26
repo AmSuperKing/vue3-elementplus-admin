@@ -13,8 +13,10 @@
 
     <div class="header-right">
       <div class="right-content">
+        <Screenfull id="screenfull" class="screenfull-btn hidden-sm-and-down" color="var(--el-color-primary)" />
+        <VThemeSetting />
+        <VLangSwitch class="mr-10" />
         <VMessageCenter />
-        <Screenfull id="screenfull" class="screenfull-btn hidden-sm-and-down" />
         <VMenuSearch />
         <VUserMenu />
       </div>
@@ -26,10 +28,12 @@
 import { onMounted} from 'vue'
 import { useSidebarStore } from '@/stores/sidebar'
 import { settings } from '@/settings'
-import VMessageCenter from './VMessageCenter.vue'
 import Screenfull from '@/components/Screenfull/index.vue'
+import VMessageCenter from './VMessageCenter.vue'
 import VMenuSearch from './VMenuSearch.vue'
 import VUserMenu from './VUserMenu.vue'
+import VThemeSetting from './VThemeSetting.vue'
+import VLangSwitch from './VLangSwitch.vue'
 
 const sidebar = useSidebarStore()
 
@@ -45,17 +49,15 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-@use '@/assets/styles/variables.scss' as *;
-
 .header-bar {
   position: relative;
   box-sizing: border-box;
   width: 100%;
   height: 70px;
   font-size: 24px;
-  color: $headerText;
-  border-bottom: 1px solid $headerBg;
-  background-color: #fff;
+  color: var(--header-text);
+  border-bottom: 1px solid var(--el-border-color-lighter);
+  background-color: var(--header-bg);
 
   .logo {
     float: left;
@@ -80,7 +82,7 @@ onMounted(() => {
 
   .collapse-btn-icon {
     vertical-align: middle;
-    color: $headerText;
+    color: var(--header-text);
   }
 }
 
@@ -95,17 +97,19 @@ onMounted(() => {
     display: flex;
     height: 70px;
     align-items: center;
+    gap: 10px;
   }
 }
 
 .screenfull-btn {
   display: inline-block;
   margin-right: 15px;
+  padding-bottom: 5px;
   font-size: 18px;
-  color: $menuText;
+  color: var(--header-text);
 
   &:hover {
-    color: $headerText;
+    color: var(--header-text);
   }
 }
 </style>

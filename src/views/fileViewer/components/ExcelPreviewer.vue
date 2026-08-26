@@ -335,7 +335,7 @@ onBeforeUnmount(() => {
   width: 100%;
   height: 100%;
   position: relative;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border-color);
   overflow: hidden;
 }
 .spreadsheet-container {
@@ -349,10 +349,10 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--mask-color);
   z-index: 10;
   font-size: 16px;
-  color: #555;
+  color: var(--text-color-regular);
 }
 .error-overlay { color: #d32f2f; }
 </style>

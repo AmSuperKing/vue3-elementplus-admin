@@ -1,6 +1,10 @@
-@use './variables.scss' as *;
 a {
   text-decoration: none;
+  color: var(--text-color-primary);
+  &:visited {
+    color: var(--text-color-primary);
+  }
+
 }
 
 .svg-icon {
@@ -22,5 +26,5 @@ a {
 
 /* header */
 .header {
-  background-color: $headerBg;
+  background-color: var(--header-bg);
 }

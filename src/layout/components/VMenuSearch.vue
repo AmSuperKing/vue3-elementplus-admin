@@ -201,7 +201,6 @@ onMounted(() => {
     color: var(--el-text-color-secondary);
     border-radius: 6px;
     border: 1px solid var(--el-color-primary);
-    background-color: #fff;
     transition: color 0.5s;
     cursor: pointer;
 

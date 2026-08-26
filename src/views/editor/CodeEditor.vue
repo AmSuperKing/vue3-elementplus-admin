@@ -92,8 +92,8 @@ const phrases: Record<string, string> = {
 .plugins-tips {
   margin-bottom: 15px;
   padding: 20px;
-  background-color: #e7ecf3;
-  color: #444;
+  background-color: var(--bg-color);
+  color: var(--text-color-regular);
 }
 
 :deep(.code-editor .cm-editor) {

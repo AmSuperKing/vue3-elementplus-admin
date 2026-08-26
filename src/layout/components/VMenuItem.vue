@@ -3,7 +3,7 @@
     <template v-if="item.children.length > 1">
       <el-sub-menu :key="item.path" :index="item.path" class="menu-border-bottom">
         <template #title>
-          <Icon v-if="item?.meta?.icon" :name="item?.meta?.icon" color="#fff" size="18" style="padding-top: 2px" />
+          <Icon v-if="item?.meta?.icon" :name="item?.meta?.icon" color="var(--menu-text-color)" size="18" style="padding-top: 2px" />
           <span>{{ item?.meta?.title }}</span>
         </template>
         <menu-item v-for="subItem in item.children" :key="subItem.path" :item="subItem" />
@@ -12,7 +12,7 @@
     <template v-if="item.children.length === 1">
       <router-link :key="item.children[0].path" :to="item.children[0].path">
         <el-menu-item :index="item.children[0].path" class="menu-border-bottom">
-          <Icon v-if="item?.meta?.icon" :name="item?.meta?.icon" color="#fff" size="18"
+          <Icon v-if="item?.meta?.icon" :name="item?.meta?.icon" color="var(--menu-text-color)" size="18"
             style="width: 24px; padding-top: 2px; margin-right: 5px" />
           <template #title>{{ item.children[0]?.meta?.title }}</template>
         </el-menu-item>
@@ -22,7 +22,7 @@
   <template v-else>
     <router-link v-if="!item.hidden" :key="item.path" :to="item.path">
       <el-menu-item :index="item.path">
-        <Icon v-if="item?.meta?.icon" :name="item?.meta?.icon" color="#fff" size="18"
+        <Icon v-if="item?.meta?.icon" :name="item?.meta?.icon" color="var(--menu-text-color)" size="18"
           style="width: 24px; padding-top: 2px; margin-right: 5px" />
         <template v-if="item?.meta?.title" #title>{{ item?.meta?.title }}</template>
       </el-menu-item>
@@ -53,25 +53,27 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@use '@/assets/styles/variables.scss' as *;
-
 .menu-border-bottom {
-  border-bottom: 1px solid $subMenuBorder;
+  border-bottom: 1px solid var(--border-color);
 }
-
+:deep(.el-sub-menu__title) {
+  color: var(--menu-text-color) !important;
+}
 :deep(.el-sub-menu__title:hover) {
-  background-color: $menuActiveBg !important;
+  color: var(--menu-active-text) !important;
+  background-color: var(--menu-active-bg) !important;
 }
 
 :deep(.el-menu-item.is-active) {
-  background-color: $menuActiveBg;
+  background-color: var(--menu-active-bg);
 }
 
 :deep(.el-menu-item:hover) {
-  background-color: $menuActiveBg;
+  color: var(--menu-active-text) !important;
+  background-color: var(--menu-active-bg);
 }
 
 .is-active .icon {
-  color: $menuActiveText !important;
+  color: var(--menu-active-text) !important;
 }
 </style>

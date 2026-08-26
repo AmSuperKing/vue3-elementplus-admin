@@ -62,9 +62,9 @@ const handleClipboard = (text: string) => {
     padding: 10px;
     line-height: 18px;
     font-size: 15px;
-    color: #909399;
+    color: var(--text-color-secondary);
     border-radius: 5px;
-    background-color: #f5f5f5;
+    background-color: var(--bg-color);
   }
 }
 
@@ -73,8 +73,8 @@ const handleClipboard = (text: string) => {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   margin-top: 15px;
-  border-left: 1px solid #909399;
-  border-top: 1px solid #909399;
+  border-left: 1px solid var(--border-color);
+  border-top: 1px solid var(--border-color);
 
   .icon-item {
     height: 120px;
@@ -83,12 +83,12 @@ const handleClipboard = (text: string) => {
     justify-content: center;
     align-items: center;
     text-align: center;
-    border-right: 1px solid #909399;
-    border-bottom: 1px solid #909399;
+    border-right: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
     cursor: pointer;
 
     &:hover {
-      background-color: #f5f5f5;
+      background-color: var(--bg-color);
     }
 
     span {

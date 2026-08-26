@@ -4,14 +4,14 @@
       <div class="ms-title">Vue3 - Element-Plus - Admin</div>
       <el-form ref="loginFormRef" label-width="0px" class="ms-content" :model="loginForm" :rules="rules">
         <el-form-item prop="username">
-          <el-input v-model="loginForm.username" size="large" placeholder="账号" tabindex="1">
+          <el-input v-model="loginForm.username" size="large" :placeholder="$t('login.username')" tabindex="1">
             <template #prepend>
               <el-button class="prepend-btn" :icon="User" />
             </template>
           </el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input v-model="loginForm.password" size="large" type="password" placeholder="密码" show-password
+          <el-input v-model="loginForm.password" size="large" type="password" :placeholder="$t('login.password')" show-password
             tabindex="2" @keyup.enter="submitForm(loginFormRef)">
             <template #prepend>
               <el-button class="prepend-btn" :icon="Lock" />
@@ -19,20 +19,20 @@
           </el-input>
         </el-form-item>
         <div class="pwd-about">
-          <el-checkbox v-model="isRemember">记住账号密码</el-checkbox>
-          <el-link @click="forgetPwd">忘记密码</el-link>
+          <el-checkbox v-model="isRemember">{{ $t('login.rememberMe') }}</el-checkbox>
+          <el-link @click="forgetPwd">{{ $t('login.forget') }}</el-link>
         </div>
         <div class="login-btn">
-          <el-button type="primary" size="large" @click="submitForm(loginFormRef)">登录</el-button>
+          <el-button type="primary" size="large" @click="submitForm(loginFormRef)">{{  $t('login.login')}}</el-button>
         </div>
         <p class="login-tips">
-          Tips : <br />管理员账号: admin, 密码: 任意, 如 123456<br />
-          其他用户: 账号/密码随意, 如: 账号: visitor, 密码: 123456
+          Tips : <br />{{ $t('login.tips1')}}<br />
+          {{ $t('login.tips2')}}
         </p>
       </el-form>
     </div>
     <div class="ms-copyright hidden-sm-and-down">
-      <span>Copyright &copy; {{ currYear }} Vue3 + Element-Plus + Vite 后台管理系统</span>
+      <span>Copyright &copy; {{ currYear }} Vue3 + Element-Plus + Vite - {{ $t('login.systemName') }}</span>
     </div>
   </div>
 </template>
@@ -182,17 +182,24 @@ const removeUserInfoFromCookie = () => {
 </script>
 
 <style lang="scss" scoped>
-@use '@/assets/styles/variables.scss' as *;
-
 .login-wrap {
   position: relative;
   width: 100%;
   height: 100%;
   min-height: 100vh;
-  background-color: $loginBg;
+  background-color: var(--login-bg);
   background-image: url('@/assets/imgs/login-bg.jpg');
   background-size: cover;
   background-repeat: no-repeat;
+}
+
+.dark {
+  .ms-login {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+  .ms-copyright {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
 }
 
 .ms-login {
@@ -210,7 +217,7 @@ const removeUserInfoFromCookie = () => {
     line-height: 80px;
     text-align: center;
     font-size: 22px;
-    color: $theme-color;
+    color: var(--theme-color);
     font-weight: bold;
     border-bottom: 1px solid #ddd;
   }
@@ -245,7 +252,7 @@ const removeUserInfoFromCookie = () => {
 .login-tips {
   font-size: 12px;
   line-height: 15px;
-  color: $theme-color;
+  color: var(--theme-color);
 }
 
 .ms-copyright {
@@ -255,7 +262,7 @@ const removeUserInfoFromCookie = () => {
   bottom: 0;
   padding: 10px 0;
   font-size: 14px;
-  color: $theme-color;
+  color: var(--theme-color);
   text-align: center;
   background-color: rgba(255, 255, 255, 0.7);
 }

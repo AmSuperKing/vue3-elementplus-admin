@@ -2,7 +2,7 @@
   <div>
     <div class="btn-bell hidden-sm-and-down">
       <el-tooltip effect="dark" :content="message ? `有${message}条未读消息` : `消息中心`" placement="bottom">
-        <el-icon :color="variablesList.textColor" @click="handleBellClick">
+        <el-icon color="var(--el-color-primary)" @click="handleBellClick">
           <Bell />
         </el-icon>
       </el-tooltip>
@@ -21,11 +21,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import variables from '@/assets/styles/variables.module.scss'
+import { ref } from 'vue'
 import MessageList from './MessageList.vue'
 
-const variablesList = computed(() => variables)
 const messageDrawerVisible = ref(false)
 const message = ref(4)
 
@@ -83,8 +81,6 @@ function onClickMessage(msg: unknown) {
 </script>
 
 <style lang="scss" scoped>
-@use '@/assets/styles/variables.scss' as *;
-
 .btn-bell {
   position: relative;
   width: 24px;
@@ -102,7 +98,7 @@ function onClickMessage(msg: unknown) {
     height: 8px;
     border-radius: 4px;
     background: #ff3232;
-    color: $textColor;
+    color: var(--text-color-primary);
   }
 }
 

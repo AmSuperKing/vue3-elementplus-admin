@@ -49,7 +49,7 @@ onMounted(() => {
 .pptx-preview-container {
   width: 100%;
   height: 100%;
-  border: 1px solid #bfbfbf;
-  background-color: #bfbfbf;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-color);
 }
 </style>

@@ -13,7 +13,8 @@
     "lint": "run-s lint:*",
     "lint:oxlint": "oxlint . --fix",
     "lint:eslint": "eslint . --fix --cache",
-    "format": "prettier --write --experimental-cli src/"
+    "format": "prettier --write --experimental-cli src/",
+    "gen:menus": "node scripts/generate-menus.js"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.20.3",
@@ -70,6 +71,7 @@
     "vue": "^3.5.32",
     "vue-clipboard3": "^2.0.0",
     "vue-codemirror6": "^1.5.2",
+    "vue-i18n": "^11.4.8",
     "vue-router": "^5.0.4",
     "vue3-cookies": "^1.0.6",
     "x-data-spreadsheet": "^1.1.9",

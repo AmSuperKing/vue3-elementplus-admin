@@ -4,8 +4,8 @@
     <div class="welcome-section">
       <div class="welcome-content">
         <div class="welcome-text">
-          <h2 class="welcome-title">欢迎回来, {{ userNameCn || '管理员' }}</h2>
-          <p class="welcome-subtitle">祝您今天工作愉快！</p>
+          <h2 class="welcome-title">{{ $t('dashboard.welcome', { name: userNameCn ?? '管理员' }) }}</h2>
+          <p class="welcome-subtitle">{{ $t('dashboard.wish') }}</p>
         </div>
         <div class="welcome-date">
           <div class="date-item">
@@ -33,7 +33,7 @@
                 <div class="stat-value">
                   <CountTo :start-val="0" :end-val="9687" :duration="2000" />
                 </div>
-                <div class="stat-label">总用户数</div>
+                <div class="stat-label">{{ $t('dashboard.totalUser') }}</div>
                 <div class="stat-trend up">
                   <Icon name="Top" />
                   <span>+12.5%</span>
@@ -55,7 +55,7 @@
                 <div class="stat-value">
                   <CountTo :start-val="0" :end-val="5678" :duration="2000" />
                 </div>
-                <div class="stat-label">今日订单</div>
+                <div class="stat-label">{{ $t('dashboard.todayOrder') }}</div>
                 <div class="stat-trend up">
                   <Icon name="Top" />
                   <span>+8.3%</span>
@@ -77,7 +77,7 @@
                 <div class="stat-value">
                   <CountTo :start-val="0" :end-val="89012" :duration="2000" />
                 </div>
-                <div class="stat-label">本月收入</div>
+                <div class="stat-label">{{ $t('dashboard.monthIncome') }}</div>
                 <div class="stat-trend up">
                   <Icon name="Top" />
                   <span>+15.2%</span>
@@ -99,7 +99,7 @@
                 <div class="stat-value">
                   <CountTo :start-val="0" :end-val="4321" :duration="2000" />
                 </div>
-                <div class="stat-label">商品数量</div>
+                <div class="stat-label">{{ $t('dashboard.productNum') }}</div>
                 <div class="stat-trend down">
                   <Icon name="Bottom" />
                   <span>-2.1%</span>
@@ -117,7 +117,7 @@
         <el-card class="quick-access-card" shadow="hover">
           <template #header>
             <div class="card-header">
-              <span>快捷访问</span>
+              <span>{{ $t('dashboard.quickAccess') }}</span>
             </div>
           </template>
           <div class="quick-access-grid">
@@ -126,8 +126,8 @@
                 <Icon name="EditPen" />
               </div>
               <div class="access-info">
-                <div class="access-title">编辑器</div>
-                <div class="access-desc">6种编辑工具</div>
+                <div class="access-title">{{ $t('dashboard.editor')}}</div>
+                <div class="access-desc">{{ $t('dashboard.editorCount', { number: 6 })}}</div>
               </div>
             </div>
             <div class="quick-access-item" @click="navigateTo('/fileViewer/pdfViewer')">
@@ -135,8 +135,8 @@
                 <Icon name="Document" />
               </div>
               <div class="access-info">
-                <div class="access-title">文件查看器</div>
-                <div class="access-desc">PDF/Office预览</div>
+                <div class="access-title">{{ $t('dashboard.fileViewer') }}</div>
+                <div class="access-desc">{{ $t('dashboard.officePreview') }}</div>
               </div>
             </div>
             <div class="quick-access-item" @click="navigateTo('/media/compress')">
@@ -144,8 +144,8 @@
                 <Icon name="PictureRounded" />
               </div>
               <div class="access-info">
-                <div class="access-title">文件压缩</div>
-                <div class="access-desc">图片/视频压缩</div>
+                <div class="access-title">{{ $t('dashboard.fileCompress') }}</div>
+                <div class="access-desc">{{ $t('dashboard.mediaCompress') }}</div>
               </div>
             </div>
             <div class="quick-access-item" @click="navigateTo('/table/TableExample')">
@@ -153,8 +153,8 @@
                 <Icon name="Grid" />
               </div>
               <div class="access-info">
-                <div class="access-title">表格</div>
-                <div class="access-desc">嵌套表格示例</div>
+                <div class="access-title">{{ $t('dashboard.table') }}</div>
+                <div class="access-desc">{{ $t('dashboard.nestedTable') }}</div>
               </div>
             </div>
             <div class="quick-access-item" @click="navigateTo('/components/scrollbar')">
@@ -162,8 +162,8 @@
                 <Icon name="Sunset" />
               </div>
               <div class="access-info">
-                <div class="access-title">组件</div>
-                <div class="access-desc">自定义组件</div>
+                <div class="access-title">{{ $t('dashboard.component') }}</div>
+                <div class="access-desc">{{ $t('dashboard.customComponent') }}</div>
               </div>
             </div>
             <div class="quick-access-item" @click="navigateTo('/icons/list')">
@@ -171,8 +171,8 @@
                 <Icon name="HelpFilled" />
               </div>
               <div class="access-info">
-                <div class="access-title">图标资源</div>
-                <div class="access-desc">图标库展示</div>
+                <div class="access-title">{{ $t('dashboard.iconResource') }}</div>
+                <div class="access-desc">{{ $t('dashboard.iconLibrary') }}</div>
               </div>
             </div>
           </div>
@@ -187,11 +187,11 @@
         <el-card class="chart-card" shadow="hover">
           <template #header>
             <div class="card-header">
-              <span>数据趋势分析</span>
+              <span>{{ $t('dashboard.dataTrend') }}</span>
               <el-radio-group v-model="chartPeriod" size="small">
-                <el-radio-button value="week">本周</el-radio-button>
-                <el-radio-button value="month">本月</el-radio-button>
-                <el-radio-button value="year">全年</el-radio-button>
+                <el-radio-button value="week">{{ $t('dashboard.week') }}</el-radio-button>
+                <el-radio-button value="month">{{ $t('dashboard.month') }}</el-radio-button>
+                <el-radio-button value="year">{{ $t('dashboard.year') }}</el-radio-button>
               </el-radio-group>
             </div>
           </template>
@@ -204,8 +204,8 @@
         <el-card class="activity-card" shadow="hover">
           <template #header>
             <div class="card-header">
-              <span>活动时间线</span>
-              <el-button type="primary" size="small" text>查看全部</el-button>
+              <span>{{ $t('dashboard.activityTimeline') }}</span>
+              <el-button type="primary" size="small" text>{{ $t('dashboard.viewAll') }}</el-button>
             </div>
           </template>
           <el-timeline class="activity-timeline">
@@ -232,7 +232,7 @@
         <el-card class="info-card" shadow="hover">
           <template #header>
             <div class="card-header">
-              <span>系统健康状态</span>
+              <span>{{ $t('dashboard.systemHealth') }}</span>
               <el-tag :type="systemHealth.type" size="small">{{ systemHealth.status }}</el-tag>
             </div>
           </template>
@@ -240,14 +240,14 @@
             <div class="status-item">
               <div class="status-label">
                 <Icon name="Odometer" />
-                <span>服务器运行时间</span>
+                <span>{{ $t('dashboard.serverUptime') }}</span>
               </div>
-              <div class="status-value">15天 8小时 32分钟</div>
+              <div class="status-value">{{ $t('dashboard.uptime', { day: 15, hour: 8, minute: 32 }) }}</div>
             </div>
             <div class="status-item">
               <div class="status-label">
                 <Icon name="Cpu" />
-                <span>CPU使用率</span>
+                <span>{{ $t('dashboard.cpuUsage') }}</span>
               </div>
               <div class="status-progress">
                 <el-progress :percentage="35" :color="getProgressColor(35)" />
@@ -256,7 +256,7 @@
             <div class="status-item">
               <div class="status-label">
                 <Icon name="svg-save-fill" class="fs-16" />
-                <span>内存使用率</span>
+                <span>{{ $t('dashboard.memoryUsage') }}</span>
               </div>
               <div class="status-progress">
                 <el-progress :percentage="62" :color="getProgressColor(62)" />
@@ -265,7 +265,7 @@
             <div class="status-item">
               <div class="status-label">
                 <Icon name="Coin" />
-                <span>磁盘空间</span>
+                <span>{{ $t('dashboard.diskSpace') }}</span>
               </div>
               <div class="status-progress">
                 <el-progress :percentage="78" :color="getProgressColor(78)" />
@@ -279,7 +279,7 @@
         <el-card class="info-card" shadow="hover">
           <template #header>
             <div class="card-header">
-              <span>通知中心</span>
+              <span>{{ $t('dashboard.notificationCenter') }}</span>
               <el-badge :value="unreadCount" class="notification-badge" />
             </div>
           </template>
@@ -302,15 +302,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
+import { computed, watch, ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
-import { useUserInfoStore } from '@/stores/userInfo'
-import CountTo from '@/components/CountTo/CountTo.vue'
 import * as echarts from 'echarts'
 import type { EChartsOption } from 'echarts'
+import { useI18n } from 'vue-i18n'
+import { useUserInfoStore } from '@/stores/userInfo'
+import CountTo from '@/components/CountTo/CountTo.vue'
 
 const router = useRouter()
 const userInfoStore = useUserInfoStore()
+const { t, locale } = useI18n()
 const userNameCn = computed(() => userInfoStore.userNameCn)
 
 // Date and time
@@ -320,16 +322,18 @@ let dateTimer: ReturnType<typeof setInterval> | null = null
 
 const updateDateTime = () => {
   const now = new Date()
-  currentDate.value = now.toLocaleDateString('zh-CN', {
+  // 根据当前 locale 动态选择语言标签
+  const dateLocale = locale.value === 'en-US' ? 'en-US' : 'zh-CN'
+  currentDate.value = now.toLocaleDateString(dateLocale, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
-    weekday: 'long'
+    weekday: 'long',
   })
-  currentTime.value = now.toLocaleTimeString('zh-CN', {
+  currentTime.value = now.toLocaleTimeString(dateLocale, {
     hour: '2-digit',
     minute: '2-digit',
-    second: '2-digit'
+    second: '2-digit',
   })
 }
 
@@ -347,121 +351,131 @@ const initChart = () => {
   window.addEventListener('resize', handleChartResize)
 }
 
+const getChartOption = (): EChartsOption => ({
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: { type: 'shadow' },
+  },
+  legend: {
+    data: [
+      t('dashboard.chart.visits'),
+      t('dashboard.chart.orders'),
+      t('dashboard.chart.income'),
+    ],
+  },
+  grid: {
+    left: '3%',
+    right: '4%',
+    bottom: '10%',
+    containLabel: true,
+  },
+  xAxis: {
+    type: 'category',
+    data: [
+      t('dashboard.weekdays.mon'),
+      t('dashboard.weekdays.tue'),
+      t('dashboard.weekdays.wed'),
+      t('dashboard.weekdays.thu'),
+      t('dashboard.weekdays.fri'),
+      t('dashboard.weekdays.sat'),
+      t('dashboard.weekdays.sun'),
+    ],
+  },
+  yAxis: { type: 'value' },
+  series: [
+    {
+      name: t('dashboard.chart.visits'),
+      type: 'line',
+      smooth: true,
+      data: [820, 932, 901, 934, 1290, 1330, 1320],
+      itemStyle: { color: '#ff7979' },
+    },
+    {
+      name: t('dashboard.chart.orders'),
+      type: 'line',
+      smooth: true,
+      data: [320, 332, 301, 334, 390, 330, 320],
+      itemStyle: { color: '#67c23a' },
+    },
+    {
+      name: t('dashboard.chart.income'),
+      type: 'bar',
+      data: [1200, 1320, 1010, 1340, 2900, 2300, 2100],
+      itemStyle: {
+        borderRadius: [4, 4, 0, 0],
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          { offset: 0, color: '#248ff7' },
+          { offset: 0.5, color: '#409eff' },
+          { offset: 1, color: '#6851f1' },
+        ]),
+      },
+      barMaxWidth: 50,
+    },
+  ],
+})
+
 const updateChart = () => {
   if (!chartInstance) return
-
-  const option: EChartsOption = {
-    tooltip: {
-      trigger: 'axis',
-      axisPointer: {
-        type: 'shadow'
-      }
-    },
-    legend: {
-      data: ['访问量', '订单数', '收入']
-    },
-    grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '10%',
-      containLabel: true
-    },
-    xAxis: {
-      type: 'category',
-      data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
-    },
-    yAxis: {
-      type: 'value'
-    },
-    series: [
-      {
-        name: '访问量',
-        type: 'line',
-        smooth: true,
-        data: [820, 932, 901, 934, 1290, 1330, 1320],
-        itemStyle: {
-          color: '#ff7979'
-        }
-      },
-      {
-        name: '订单数',
-        type: 'line',
-        smooth: true,
-        data: [320, 332, 301, 334, 390, 330, 320],
-        itemStyle: {
-          color: '#67c23a'
-        }
-      },
-      {
-        name: '收入',
-        type: 'bar',
-        data: [1200, 1320, 1010, 1340, 2900, 2300, 2100],
-        itemStyle: {
-          borderRadius: [4, 4, 0, 0],
-          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            {
-              offset: 0,
-              color: "#248ff7"
-            },
-            {
-              offset: 0.5,
-              color: "#409eff"
-            },
-            {
-              offset: 1,
-              color: "#6851f1"
-            }
-          ])
-        },
-        barMaxWidth: 50
-      }
-    ]
-  }
-
-  chartInstance.setOption(option)
+  chartInstance.setOption(getChartOption())
 }
 
 const handleChartResize = () => {
   chartInstance?.resize()
 }
 
+watch(locale, () => {
+  updateDateTime()
+  updateChart()
+})
+
 // Activities
-const activities = ref([
+const activitiesOrigin = ref([
   {
     time: '10:30',
-    title: '新用户注册',
-    desc: '用户 user123 完成注册',
+    titleKey: 'dashboard.activities.userRegistration',
+    descParams: { user: 'user123' },
+    descKey: 'dashboard.activities.userRegistrationDesc',
     type: 'primary' as const,
-    color: '#409eff'
+    color: '#409eff',
   },
   {
     time: '09:45',
-    title: '订单完成',
-    desc: '订单 #12345 已完成支付',
+    titleKey: 'dashboard.activities.orderCompleted',
+    descParams: { id: '12345' },
+    descKey: 'dashboard.activities.orderCompletedDesc',
     type: 'success' as const,
-    color: '#67c23a'
+    color: '#67c23a',
   },
   {
     time: '09:15',
-    title: '系统更新',
-    desc: '系统版本更新至 v2.1.0',
+    titleKey: 'dashboard.activities.systemUpdate',
+    descParams: { version: 'v2.1.0' },
+    descKey: 'dashboard.activities.systemUpdateDesc',
     type: 'warning' as const,
-    color: '#e6a23c'
+    color: '#e6a23c',
   },
   {
     time: '08:30',
-    title: '备份完成',
-    desc: '数据库自动备份成功',
+    titleKey: 'dashboard.activities.backupCompleted',
+    descParams: {},
+    descKey: 'dashboard.activities.backupCompletedDesc',
     type: 'info' as const,
-    color: '#909399'
-  }
+    color: '#909399',
+  },
 ])
+const activities = computed(() =>
+  activitiesOrigin.value.map((item) => ({
+    ...item,
+    title: t(item.titleKey),
+    desc: t(item.descKey, item.descParams),
+  }))
+)
 
 // System health
-const systemHealth = ref({
-  status: '运行正常',
-  type: 'success' as const
-})
+const systemHealth = computed(() => ({
+  status: t('dashboard.runningNormal'),
+  type: 'success' as const,
+}))
 
 const getProgressColor = (percentage: number) => {
   if (percentage < 50) return '#67c23a'
@@ -471,36 +485,44 @@ const getProgressColor = (percentage: number) => {
 
 // Notifications
 const unreadCount = ref(3)
-const notifications = ref([
+const notificationsOrigin = ref([
   {
-    tag: '成功',
-    text: '系统备份已完成',
-    time: '2小时前',
+    tagKey: 'dashboard.notifications.tagSuccess',
+    textKey: 'dashboard.notifications.backupDone',
+    timeKey: 'dashboard.notifications.time2hAgo',
     type: 'success' as const,
-    unread: true
+    unread: true,
   },
   {
-    tag: '警告',
-    text: '存储空间即将不足',
-    time: '5小时前',
+    tagKey: 'dashboard.notifications.tagWarning',
+    textKey: 'dashboard.notifications.storageLow',
+    timeKey: 'dashboard.notifications.time5hAgo',
     type: 'warning' as const,
-    unread: true
+    unread: true,
   },
   {
-    tag: '错误',
-    text: '数据库连接异常',
-    time: '昨天',
+    tagKey: 'dashboard.notifications.tagError',
+    textKey: 'dashboard.notifications.dbConnectionError',
+    timeKey: 'dashboard.notifications.timeYesterday',
     type: 'danger' as const,
-    unread: true
+    unread: true,
   },
   {
-    tag: '信息',
-    text: '新版本可用',
-    time: '2天前',
+    tagKey: 'dashboard.notifications.tagInfo',
+    textKey: 'dashboard.notifications.newVersionAvailable',
+    timeKey: 'dashboard.notifications.time2dAgo',
     type: 'info' as const,
-    unread: false
-  }
+    unread: false,
+  },
 ])
+const notifications = computed(() =>
+  notificationsOrigin.value.map((item) => ({
+    ...item,
+    tag: t(item.tagKey),
+    text: t(item.textKey),
+    time: t(item.timeKey),
+  }))
+)
 
 // Navigation
 const navigateTo = (path: string) => {
@@ -525,8 +547,14 @@ onBeforeUnmount(() => {
 <style scoped lang="scss">
 .dashboard-container {
   padding: 20px;
-  background-color: #f5f7fa;
+  background-color: var(--bg-color);
   min-height: 100%;
+  --shadow-color-light-1: rgba(0, 0, 0, 0.05);
+  --shadow-color-light-2: rgba(0, 0, 0, 0.12);
+}
+.dark .dashboard-container {
+  --shadow-color-light-1: rgba(255, 255, 255, 0.05);
+  --shadow-color-light-2: rgba(255, 255, 255, 0.08);
 }
 
 // Welcome Section
@@ -545,7 +573,7 @@ onBeforeUnmount(() => {
     .welcome-title {
       font-size: 28px;
       font-weight: 600;
-      color: #303133;
+      color: var(--text-color-primary);
       margin: 0 0 8px 0;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       -webkit-background-clip: text;
@@ -555,7 +583,7 @@ onBeforeUnmount(() => {
 
     .welcome-subtitle {
       font-size: 14px;
-      color: #909399;
+      color: var(--text-color-secondary);
       margin: 0;
     }
   }
@@ -569,11 +597,12 @@ onBeforeUnmount(() => {
       align-items: center;
       gap: 8px;
       font-size: 14px;
-      color: #606266;
-      background: #fff;
+      color: var(--text-color-regular);
+      background: var(--bg-color);
       padding: 8px 16px;
       border-radius: 20px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      border-color: var(--border-color);
+      box-shadow: 0 2px 8px var(--shadow-color-light-1);
 
       span {
         font-weight: 500;
@@ -603,10 +632,11 @@ onBeforeUnmount(() => {
     border-radius: 12px;
     border: none;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 12px 32px var(--shadow-color-light-2);
 
     &:hover {
       transform: translateY(-8px);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 12px 32px var(--shadow-color-light-2);
     }
 
     .stat-content {
@@ -653,14 +683,14 @@ onBeforeUnmount(() => {
         .stat-value {
           font-size: 28px;
           font-weight: 700;
-          color: #303133;
+          color: var(--text-color-primary);
           margin-bottom: 4px;
           line-height: 1;
         }
 
         .stat-label {
           font-size: 14px;
-          color: #909399;
+          color: var(--text-color-secondary);
           margin-bottom: 8px;
         }
 
@@ -691,13 +721,18 @@ onBeforeUnmount(() => {
   .quick-access-card {
     border-radius: 12px;
     border: none;
+    box-shadow: 0 12px 32px var(--shadow-color-light-2);
+    &:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 32px var(--shadow-color-light-2);
+    }
 
     .card-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       font-weight: 600;
-      color: #303133;
+      color: var(--text-color-primary);
     }
 
     .quick-access-grid {
@@ -771,7 +806,7 @@ onBeforeUnmount(() => {
 
         .access-desc {
           font-size: 12px;
-          color: #909399;
+          color: #303133;
         }
       }
     }
@@ -787,13 +822,14 @@ onBeforeUnmount(() => {
     border-radius: 12px;
     border: none;
     height: 100%;
+    box-shadow: 0 12px 32px var(--shadow-color-light-2);
 
     .card-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       font-weight: 600;
-      color: #303133;
+      color: var(--text-color-primary);
     }
   }
 
@@ -809,13 +845,13 @@ onBeforeUnmount(() => {
       .activity-title {
         font-size: 14px;
         font-weight: 600;
-        color: #303133;
+        color: var(--text-color-primary);
         margin-bottom: 4px;
       }
 
       .activity-desc {
         font-size: 12px;
-        color: #909399;
+        color: var(--text-color-regular);
       }
     }
   }
@@ -827,13 +863,14 @@ onBeforeUnmount(() => {
     border-radius: 12px;
     border: none;
     height: 100%;
+    box-shadow: 0 12px 32px var(--shadow-color-light-2);
 
     .card-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       font-weight: 600;
-      color: #303133;
+      color: var(--text-color-primary);
     }
 
     .system-status {
@@ -849,14 +886,14 @@ onBeforeUnmount(() => {
           align-items: center;
           gap: 8px;
           font-size: 14px;
-          color: #606266;
+          color: var(--text-color-secondary);
           margin-bottom: 8px;
           font-weight: 500;
         }
 
         .status-value {
           font-size: 14px;
-          color: #303133;
+          color: var(--text-color-primary);
           font-weight: 600;
         }
 
@@ -889,7 +926,7 @@ onBeforeUnmount(() => {
 
         &.unread {
           .notification-text {
-            color: #303133;
+            color: var(--text-color-primary);
             font-weight: 500;
           }
         }
@@ -898,12 +935,12 @@ onBeforeUnmount(() => {
           flex: 1;
           margin: 0 12px;
           font-size: 14px;
-          color: #606266;
+          color: var(--text-color-regular);
         }
 
         .notification-time {
           font-size: 12px;
-          color: #909399;
+          color: var(--text-color-regular);
           white-space: nowrap;
         }
       }

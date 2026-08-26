@@ -26,12 +26,12 @@ const editorContent = ref('<p>Hello <strong>Fluent Editor</strong></p><p><br><a 
 .plugins-tips {
   margin-bottom: 15px;
   padding: 20px;
-  background-color: #e7ecf3;
-  color: #444;
+  background-color: var(--bg-color);
+  color: var(--text-color-regular);
 }
 
 .content-preview {
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   padding: 10px;
 }

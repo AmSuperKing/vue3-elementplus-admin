@@ -114,8 +114,8 @@ onMounted(() => {
 .plugins-tips {
   margin-bottom: 15px;
   padding: 20px;
-  background-color: #e7ecf3;
-  color: #444;
+  background-color: var(--bg-color);
+  color: var(--text-color-regular);
 }
 .docx-preview-container {
   position: relative;
