@@ -141,7 +141,7 @@ const handleSystemThemeChange = (e: MediaQueryListEvent | MediaQueryList) => {
 }
 
 const updateDarkModeStyles = (dark: boolean) => {
-  if (dark && props.darkWithSystem) {
+  if (dark) {
     themeStyleVars.value = {
       '--table-bg-color': '#1d1e1f',
       '--table-text-color': '#e5eaf3',
@@ -160,7 +160,7 @@ const updateDarkModeStyles = (dark: boolean) => {
       '--table-scrollbar-thumb-bg': '#4c4d4f',
       '--table-scrollbar-thumb-hover-bg': '#5a5c5e',
     }
-  } else if (!dark && props.darkWithSystem) {
+  } else {
     themeStyleVars.value = {
       '--table-bg-color': '#fff',
       '--table-text-color': '#333',
@@ -190,11 +190,11 @@ onMounted(() => {
       for (const mutation of mutations) {
         if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
           isSystemDark.value = document.documentElement.classList.contains(props.darkWithSystemClassName);
+          updateDarkModeStyles(isSystemDark.value)
         }
       }
     });
     observer.observe(document.documentElement, { attributes: true });
-    updateDarkModeStyles(isSystemDark.value)
   }
 
   // 监听系统暗色模式, 如果启用了 darkWithSystem, 则监听系统主题变化
