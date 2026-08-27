@@ -30,6 +30,8 @@ export interface MultiTableProps {
   fixedColumnBg?: string
   size?: 'small' | 'default' | 'large'
   theme?: string
+  darkWithSystem?: boolean
+  darkWithSystemClassName?: string
   clickRowToSelect?: boolean
   selectable?: boolean
   selectMode?: 'radio' | 'checkbox'

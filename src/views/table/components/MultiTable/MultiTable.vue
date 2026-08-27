@@ -7,7 +7,10 @@
       'multi-table-layout__large': props.size === 'large',
       'multi-table-layout--highlight-selected': props.highlightSlectedRow
     }"
-    :style="styleMethods.tableConfigStyle.value"
+    :style="{
+      ...themeStyleVars,
+      ...styleMethods.tableConfigStyle.value
+    }"
   >
     <!-- 表题头 -->
     <div v-if="$slots.header" class="multi-table-header">
@@ -111,7 +114,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref, toRef, useId, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, toRef, useId, watch } from 'vue'
 import type { MultiTableProps, MultiTableEvent } from './types'
 import { useColumns } from './composables/useColumns'
 import { useResizable } from './composables/useResizable'
@@ -126,6 +129,90 @@ import TableRow from './TableRow.vue'
 import SummaryRow from './SummaryRow.vue'
 import "./style.css"
 
+// 系统暗色模式监听
+let mediaQuery: MediaQueryList | null = null
+let observer: MutationObserver | null = null;
+const isSystemDark = ref(false)
+const themeStyleVars = ref({})
+
+const handleSystemThemeChange = (e: MediaQueryListEvent | MediaQueryList) => {
+  isSystemDark.value = e.matches
+  updateDarkModeStyles(e.matches)
+}
+
+const updateDarkModeStyles = (dark: boolean) => {
+  if (dark && props.darkWithSystem) {
+    themeStyleVars.value = {
+      '--table-bg-color': '#1d1e1f',
+      '--table-text-color': '#e5eaf3',
+      '--table-border-color': '#4c4d4f',
+      '--table-header-bg': '#262727',
+      '--table-header-cell-bg': '#303030',
+      '--table-row-hover-bg': '#2a2b2c',
+      '--table-row-stripe-color': '#262727',
+      '--table-row-selected-bg': '#409eff',
+      '--table-fixed-column-bg': '#1d1e1f',
+      '--table-summary-bg': '#262727',
+      '--table-summary-color': '#e5eaf3',
+      '--table-primary-color': '#409eff',
+      '--table-th-resizing-color': '#2a598a',
+      '--table-scrollbar-track-bg': '#262727',
+      '--table-scrollbar-thumb-bg': '#4c4d4f',
+      '--table-scrollbar-thumb-hover-bg': '#5a5c5e',
+    }
+  } else if (!dark && props.darkWithSystem) {
+    themeStyleVars.value = {
+      '--table-bg-color': '#fff',
+      '--table-text-color': '#333',
+      '--table-border-color': '#e8e8e8',
+      '--table-header-bg': '#fafafa',
+      '--table-header-cell-bg': '#f5f5f5',
+      '--table-row-hover-bg': '#f5f7fa',
+      '--table-row-stripe-color': '#fafafa',
+      '--table-row-selected-bg': '#409eff',
+      '--table-fixed-column-bg': '#fff',
+      '--table-summary-bg': '#fafafa',
+      '--table-summary-color': '#333',
+      '--table-primary-color': '#1890ff',
+      '--table-th-resizing-color': '#e6f7ff',
+      '--table-scrollbar-track-bg': '#f5f5f5',
+      '--table-scrollbar-thumb-bg': '#d9d9d9',
+      '--table-scrollbar-thumb-hover-bg': '#bfbfbf',
+    }
+  }
+}
+
+onMounted(() => {
+  // 监听系统暗色模式, 如果启用了 darkWithSystemClassName, 则监听类名变化
+  if (props.darkWithSystemClassName) {
+    isSystemDark.value = document.documentElement.classList.contains(props.darkWithSystemClassName)
+    observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+          isSystemDark.value = document.documentElement.classList.contains(props.darkWithSystemClassName);
+        }
+      }
+    });
+    observer.observe(document.documentElement, { attributes: true });
+    updateDarkModeStyles(isSystemDark.value)
+  }
+
+  // 监听系统暗色模式, 如果启用了 darkWithSystem, 则监听系统主题变化
+  if (props.darkWithSystem && window.matchMedia) {
+    mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    mediaQuery.addEventListener('change', handleSystemThemeChange)
+    isSystemDark.value = mediaQuery.matches
+    updateDarkModeStyles(isSystemDark.value)
+  }
+})
+
+onBeforeUnmount(() => {
+  if (mediaQuery) {
+    mediaQuery.removeEventListener('change', handleSystemThemeChange)
+  }
+  observer?.disconnect();
+})
+
 const props = withDefaults(
   defineProps<MultiTableProps>(),
   {
@@ -134,6 +221,8 @@ const props = withDefaults(
     showHeader: true,
     border: true,
     size: 'default',
+    darkWithSystem: true,
+    darkWithSystemClassName: '',
     clickRowToSelect: false,
     selectable: false,
     selectMode: 'radio',

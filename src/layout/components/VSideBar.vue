@@ -31,7 +31,7 @@ const themeStore = useThemeStore()
 // 动态菜单样式（跟随主题色变化）
 const menuStyle = computed(() => ({
   backgroundColor: themeStore.isDark ? 'var(--menu-bg)' : 'var(--menu-bg, #e7ecf3)',
-  textColor: themeStore.isDark ? 'var(--text-color-primary, #ffffff)' : 'var(--menu-text-color)',
+  textColor: themeStore.isDark ? 'var(--text-color-primary, #ffffff)' : 'var(--menu-text)',
   activeTextColor: themeStore.primaryColor,
 }))
 

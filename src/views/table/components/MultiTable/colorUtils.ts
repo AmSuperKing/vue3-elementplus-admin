@@ -1,4 +1,103 @@
 /**
+ * 颜色亮度判断结果
+ */
+interface ColorBrightnessResult {
+  /** 是否为暗色系 */
+  dark: boolean;
+  /** 是否为亮色系 */
+  light: boolean;
+}
+
+/**
+ * 解析颜色字符串为 RGB 分量 (0-255)
+ * 支持格式: #RGB, #RRGGBB, rgb(r,g,b), rgba(r,g,b,a)
+ */
+function parseColor(color: string): [number, number, number] | null {
+  const trimmed = color.trim().toLowerCase();
+
+  // 匹配 Hex 格式: #RGB 或 #RRGGBB
+  const hexMatch = trimmed.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/);
+  if (hexMatch) {
+    let hex = hexMatch[1]!;
+    if (hex.length === 3) {
+      hex = hex[0]! + hex[0]! + hex[1] + hex[1] + hex[2] + hex[2];
+    }
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    return [r, g, b];
+  }
+
+  // 匹配 rgb() / rgba() 格式
+  const rgbMatch = trimmed.match(
+    /^rgba?\(\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)(?:\s*,\s*[\d.]+)?\s*\)$/
+  );
+  if (rgbMatch) {
+    const r = Math.min(255, Math.max(0, Math.round(parseFloat(rgbMatch[1]!))));
+    const g = Math.min(255, Math.max(0, Math.round(parseFloat(rgbMatch[2]!))));
+    const b = Math.min(255, Math.max(0, Math.round(parseFloat(rgbMatch[3]!))));
+    return [r, g, b];
+  }
+
+  return null;
+}
+
+/**
+ * 计算 sRGB 通道的线性化值 (W3C WCAG 2.x 标准)
+ * @see https://www.w3.org/TR/WCAG20/#relativeluminancedef
+ */
+function linearize(channel: number): number {
+  const sRGB = channel / 255;
+  return sRGB <= 0.03928
+    ? sRGB / 12.92
+    : Math.pow((sRGB + 0.055) / 1.055, 2.4);
+}
+
+/**
+ * 计算颜色的相对亮度 (0 ~ 1)
+ * 0 = 纯黑, 1 = 纯白
+ */
+function getRelativeLuminance(r: number, g: number, b: number): number {
+  const rLin = linearize(r);
+  const gLin = linearize(g);
+  const bLin = linearize(b);
+  return 0.2126 * rLin + 0.7152 * gLin + 0.0722 * bLin;
+}
+
+/**
+ * 判断颜色是暗色系还是亮色系
+ *
+ * @param color - 颜色值，支持 hex (#RGB/#RRGGBB)、rgb()、rgba() 格式
+ * @param threshold - 亮度阈值，默认 0.179 (W3C 推荐用于对比度判断的中间值)
+ * @returns { dark: boolean, light: boolean }
+ *
+ * @example
+ * judgeColorBrightness('#000000')  // { dark: true, light: false }
+ * judgeColorBrightness('#FFFFFF')  // { dark: false, light: true }
+ * judgeColorBrightness('rgb(128, 128, 128)') // { dark: true, light: false }
+ * judgeColorBrightness('rgba(255, 200, 50, 0.8)') // { dark: false, light: true }
+ */
+function judgeColorBrightness(
+  color: string,
+  threshold: number = 0.179
+): ColorBrightnessResult {
+  const rgb = parseColor(color);
+
+  if (!rgb) {
+    console.warn(`[judgeColorBrightness] 无法解析颜色: "${color}"，默认返回亮色`);
+    return { dark: false, light: true };
+  }
+
+  const luminance = getRelativeLuminance(rgb[0], rgb[1], rgb[2]);
+  const isLight = luminance > threshold;
+
+  return {
+    dark: !isLight,
+    light: isLight,
+  };
+}
+
+/**
  * HEX 颜色转 rgba
  * @param {string} hex - HEX 颜色值，如 '#1890ff'、'1890ff'、'#fff'
  * @param {number} alpha - 透明度，范围 0~1，默认 1
@@ -68,4 +167,9 @@ function rgbaToHex6(rgba: string, bgHex: string = "#ffffff"): string {
   return `#${toHex(blend(r, bgR))}${toHex(blend(g, bgG))}${toHex(blend(b, bgB))}`;
 }
 
-export { hexToRgba, rgbaToHex6 };
+export {
+  type ColorBrightnessResult,
+  judgeColorBrightness,
+  hexToRgba,
+  rgbaToHex6
+};

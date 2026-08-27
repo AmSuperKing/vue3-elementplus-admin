@@ -12,7 +12,7 @@
     <template v-if="item.children.length === 1">
       <router-link :key="item.children[0].path" :to="item.children[0].path">
         <el-menu-item :index="item.children[0].path" class="menu-border-bottom">
-          <Icon v-if="item?.meta?.icon" :name="item?.meta?.icon" color="var(--menu-text-color)" size="18"
+          <Icon v-if="item?.meta?.icon" :name="item?.meta?.icon" color="var(--menu-text)" size="18"
             style="width: 24px; padding-top: 2px; margin-right: 5px" />
           <template #title>{{ item.children[0]?.meta?.title }}</template>
         </el-menu-item>
@@ -22,7 +22,7 @@
   <template v-else>
     <router-link v-if="!item.hidden" :key="item.path" :to="item.path">
       <el-menu-item :index="item.path">
-        <Icon v-if="item?.meta?.icon" :name="item?.meta?.icon" color="var(--menu-text-color)" size="18"
+        <Icon v-if="item?.meta?.icon" :name="item?.meta?.icon" color="var(--menu-text)" size="18"
           style="width: 24px; padding-top: 2px; margin-right: 5px" />
         <template v-if="item?.meta?.title" #title>{{ item?.meta?.title }}</template>
       </el-menu-item>
@@ -57,7 +57,7 @@ export default {
   border-bottom: 1px solid var(--border-color);
 }
 :deep(.el-sub-menu__title) {
-  color: var(--menu-text-color) !important;
+  color: var(--menu-text) !important;
 }
 :deep(.el-sub-menu__title:hover) {
   color: var(--menu-active-text) !important;

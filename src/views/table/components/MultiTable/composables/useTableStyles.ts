@@ -2,7 +2,7 @@
 import { computed, type Ref } from 'vue'
 import type { CSSProperties } from 'vue'
 import type {  MultiTableProps, FlatColumn, HeaderRow, LeafColumn, ExpandedRow } from '../types'
-import { hexToRgba, rgbaToHex6 } from '../colorUtils'
+import { hexToRgba, rgbaToHex6, judgeColorBrightness } from '../colorUtils'
 
 export function useTableStyles(
   props: MultiTableProps,
@@ -17,6 +17,8 @@ export function useTableStyles(
 ) {
   const tableConfigStyle = computed(() => {
     const style: Record<string, string> = {}
+
+    // 只在主题属性存在时应用主题相关的样式
     if (props.theme) {
       style['--table-primary-color'] = props.theme
       style['--table-selector-checked-color'] = props.theme
@@ -24,18 +26,36 @@ export function useTableStyles(
       style['--table-selector-border-color'] = props.theme
       style['--table-th-resizing-color'] = props.theme
     }
+
     const themeAlphaColor = props.theme ? rgbaToHex6(hexToRgba(props.theme, 0.055)) : ''
     const applyStyle = (cssVar: string, propValue: string | undefined, fallbackValue: string = themeAlphaColor) => {
       const value = propValue || fallbackValue
       if (value) style[cssVar] = value
     }
-    applyStyle('--table-header-bg', props.headerRowBg)
-    applyStyle('--table-header-cell-bg', props.headerCellBg)
-    applyStyle('--table-selector-color', props.selectorColor)
-    applyStyle('--table-row-stripe-color', props.stripeColor)
-    applyStyle('--table-row-hover-bg', props.rowHoverBg)
-    applyStyle('--table-row-selected-bg', props.highlightSlectedRow ? props.highlightSlectedColor : undefined)
 
+    // 只在属性存在时应用，避免覆盖系统暗色模式的设置
+    if (props.headerRowBg) applyStyle('--table-header-bg', props.headerRowBg)
+    if (props.headerCellBg) {
+      applyStyle('--table-header-cell-bg', props.headerCellBg)
+      const brightness = judgeColorBrightness(props.headerCellBg)
+      if (brightness.dark) {
+        applyStyle('--table-header-text-color', '#e5eaf3')
+      } else if (brightness.light) {
+        applyStyle('--table-header-text-color', '#333')
+      }
+    }
+    if (props.selectorColor) applyStyle('--table-selector-color', props.selectorColor)
+    if (props.stripeColor) applyStyle('--table-row-stripe-color', props.stripeColor)
+    if (props.rowHoverBg) {
+      applyStyle('--table-row-hover-bg', props.rowHoverBg)
+      const brightness = judgeColorBrightness(props.rowHoverBg)
+      if (brightness.dark) {
+        applyStyle('--table-row-hover-text-color', '#e5eaf3')
+      } else if (brightness.light) {
+        applyStyle('--table-row-hover-text-color', '#333')
+      }
+    }
+    if (props.highlightSlectedRow && props.highlightSlectedColor) applyStyle('--table-row-selected-bg', props.highlightSlectedColor)
 
     if (props.height) style['--table-container-height'] = typeof props.height === 'number' ? `${props.height}px` : props.height
     if (props.maxHeight) style['--table-container-max-height'] = typeof props.maxHeight === 'number' ? `${props.maxHeight}px` : props.maxHeight
