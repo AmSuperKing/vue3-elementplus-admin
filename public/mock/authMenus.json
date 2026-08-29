@@ -27,8 +27,8 @@
     {
       "path": "/editor",
       "name": "editor",
-      "redirect": "/editor/markdownEditor",
       "component": "Layout",
+      "redirect": "/editor/markdownEditor",
       "meta": {
         "title": "编辑器",
         "icon": "EditPen"
@@ -37,7 +37,7 @@
       "children": [
         {
           "path": "/editor/markdownEditor",
-          "name": "markdownEditor",
+          "name": "MarkdownEditor",
           "meta": {
             "title": "Markdown编辑器",
             "icon": "Edit"
@@ -46,7 +46,7 @@
         },
         {
           "path": "/editor/richTextEditor",
-          "name": "richTextEditor",
+          "name": "RichTextEditor",
           "meta": {
             "title": "富文本编辑器",
             "icon": "Edit"
@@ -55,7 +55,7 @@
         },
         {
           "path": "/editor/richTextEditor2",
-          "name": "richTextEditor2",
+          "name": "RichTextEditor2",
           "meta": {
             "title": "富文本编辑器2",
             "icon": "Edit"
@@ -64,7 +64,7 @@
         },
         {
           "path": "/editor/richTextEditor3",
-          "name": "richTextEditor3",
+          "name": "RichTextEditor3",
           "meta": {
             "title": "富文本编辑器3",
             "icon": "Edit"
@@ -73,7 +73,7 @@
         },
         {
           "path": "/editor/richTextEditor4",
-          "name": "richTextEditor4",
+          "name": "RichTextEditor4",
           "meta": {
             "title": "富文本编辑器4",
             "icon": "Edit"
@@ -82,7 +82,7 @@
         },
         {
           "path": "/editor/codeEditor",
-          "name": "codeEditor",
+          "name": "CodeEditor",
           "meta": {
             "title": "代码编辑器",
             "icon": "Edit"
@@ -94,8 +94,8 @@
     {
       "path": "/fileViewer",
       "name": "fileViewer",
-      "redirect": "/fileViewer/pdfViewer",
       "component": "Layout",
+      "redirect": "/fileViewer/pdfViewer",
       "meta": {
         "title": "文件查看器",
         "icon": "Document"
@@ -125,8 +125,8 @@
     {
       "path": "/media",
       "name": "media",
-      "redirect": "/media/compress",
       "component": "Layout",
+      "redirect": "/media/compress",
       "meta": {
         "title": "文件压缩",
         "icon": "PictureRounded"
@@ -148,6 +148,7 @@
       "path": "/table",
       "name": "table",
       "component": "Layout",
+      "redirect": "/table/TableExample",
       "meta": {
         "title": "表格",
         "icon": "Grid"
@@ -156,9 +157,9 @@
       "children": [
         {
           "path": "/table/TableExample",
-          "name": "Grid",
+          "name": "TableExample",
           "meta": {
-            "title": "表格示例",
+            "title": "嵌套表格",
             "icon": "Grid"
           },
           "hidden": false
@@ -169,24 +170,25 @@
       "path": "/components",
       "name": "components",
       "component": "Layout",
+      "redirect": "/components/scrollbar",
       "meta": {
-        "title": "Vue3组件",
+        "title": "组件",
         "icon": "svg-vue"
       },
       "hidden": false,
       "children": [
         {
           "path": "/components/scrollbar",
-          "name": "Menu",
+          "name": "ScrollbarUsageExample",
           "meta": {
             "title": "自定义滚动条",
-            "icon": "Grid"
+            "icon": "Menu"
           },
           "hidden": false
         },
         {
           "path": "/components/noticeBar",
-          "name": "noticeBar",
+          "name": "NoticeBarUsageExample",
           "meta": {
             "title": "通知栏",
             "icon": "Bell"
@@ -199,6 +201,7 @@
       "path": "/icons",
       "name": "icons",
       "component": "Layout",
+      "redirect": "/icons/list",
       "meta": {
         "title": "图标资源",
         "icon": "HelpFilled"
@@ -207,7 +210,7 @@
       "children": [
         {
           "path": "/icons/list",
-          "name": "iconList",
+          "name": "IconList",
           "meta": {
             "title": "图标资源",
             "icon": "HelpFilled"

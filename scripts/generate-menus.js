@@ -1,117 +1,187 @@
+#!/usr/bin/env node
 /**
- * 从 src/router/routes.ts 自动生成 public/mock/authMenus.json
+ * generateAuthMenus.mjs
  *
- * 转换规则：
- * 1. 仅包含有 children 的路由（菜单是层级结构），自动排除纯重定向路由和 /login
- * 2. 排除 notFound 通配路由 { path: '/:pathMatch(.*)*', name: 'notFound' }
- * 3. 子路由 path 拼接为完整路径（父 path + / + 子 path）
- * 4. 子路由移除 component 字段
- * 5. 父路由 component: Layout 转为字符串 "Layout"
- * 6. 保留 meta、hidden、redirect 等字段
+ * 从 ../src/router/routes.ts 自动提取路由信息，生成 ../mock/authMenus.json
  *
- * 用法: node scripts/generate-menus.js
+ * 用法: node generateAuthMenus.mjs
  */
 
-import { readFileSync, writeFileSync } from 'node:fs'
-import { resolve, dirname } from 'node:path'
-import { fileURLToPath } from 'node:url'
-import vm from 'node:vm'
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
-const routesPath = resolve(__dirname, '../src/router/routes.ts')
-const outputPath = resolve(__dirname, '../public/mock/authMenus.json')
+// ========== 固定路径（相对于脚本所在目录）==========
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-function generateMenus() {
-  // 1. 读取 routes.ts 源码
-  const source = readFileSync(routesPath, 'utf-8')
+const ROUTES_FILE = path.resolve(__dirname, '../src/router/routes.ts');
+const OUTPUT_FILE = path.resolve(__dirname, '../public/mock/authMenus.json');
 
-  // 2. 转换源码为可执行 JS
-  const transformed = source
-    // 替换 Layout 导入为字符串常量
-    .replace(
-      /import\s+Layout\s+from\s+['"][^'"]+['"]/,
-      'const Layout = "Layout"'
-    )
-    // 替换动态 import() 为字符串路径（提取路径，忽略 webpackChunkName 注释）
-    .replace(
-      /\(\)\s*=>\s*import\((?:\/\*[\s\S]*?\*\/\s*)?['"]([^'"]+)['"]\)/g,
-      '"$1"'
-    )
-    // 移除 export default
-    .replace(/export\s+default\s+routes/, '/* export default removed */')
+// ========== 解析 routes.ts ==========
+function parseRoutesFile(filePath) {
+  const content = fs.readFileSync(filePath, 'utf-8');
 
-  // 3. 执行转换后的代码获取 routes 数组
-  const sandbox = { __routes: null }
-  const code = `${transformed}\n__routes = routes;`
-  vm.runInNewContext(code, sandbox)
-  const routes = sandbox.__routes
+  let cleaned = content;
 
-  if (!Array.isArray(routes)) {
-    throw new Error('Failed to parse routes from routes.ts')
+  // 移除 import 语句
+  cleaned = cleaned.replace(/^import\s+.*$/gm, '');
+
+  // 移除 export default
+  cleaned = cleaned.replace(/^export\s+default\s+.*$/gm, '');
+
+  // 移除 webpackChunkName 注释
+  cleaned = cleaned.replace(/\/\*\s*webpackChunkName:\s*"[^"]*"\s*\*\//g, '');
+
+  // 将动态 import 替换为占位字符串
+  cleaned = cleaned.replace(
+    /component:\s*\(\)\s*=>\s*import\s*\(\s*['"`][^'"`]*['"`]\s*\)/g,
+    'component: "__DYNAMIC_IMPORT__"'
+  );
+
+  // 将 Layout 组件引用替换为字符串
+  cleaned = cleaned.replace(/component:\s*Layout/g, 'component: "Layout"');
+
+  // 移除行尾注释和单行注释
+  cleaned = cleaned.replace(/\/\/.*$/gm, '');
+
+  // 提取数组部分
+  const arrayMatch = cleaned.match(/const\s+routes\s*=\s*(\[[\s\S]*\])/);
+  if (!arrayMatch) {
+    console.error('❌ 无法从文件中解析出 routes 数组');
+    process.exit(1);
   }
 
-  // 4. 路由转换辅助函数
+  const arrayStr = arrayMatch[1];
 
-  /** 将子路由的相对 path 拼接为完整路径 */
-  function buildFullPath(parentPath, childPath) {
-    const base = parentPath.replace(/\/$/, '')
-    return `${base}/${childPath}`
+  let routes;
+  try {
+    // eslint-disable-next-line no-new-func
+    routes = new Function(`return ${arrayStr}`)();
+  } catch (e) {
+    console.error('❌ 解析 routes 数组失败:', e.message);
+    console.error('尝试解析的内容前200字符:', arrayStr.substring(0, 200));
+    process.exit(1);
   }
 
-  /** 转换子路由：拼接完整 path，移除 component */
-  function transformChild(child, parentPath) {
-    const item = {}
-
-    if (child.path) {
-      item.path = buildFullPath(parentPath, child.path)
-    }
-    if (child.name) item.name = child.name
-    if (child.meta) item.meta = child.meta
-    if (child.hidden !== undefined) item.hidden = child.hidden
-
-    return item
-  }
-
-  /** 转换父路由：保留所有字段，递归处理 children */
-  function transformRoute(route) {
-    const item = {}
-
-    if (route.path) item.path = route.path
-    if (route.name) item.name = route.name
-    if (route.redirect) item.redirect = route.redirect
-    if (route.component) item.component = route.component
-    if (route.meta) item.meta = route.meta
-    if (route.hidden !== undefined) item.hidden = route.hidden
-
-    if (route.children) {
-      item.children = route.children
-        .filter((child) => child.name !== 'notFound')
-        .map((child) => transformChild(child, route.path))
-    }
-
-    return item
-  }
-
-  // 5. 过滤并转换路由
-  const menuData = routes
-    // 排除 notFound 通配路由
-    .filter((route) => route.name !== 'notFound')
-    // 仅包含有 children 的路由（构成菜单层级）
-    .filter((route) => route.children && route.children.length > 0)
-    .map(transformRoute)
-
-  // 6. 包装并写入 authMenus.json
-  const output = {
-    code: 200,
-    message: 'success',
-    data: menuData,
-  }
-
-  const jsonStr = JSON.stringify(output, null, 2) + '\n'
-  writeFileSync(outputPath, jsonStr, 'utf-8')
-
-  console.log(`authMenus.json 已生成: ${outputPath}`)
-  console.log(`共 ${menuData.length} 个菜单项`)
+  return routes;
 }
 
-generateMenus()
+// ========== 转换逻辑 ==========
+function transformRoutesToAuthMenus(routes) {
+  const menuItems = [];
+
+  for (const route of routes) {
+    // 跳过纯重定向路由（没有 name 和 children）
+    if (!route.name && !route.children) continue;
+
+    // 跳过登录页
+    if (route.name === 'login') continue;
+
+    // 跳过 404 兜底路由
+    if (route.name === 'notFound') continue;
+
+    // 只处理有 children 的路由（菜单项）
+    if (!route.children || route.children.length === 0) continue;
+
+    // 构建父级菜单
+    const menuItem = {
+      path: route.path,
+      name: route.name,
+    };
+
+    if (route.component === 'Layout') {
+      menuItem.component = 'Layout';
+    }
+
+    if (route.redirect) {
+      menuItem.redirect = route.redirect;
+    }
+
+    if (route.meta) {
+      menuItem.meta = { ...route.meta };
+    }
+
+    // hidden 统一设为 false
+    menuItem.hidden = false;
+
+    // 构建子菜单
+    menuItem.children = route.children
+      .filter((child) => child.name !== undefined)
+      .map((child) => {
+        const childPath = route.path.endsWith('/')
+          ? `${route.path}${child.path}`
+          : `${route.path}/${child.path}`;
+
+        const childItem = {
+          path: childPath,
+          name: child.name,
+        };
+
+        if (child.meta) {
+          childItem.meta = { ...child.meta };
+        }
+
+        childItem.hidden = false;
+
+        return childItem;
+      });
+
+    menuItems.push(menuItem);
+  }
+
+  return menuItems;
+}
+
+// ========== 输出 ==========
+function generateOutput(menuItems) {
+  return JSON.stringify(
+    {
+      code: 200,
+      message: 'success',
+      data: menuItems,
+    },
+    null,
+    2
+  );
+}
+
+// ========== 主流程 ==========
+function main() {
+  console.log('🔍 读取路由文件:', ROUTES_FILE);
+
+  if (!fs.existsSync(ROUTES_FILE)) {
+    console.error(`❌ 文件不存在: ${ROUTES_FILE}`);
+    process.exit(1);
+  }
+
+  // 确保输出目录存在
+  const outputDir = path.dirname(OUTPUT_FILE);
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+    console.log(`📁 已创建输出目录: ${outputDir}`);
+  }
+
+  // 1. 解析 routes.ts
+  const routes = parseRoutesFile(ROUTES_FILE);
+  console.log(`✅ 解析到 ${routes.length} 个顶层路由`);
+
+  // 2. 转换为 authMenus 格式
+  const menuItems = transformRoutesToAuthMenus(routes);
+  console.log(`✅ 生成 ${menuItems.length} 个菜单项`);
+
+  // 3. 输出统计
+  for (const item of menuItems) {
+    const childCount = item.children ? item.children.length : 0;
+    console.log(
+      `   📁 ${item.meta?.title || item.name} (${item.path}) - ${childCount} 个子菜单`
+    );
+  }
+
+  // 4. 写入文件
+  const jsonContent = generateOutput(menuItems);
+  fs.writeFileSync(OUTPUT_FILE, jsonContent, 'utf-8');
+  console.log(`\n🎉 已生成: ${OUTPUT_FILE}`);
+}
+
+main();
