@@ -1,4 +1,4 @@
-import { ElMessage } from 'element-plus'
+// import { ElMessage } from 'element-plus'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 import type { Router } from 'vue-router'
@@ -42,6 +42,7 @@ const permission = (router: Router) => {
         try {
           await userInfo.initUserData()
         } catch (error) {
+          console.error(error)
           NProgress.done()
           return false
         }

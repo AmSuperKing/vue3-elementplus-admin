@@ -21,6 +21,11 @@ import { indentUnit } from "@codemirror/language";
 import { keymap } from "@codemirror/view";
 import { defaultKeymap, indentWithTab } from "@codemirror/commands";
 
+// 组件名与路由 name 保持一致，供 keep-alive include 匹配
+defineOptions({
+  name: 'CodeEditor',
+})
+
 const codeText = ref<string>('');
 
 /**

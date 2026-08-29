@@ -18,6 +18,11 @@
 import { ref } from 'vue'
 import TinyEditor from './components/TinyEditor.vue'
 
+// 组件名与路由 name 保持一致，供 keep-alive include 匹配
+defineOptions({
+  name: 'RichTextEditor2',
+})
+
 // 使用 v-model 绑定编辑器内容
 const editorContent = ref('<p>Hello <strong>Fluent Editor</strong></p><p><br><a href="https://opentiny.github.io/tiny-editor/">https://opentiny.github.io/tiny-editor/</a></p>')
 </script>

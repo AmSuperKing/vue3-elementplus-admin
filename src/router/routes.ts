@@ -32,45 +32,45 @@ const routes = [
     children: [
       {
         path: 'markdownEditor',
-        name: 'markdownEditor',
+        name: 'MarkdownEditor',
         meta: { title: 'Markdown编辑器', icon: 'Edit' },
         hidden: false,
-        component: () => import(/* webpackChunkName: "markdownEditor" */ '@/views/editor/MarkdownEditor.vue'),
+        component: () => import(/* webpackChunkName: "MarkdownEditor" */ '@/views/editor/MarkdownEditor.vue'),
       },
       {
         path: 'richTextEditor',
-        name: 'richTextEditor',
+        name: 'RichTextEditor',
         meta: { title: '富文本编辑器', icon: 'Edit' },
         hidden: false,
-        component: () => import(/* webpackChunkName: "richTextEditor" */ '@/views/editor/RichTextEditor.vue'),
+        component: () => import(/* webpackChunkName: "RichTextEditor" */ '@/views/editor/RichTextEditor.vue'),
       },
       {
         path: 'richTextEditor2',
-        name: 'richTextEditor2',
+        name: 'RichTextEditor2',
         meta: { title: '富文本编辑器2', icon: 'Edit' },
         hidden: false,
-        component: () => import(/* webpackChunkName: "richTextEditor2" */ '@/views/editor/RichTextEditor2.vue'),
+        component: () => import(/* webpackChunkName: "RichTextEditor2" */ '@/views/editor/RichTextEditor2.vue'),
       },
       {
         path: 'richTextEditor3',
-        name: 'richTextEditor3',
+        name: 'RichTextEditor3',
         meta: { title: '富文本编辑器3', icon: 'Edit' },
         hidden: false,
-        component: () => import(/* webpackChunkName: "richTextEditor3" */ '@/views/editor/RichTextEditor3.vue'),
+        component: () => import(/* webpackChunkName: "RichTextEditor3" */ '@/views/editor/RichTextEditor3.vue'),
       },
       {
         path: 'richTextEditor4',
-        name: 'richTextEditor4',
+        name: 'RichTextEditor4',
         meta: { title: '富文本编辑器4', icon: 'Edit' },
         hidden: false,
-        component: () => import(/* webpackChunkName: "richTextEditor4" */ '@/views/editor/RichTextEditor4.vue'),
+        component: () => import(/* webpackChunkName: "RichTextEditor4" */ '@/views/editor/RichTextEditor4.vue'),
       },
       {
         path: 'codeEditor',
-        name: 'codeEditor',
+        name: 'CodeEditor',
         meta: { title: '代码编辑器', icon: 'Edit' },
         hidden: false,
-        component: () => import(/* webpackChunkName: "codeEditor" */ '@/views/editor/CodeEditor.vue'),
+        component: () => import(/* webpackChunkName: "CodeEditor" */ '@/views/editor/CodeEditor.vue'),
       },
     ],
   },
@@ -143,14 +143,14 @@ const routes = [
     children: [
       {
         path: 'scrollbar',
-        name: 'scrollbar',
+        name: 'ScrollbarUsageExample',
         meta: { title: '自定义滚动条', icon: 'Menu' },
         hidden: false,
         component: () => import(/* webpackChunkName: "ScrollbarUsageExample" */  '@/views/scrollbar/UsageExample.vue')
       },
       {
         path: 'noticeBar',
-        name: 'NoticeBar',
+        name: 'NoticeBarUsageExample',
         meta: { title: '通知栏', icon: 'Bell' },
         hidden: false,
         component: () => import(/* webpackChunkName: "NoticeBarUsageExample" */  '@/views/component/noticeBar/example.vue')
@@ -167,10 +167,10 @@ const routes = [
     children: [
       {
         path: 'list',
-        name: 'iconList',
+        name: 'IconList',
         meta: { title: '图标资源', icon: 'HelpFilled' },
         hidden: false,
-        component: () => import(/* webpackChunkName: "iconList" */ '@/views/icons/icons.vue'),
+        component: () => import(/* webpackChunkName: "IconList" */ '@/views/icons/icons.vue'),
       },
     ],
   },
@@ -181,7 +181,7 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (About.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "dashboard" */ '@/views/login/index.vue'),
+    component: () => import(/* webpackChunkName: "login" */ '@/views/login/index.vue'),
   },
   {
     path: '/error',

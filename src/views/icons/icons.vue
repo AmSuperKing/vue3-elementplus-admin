@@ -24,6 +24,11 @@
 import { onMounted, ref } from 'vue'
 import clipboard from '@/utils/clipboard'
 
+// 组件名与路由 name 保持一致，供 keep-alive include 匹配
+defineOptions({
+  name: 'IconList',
+})
+
 const expandedIcons = ref<string[]>([])
 
 onMounted(() => {

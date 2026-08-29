@@ -14,6 +14,11 @@ import { ref } from 'vue'
 import { MdEditor, type ToolbarNames } from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
 
+// 组件名与路由 name 保持一致，供 keep-alive include 匹配
+defineOptions({
+  name: 'MarkdownEditor',
+})
+
 const toolbars: ToolbarNames[] = [
   "bold",
   "underline",

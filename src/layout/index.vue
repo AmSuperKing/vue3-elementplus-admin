@@ -17,7 +17,7 @@
       <el-scrollbar>
         <div class="content-container">
           <AppMain />
-          <el-backtop target=".content-container" style="z-index: 1999;" />
+          <el-backtop target=".main-wrapper .el-scrollbar__wrap" style="z-index: 1999;" />
         </div>
       </el-scrollbar>
     </div>
@@ -184,11 +184,6 @@ onBeforeUnmount(() => {
   height: 100%;
   padding: 10px;
   background: var(--content-bg);
-  scrollbar-width: none;
-  &::-webkit-scrollbar {
-    display: none;
-    width: 0;
-  }
 }
 
 @media screen and (max-width: 768px) {

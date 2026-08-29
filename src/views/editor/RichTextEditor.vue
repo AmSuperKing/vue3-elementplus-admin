@@ -19,6 +19,11 @@ import { onBeforeUnmount, ref, shallowRef } from 'vue'
 import type { IDomEditor } from '@wangeditor/editor'
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 
+// 组件名与路由 name 保持一致，供 keep-alive include 匹配
+defineOptions({
+  name: 'RichTextEditor',
+})
+
 const editorRef = shallowRef<IDomEditor | undefined>()
 const valueHtml = ref('<p>hello</p>')
 const mode: 'default' | 'simple' = 'default'

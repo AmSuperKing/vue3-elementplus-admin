@@ -16,6 +16,11 @@ import { ref } from 'vue'
 import { UmoEditor } from '@umoteam/editor'
 import request from '@/utils/request'
 
+// 组件名与路由 name 保持一致，供 keep-alive include 匹配
+defineOptions({
+  name: 'RichTextEditor3',
+})
+
 const editorRef = ref()
 
 const options = {

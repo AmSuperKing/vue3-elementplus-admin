@@ -21,6 +21,11 @@ import type { RawEditorOptions } from "tinymce";
 import { ElLoading, ElMessage } from 'element-plus'
 import request from '@/utils/request'
 
+// 组件名与路由 name 保持一致，供 keep-alive include 匹配
+defineOptions({
+  name: 'RichTextEditor4',
+})
+
 // 计算 tinymce 脚本源路径
 const tinymceScriptSrc = computed(() => {
   return import.meta.env.PROD
@@ -148,26 +153,31 @@ const editorInitOptions: RawEditorOptions = {
     input.click();
   },
 
-  images_upload_handler: (blobInfo) =>
-    new Promise(async (resolve, reject) => {
-      const formData = new FormData();
-      formData.append("file", blobInfo.blob());
-      const url = "/api/upload";
-      const loadingInstance = ElLoading.service({ fullscreen: true })
+  images_upload_handler: (blobInfo) => {
+    return new Promise((resolve, reject) => {
+      const uploadFile = async () => {
+        const formData = new FormData();
+        formData.append("file", blobInfo.blob());
+        const url = "/api/upload";
+        const loadingInstance = ElLoading.service({ fullscreen: true })
 
-      try {
-        const rs = await request.post(url, formData) as unknown as ApiResponse<{ url: string }>
-        loadingInstance.close()
-        if (rs && rs.code === 200) {
-          resolve(rs.data.url);
-        } else {
-          reject(rs.message || "上传失败");
+        try {
+          const rs = await request.post(url, formData) as unknown as ApiResponse<{ url: string }>
+          loadingInstance.close()
+          if (rs && rs.code === 200) {
+            resolve(rs.data.url);
+          } else {
+            reject(rs.message || "上传失败");
+          }
+        } catch {
+          loadingInstance.close()
+          reject("上传异常");
         }
-      } catch {
-        loadingInstance.close()
-        reject("上传异常");
-      }
+      };
+
+      uploadFile();
     })
+  }
 };
 </script>
 

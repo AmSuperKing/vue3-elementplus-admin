@@ -55,6 +55,11 @@ import { ref, toValue } from 'vue'
 import Scrollbar from './components/Scrollbar/Scrollbar.vue'
 import type { ScrollbarInstance } from './components/Scrollbar/types'
 
+// 组件名与路由 name 保持一致，供 keep-alive include 匹配
+defineOptions({
+  name: 'ScrollbarUsageExample',
+})
+
 const scrollbarRef = ref<ScrollbarInstance>()
 
 function onScroll({ scrollTop, scrollLeft }: { scrollTop: number; scrollLeft: number }) {

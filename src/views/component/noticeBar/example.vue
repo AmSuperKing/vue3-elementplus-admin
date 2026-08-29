@@ -68,6 +68,11 @@
 <script setup lang="ts">
 import NoticeBar from './NoticeBar.vue'
 
+// 组件名与路由 name 保持一致，供 keep-alive include 匹配
+defineOptions({
+  name: 'NoticeBarUsageExample',
+})
+
 function onClick() {
   console.log('通知栏已点击')
 }
