@@ -16,12 +16,15 @@ const permission = (router: Router) => {
     // start progress bar
     NProgress.start()
     document.title = `${to?.meta?.title || '未知页面标题'} | ${settings.pageTitle}`
-    if (to.name && _WhiteList.includes(to.name as string)) {
-      return true
-    }
+
     const token = getToken()
     const userInfo = useUserInfoStore()
     if (!token) {
+      // 白名单，直接访问
+      if (to.name && _WhiteList.includes(to.name as string)) {
+        return true
+      }
+      // 非白名单，重置缓存信息，跳转到登录页面
       userInfo.resetInfo()
       NProgress.done()
       return {
@@ -32,9 +35,10 @@ const permission = (router: Router) => {
         replace: true,
       }
     } else {
+      // 登录后，再次访问登录页面，重定向到首页
       if (to.path === '/login') {
         return {
-          name: 'dashboard',
+          path: '/',
           replace: true,
         }
       }

@@ -101,8 +101,8 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate((valid: boolean) => {
     if (valid) {
-      userApi
-        .login(loginForm)
+      const loginMethod = loginForm.username === 'admin' ? userApi.adminLogin : userApi.otherLogin
+      loginMethod(loginForm)
         .then((res) => {
           if (res) {
             setToken(res.data.token)

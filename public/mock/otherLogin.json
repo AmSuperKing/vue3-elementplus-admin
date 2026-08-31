@@ -1,0 +1,13 @@
+{
+  "code": 200,
+  "message": "success",
+  "data": {
+    "userName": "normal",
+    "userNameCn": "普通用户",
+    "roles": [
+      "moraml"
+    ],
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cAI6IkpXVCA9.normal.mock_token_string",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsLnR5cCI6IkpXVCP9.normal.mock_refresh_token"
+  }
+}

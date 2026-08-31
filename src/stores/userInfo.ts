@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { getToken, removeToken } from '@/utils/auth'
+import { removeToken } from '@/utils/auth'
 import { userApi } from '@/api/userApi'
 import { flattern } from '@/utils/common'
 import { ref } from 'vue'
@@ -38,7 +38,8 @@ export const useUserInfoStore = defineStore('userInfo', () => {
   }
 
   async function getUserInfo() {
-    const response = await userApi.getUserInfo(userName.value)
+    const requestMethod = userName.value === 'admin' ? userApi.getUserInfo : userApi.getOtherUserInfo
+    const response = await requestMethod(userName.value)
     if (+response.code === 200) {
       userName.value = response.data.userName
       userNameCn.value = response.data.userNameCn
@@ -47,7 +48,8 @@ export const useUserInfoStore = defineStore('userInfo', () => {
   }
 
   async function getAuthMenus(): Promise<MenuRoute[]> {
-    const response = await userApi.getUserAuthMenu()
+    const requestMethod = userName.value === 'admin' ? userApi.getUserAuthMenu : userApi.getNormalUserAuthMenu
+    const response = await requestMethod()
     if (+response.code === 200) {
       authMenus.value = response.data
       return Promise.resolve(response.data as MenuRoute[])
