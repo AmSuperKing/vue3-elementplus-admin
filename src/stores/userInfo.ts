@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { removeToken } from '@/utils/auth'
+import { getToken, removeToken } from '@/utils/auth'
 import { userApi } from '@/api/userApi'
 import { flattern } from '@/utils/common'
 import { ref } from 'vue'
@@ -12,7 +12,6 @@ export const useUserInfoStore = defineStore('userInfo', () => {
   const permissions = ref<string[]>([])
 
   async function setUserInfo(userInfo: UserInfo) {
-    console.log('setUserInfo', userInfo)
     userName.value = userInfo.userName
     userNameCn.value = userInfo.userNameCn
     roles.value = userInfo.roles
@@ -41,7 +40,9 @@ export const useUserInfoStore = defineStore('userInfo', () => {
   }
 
   async function getUserInfo() {
-    const requestMethod = userName.value === 'admin' ? userApi.getUserInfo : userApi.getOtherUserInfo
+    // 此处为mock需要，根据实际自行调整
+    const token = getToken()
+    const requestMethod = token.indexOf('admin') > -1 ? userApi.getUserInfo : userApi.getOtherUserInfo
     const response = await requestMethod(userName.value)
     if (+response.code === 200) {
       userName.value = response.data.userName
@@ -51,7 +52,9 @@ export const useUserInfoStore = defineStore('userInfo', () => {
   }
 
   async function getAuthMenus(): Promise<MenuRoute[]> {
-    const requestMethod = userName.value === 'admin' ? userApi.getUserAuthMenu : userApi.getNormalUserAuthMenu
+    // 此处为mock需要，根据实际自行调整
+    const token = getToken()
+    const requestMethod = token.indexOf('admin') > -1 ? userApi.getUserAuthMenu : userApi.getNormalUserAuthMenu
     const response = await requestMethod()
     if (+response.code === 200) {
       authMenus.value = response.data
@@ -60,13 +63,21 @@ export const useUserInfoStore = defineStore('userInfo', () => {
     return []
   }
 
-  function initUserData() {
-    getUserInfo().then((userInfo) => {
-      if (userInfo) setUserInfo(userInfo)
-    })
-    getAuthMenus().then((menus) => {
-      setAuthMenus(menus)
-    })
+  async function initUserData() {
+    const [userInfoResult, menusResult] = await Promise.allSettled([
+      getUserInfo(),
+      getAuthMenus()
+    ]);
+
+    // 处理用户信息：仅在 fulfilled 且有值时设置
+    if (userInfoResult.status === 'fulfilled' && userInfoResult.value) {
+      setUserInfo(userInfoResult.value);
+    }
+
+    // 处理权限菜单：仅在 fulfilled 时设置
+    if (menusResult.status === 'fulfilled') {
+      setAuthMenus(menusResult.value);
+    }
   }
 
   return {
@@ -84,4 +95,4 @@ export const useUserInfoStore = defineStore('userInfo', () => {
     getAuthMenus,
     initUserData,
   }
-})
+}, { persist: true })

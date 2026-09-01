@@ -4,6 +4,7 @@ interface LoginForm {
   password: string
 }
 export const userApi = {
+  // json mock api，实际使用请替换为真实接口地址
   adminLogin(data: LoginForm) {
     return request.get('/adminLogin.json', { params: data }).then((res) => Promise.resolve(res.data))
   },

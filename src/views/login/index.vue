@@ -149,8 +149,8 @@ const forgetPwd = () => {
 }
 
 const ENCRYPT_CODE = 'Identity_verification'
-const USERNAME_KEY = 'userName'
-const PWD_KEY = 'userPwd'
+const USERNAME_KEY = 'user_name'
+const PWD_KEY = 'access_key'
 
 const checkLoginInfo = () => {
   const username = $cookies.get(USERNAME_KEY) ? $cookies.get(USERNAME_KEY) : ''

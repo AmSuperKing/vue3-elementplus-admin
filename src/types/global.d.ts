@@ -4,10 +4,12 @@ interface MenuMeta {
 }
 
 interface MenuRoute {
-  meta: MenuMeta
-  menuName: string
+  meta?: MenuMeta
+  name?: string
+  menuName?: string
   path: string
   menuPath?: string
+  redirect?: string;
   icon?: string
   hidden?: boolean
   children?: MenuRoute[]
