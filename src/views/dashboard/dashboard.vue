@@ -20,284 +20,288 @@
       </div>
     </div>
 
-    <!-- 统计卡片区域 -->
-    <el-row :gutter="20" class="stats-cards">
-      <el-col :xs="24" :sm="12" :lg="6">
-        <div class="stat-card-wrapper">
-          <el-card class="stat-card" shadow="hover">
-            <div class="stat-content">
-              <div class="stat-icon users">
-                <Icon name="svg-peoples" />
-              </div>
-              <div class="stat-info">
-                <div class="stat-value">
-                  <CountTo :start-val="0" :end-val="9687" :duration="2000" />
-                </div>
-                <div class="stat-label">{{ $t('dashboard.totalUser') }}</div>
-                <div class="stat-trend up">
-                  <Icon name="Top" />
-                  <span>+12.5%</span>
-                </div>
-              </div>
-            </div>
-          </el-card>
-        </div>
-      </el-col>
+    <div v-permission="'sys:dashboard:viewAll'">
 
-      <el-col :xs="24" :sm="12" :lg="6">
-        <div class="stat-card-wrapper">
-          <el-card class="stat-card" shadow="hover">
-            <div class="stat-content">
-              <div class="stat-icon orders">
-                <Icon name="el-icon-Tickets" />
-              </div>
-              <div class="stat-info">
-                <div class="stat-value">
-                  <CountTo :start-val="0" :end-val="5678" :duration="2000" />
+      <!-- 统计卡片区域 -->
+      <el-row :gutter="20" class="stats-cards">
+        <el-col :xs="24" :sm="12" :lg="6">
+          <div class="stat-card-wrapper">
+            <el-card class="stat-card" shadow="hover">
+              <div class="stat-content">
+                <div class="stat-icon users">
+                  <Icon name="svg-peoples" />
                 </div>
-                <div class="stat-label">{{ $t('dashboard.todayOrder') }}</div>
-                <div class="stat-trend up">
-                  <Icon name="Top" />
-                  <span>+8.3%</span>
-                </div>
-              </div>
-            </div>
-          </el-card>
-        </div>
-      </el-col>
-
-      <el-col :xs="24" :sm="12" :lg="6">
-        <div class="stat-card-wrapper">
-          <el-card class="stat-card" shadow="hover">
-            <div class="stat-content">
-              <div class="stat-icon revenue">
-                <Icon name="money" />
-              </div>
-              <div class="stat-info">
-                <div class="stat-value">
-                  <CountTo :start-val="0" :end-val="89012" :duration="2000" />
-                </div>
-                <div class="stat-label">{{ $t('dashboard.monthIncome') }}</div>
-                <div class="stat-trend up">
-                  <Icon name="Top" />
-                  <span>+15.2%</span>
+                <div class="stat-info">
+                  <div class="stat-value">
+                    <CountTo :start-val="0" :end-val="9687" :duration="2000" />
+                  </div>
+                  <div class="stat-label">{{ $t('dashboard.totalUser') }}</div>
+                  <div class="stat-trend up">
+                    <Icon name="Top" />
+                    <span>+12.5%</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          </el-card>
-        </div>
-      </el-col>
-
-      <el-col :xs="24" :sm="12" :lg="6">
-        <div class="stat-card-wrapper">
-          <el-card class="stat-card" shadow="hover">
-            <div class="stat-content">
-              <div class="stat-icon products">
-                <Icon name="Goods" />
-              </div>
-              <div class="stat-info">
-                <div class="stat-value">
-                  <CountTo :start-val="0" :end-val="4321" :duration="2000" />
-                </div>
-                <div class="stat-label">{{ $t('dashboard.productNum') }}</div>
-                <div class="stat-trend down">
-                  <Icon name="Bottom" />
-                  <span>-2.1%</span>
-                </div>
-              </div>
-            </div>
-          </el-card>
-        </div>
-      </el-col>
-    </el-row>
-
-    <!-- 快捷访问区域 -->
-    <el-row :gutter="20" class="quick-access-section">
-      <el-col :span="24">
-        <el-card class="quick-access-card" shadow="hover">
-          <template #header>
-            <div class="card-header">
-              <span>{{ $t('dashboard.quickAccess') }}</span>
-            </div>
-          </template>
-          <div class="quick-access-grid">
-            <div class="quick-access-item" @click="navigateTo('/editor/markdownEditor')">
-              <div class="access-icon editor">
-                <Icon name="EditPen" />
-              </div>
-              <div class="access-info">
-                <div class="access-title">{{ $t('dashboard.editor')}}</div>
-                <div class="access-desc">{{ $t('dashboard.editorCount', { number: 6 })}}</div>
-              </div>
-            </div>
-            <div class="quick-access-item" @click="navigateTo('/fileViewer/pdfViewer')">
-              <div class="access-icon file">
-                <Icon name="Document" />
-              </div>
-              <div class="access-info">
-                <div class="access-title">{{ $t('dashboard.fileViewer') }}</div>
-                <div class="access-desc">{{ $t('dashboard.officePreview') }}</div>
-              </div>
-            </div>
-            <div class="quick-access-item" @click="navigateTo('/media/compress')">
-              <div class="access-icon media">
-                <Icon name="PictureRounded" />
-              </div>
-              <div class="access-info">
-                <div class="access-title">{{ $t('dashboard.fileCompress') }}</div>
-                <div class="access-desc">{{ $t('dashboard.mediaCompress') }}</div>
-              </div>
-            </div>
-            <div class="quick-access-item" @click="navigateTo('/table/TableExample')">
-              <div class="access-icon table">
-                <Icon name="Grid" />
-              </div>
-              <div class="access-info">
-                <div class="access-title">{{ $t('dashboard.table') }}</div>
-                <div class="access-desc">{{ $t('dashboard.nestedTable') }}</div>
-              </div>
-            </div>
-            <div class="quick-access-item" @click="navigateTo('/components/scrollbar')">
-              <div class="access-icon component">
-                <Icon name="Sunset" />
-              </div>
-              <div class="access-info">
-                <div class="access-title">{{ $t('dashboard.component') }}</div>
-                <div class="access-desc">{{ $t('dashboard.customComponent') }}</div>
-              </div>
-            </div>
-            <div class="quick-access-item" @click="navigateTo('/icons/list')">
-              <div class="access-icon icon">
-                <Icon name="HelpFilled" />
-              </div>
-              <div class="access-info">
-                <div class="access-title">{{ $t('dashboard.iconResource') }}</div>
-                <div class="access-desc">{{ $t('dashboard.iconLibrary') }}</div>
-              </div>
-            </div>
+            </el-card>
           </div>
-        </el-card>
-      </el-col>
-    </el-row>
+        </el-col>
 
-    <!-- 主要内容区域 -->
-    <el-row :gutter="20" class="main-content">
-      <!-- 左侧图表区域 -->
-      <el-col :xs="24" :lg="16">
-        <el-card class="chart-card" shadow="hover">
-          <template #header>
-            <div class="card-header">
-              <span>{{ $t('dashboard.dataTrend') }}</span>
-              <el-radio-group v-model="chartPeriod" size="small">
-                <el-radio-button value="week">{{ $t('dashboard.week') }}</el-radio-button>
-                <el-radio-button value="month">{{ $t('dashboard.month') }}</el-radio-button>
-                <el-radio-button value="year">{{ $t('dashboard.year') }}</el-radio-button>
-              </el-radio-group>
-            </div>
-          </template>
-          <div ref="chartRef" class="echarts-container"></div>
-        </el-card>
-      </el-col>
-
-      <!-- 右侧活动时间线 -->
-      <el-col :xs="24" :lg="8">
-        <el-card class="activity-card" shadow="hover">
-          <template #header>
-            <div class="card-header">
-              <span>{{ $t('dashboard.activityTimeline') }}</span>
-              <el-button type="primary" size="small" text>{{ $t('dashboard.viewAll') }}</el-button>
-            </div>
-          </template>
-          <el-timeline class="activity-timeline">
-            <el-timeline-item
-              v-for="(activity, index) in activities"
-              :key="index"
-              :timestamp="activity.time"
-              :type="activity.type"
-              :color="activity.color"
-            >
-              <div class="activity-content">
-                <div class="activity-title">{{ activity.title }}</div>
-                <div class="activity-desc">{{ activity.desc }}</div>
+        <el-col :xs="24" :sm="12" :lg="6">
+          <div class="stat-card-wrapper">
+            <el-card class="stat-card" shadow="hover">
+              <div class="stat-content">
+                <div class="stat-icon orders">
+                  <Icon name="el-icon-Tickets" />
+                </div>
+                <div class="stat-info">
+                  <div class="stat-value">
+                    <CountTo :start-val="0" :end-val="5678" :duration="2000" />
+                  </div>
+                  <div class="stat-label">{{ $t('dashboard.todayOrder') }}</div>
+                  <div class="stat-trend up">
+                    <Icon name="Top" />
+                    <span>+8.3%</span>
+                  </div>
+                </div>
               </div>
-            </el-timeline-item>
-          </el-timeline>
-        </el-card>
-      </el-col>
-    </el-row>
-
-    <!-- 底部信息区域 -->
-    <el-row :gutter="20" class="bottom-section">
-      <el-col :xs="24" :lg="12">
-        <el-card class="info-card" shadow="hover">
-          <template #header>
-            <div class="card-header">
-              <span>{{ $t('dashboard.systemHealth') }}</span>
-              <el-tag :type="systemHealth.type" size="small">{{ systemHealth.status }}</el-tag>
-            </div>
-          </template>
-          <div class="system-status">
-            <div class="status-item">
-              <div class="status-label">
-                <Icon name="Odometer" />
-                <span>{{ $t('dashboard.serverUptime') }}</span>
-              </div>
-              <div class="status-value">{{ $t('dashboard.uptime', { day: 15, hour: 8, minute: 32 }) }}</div>
-            </div>
-            <div class="status-item">
-              <div class="status-label">
-                <Icon name="Cpu" />
-                <span>{{ $t('dashboard.cpuUsage') }}</span>
-              </div>
-              <div class="status-progress">
-                <el-progress :percentage="35" :color="getProgressColor(35)" />
-              </div>
-            </div>
-            <div class="status-item">
-              <div class="status-label">
-                <Icon name="svg-save-fill" class="fs-16" />
-                <span>{{ $t('dashboard.memoryUsage') }}</span>
-              </div>
-              <div class="status-progress">
-                <el-progress :percentage="62" :color="getProgressColor(62)" />
-              </div>
-            </div>
-            <div class="status-item">
-              <div class="status-label">
-                <Icon name="Coin" />
-                <span>{{ $t('dashboard.diskSpace') }}</span>
-              </div>
-              <div class="status-progress">
-                <el-progress :percentage="78" :color="getProgressColor(78)" />
-              </div>
-            </div>
+            </el-card>
           </div>
-        </el-card>
-      </el-col>
+        </el-col>
 
-      <el-col :xs="24" :lg="12">
-        <el-card class="info-card" shadow="hover">
-          <template #header>
-            <div class="card-header">
-              <span>{{ $t('dashboard.notificationCenter') }}</span>
-              <el-badge :value="unreadCount" class="notification-badge" />
-            </div>
-          </template>
-          <div class="notifications">
-            <div
-              v-for="(notification, index) in notifications"
-              :key="index"
-              class="notification-item"
-              :class="{ unread: notification.unread }"
-            >
-              <el-tag :type="notification.type" size="small">{{ notification.tag }}</el-tag>
-              <span class="notification-text">{{ notification.text }}</span>
-              <span class="notification-time">{{ notification.time }}</span>
-            </div>
+        <el-col :xs="24" :sm="12" :lg="6">
+          <div class="stat-card-wrapper">
+            <el-card class="stat-card" shadow="hover">
+              <div class="stat-content">
+                <div class="stat-icon revenue">
+                  <Icon name="money" />
+                </div>
+                <div class="stat-info">
+                  <div class="stat-value">
+                    <CountTo :start-val="0" :end-val="89012" :duration="2000" />
+                  </div>
+                  <div class="stat-label">{{ $t('dashboard.monthIncome') }}</div>
+                  <div class="stat-trend up">
+                    <Icon name="Top" />
+                    <span>+15.2%</span>
+                  </div>
+                </div>
+              </div>
+            </el-card>
           </div>
-        </el-card>
-      </el-col>
-    </el-row>
+        </el-col>
+
+        <el-col :xs="24" :sm="12" :lg="6">
+          <div class="stat-card-wrapper">
+            <el-card class="stat-card" shadow="hover">
+              <div class="stat-content">
+                <div class="stat-icon products">
+                  <Icon name="Goods" />
+                </div>
+                <div class="stat-info">
+                  <div class="stat-value">
+                    <CountTo :start-val="0" :end-val="4321" :duration="2000" />
+                  </div>
+                  <div class="stat-label">{{ $t('dashboard.productNum') }}</div>
+                  <div class="stat-trend down">
+                    <Icon name="Bottom" />
+                    <span>-2.1%</span>
+                  </div>
+                </div>
+              </div>
+            </el-card>
+          </div>
+        </el-col>
+      </el-row>
+
+      <!-- 快捷访问区域 -->
+      <el-row :gutter="20" class="quick-access-section">
+        <el-col :span="24">
+          <el-card class="quick-access-card" shadow="hover">
+            <template #header>
+              <div class="card-header">
+                <span>{{ $t('dashboard.quickAccess') }}</span>
+              </div>
+            </template>
+            <div class="quick-access-grid">
+              <div class="quick-access-item" @click="navigateTo('/editor/markdownEditor')">
+                <div class="access-icon editor">
+                  <Icon name="EditPen" />
+                </div>
+                <div class="access-info">
+                  <div class="access-title">{{ $t('dashboard.editor')}}</div>
+                  <div class="access-desc">{{ $t('dashboard.editorCount', { number: 6 })}}</div>
+                </div>
+              </div>
+              <div class="quick-access-item" @click="navigateTo('/fileViewer/pdfViewer')">
+                <div class="access-icon file">
+                  <Icon name="Document" />
+                </div>
+                <div class="access-info">
+                  <div class="access-title">{{ $t('dashboard.fileViewer') }}</div>
+                  <div class="access-desc">{{ $t('dashboard.officePreview') }}</div>
+                </div>
+              </div>
+              <div class="quick-access-item" @click="navigateTo('/media/compress')">
+                <div class="access-icon media">
+                  <Icon name="PictureRounded" />
+                </div>
+                <div class="access-info">
+                  <div class="access-title">{{ $t('dashboard.fileCompress') }}</div>
+                  <div class="access-desc">{{ $t('dashboard.mediaCompress') }}</div>
+                </div>
+              </div>
+              <div class="quick-access-item" @click="navigateTo('/table/TableExample')">
+                <div class="access-icon table">
+                  <Icon name="Grid" />
+                </div>
+                <div class="access-info">
+                  <div class="access-title">{{ $t('dashboard.table') }}</div>
+                  <div class="access-desc">{{ $t('dashboard.nestedTable') }}</div>
+                </div>
+              </div>
+              <div class="quick-access-item" @click="navigateTo('/components/scrollbar')">
+                <div class="access-icon component">
+                  <Icon name="Sunset" />
+                </div>
+                <div class="access-info">
+                  <div class="access-title">{{ $t('dashboard.component') }}</div>
+                  <div class="access-desc">{{ $t('dashboard.customComponent') }}</div>
+                </div>
+              </div>
+              <div class="quick-access-item" @click="navigateTo('/icons/list')">
+                <div class="access-icon icon">
+                  <Icon name="HelpFilled" />
+                </div>
+                <div class="access-info">
+                  <div class="access-title">{{ $t('dashboard.iconResource') }}</div>
+                  <div class="access-desc">{{ $t('dashboard.iconLibrary') }}</div>
+                </div>
+              </div>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
+
+      <!-- 主要内容区域 -->
+      <el-row :gutter="20" class="main-content">
+        <!-- 左侧图表区域 -->
+        <el-col :xs="24" :lg="16">
+          <el-card class="chart-card" shadow="hover">
+            <template #header>
+              <div class="card-header">
+                <span>{{ $t('dashboard.dataTrend') }}</span>
+                <el-radio-group v-model="chartPeriod" size="small">
+                  <el-radio-button value="week">{{ $t('dashboard.week') }}</el-radio-button>
+                  <el-radio-button value="month">{{ $t('dashboard.month') }}</el-radio-button>
+                  <el-radio-button value="year">{{ $t('dashboard.year') }}</el-radio-button>
+                </el-radio-group>
+              </div>
+            </template>
+            <div ref="chartRef" class="echarts-container"></div>
+          </el-card>
+        </el-col>
+
+        <!-- 右侧活动时间线 -->
+        <el-col :xs="24" :lg="8">
+          <el-card class="activity-card" shadow="hover">
+            <template #header>
+              <div class="card-header">
+                <span>{{ $t('dashboard.activityTimeline') }}</span>
+                <el-button type="primary" size="small" text>{{ $t('dashboard.viewAll') }}</el-button>
+              </div>
+            </template>
+            <el-timeline class="activity-timeline">
+              <el-timeline-item
+                v-for="(activity, index) in activities"
+                :key="index"
+                :timestamp="activity.time"
+                :type="activity.type"
+                :color="activity.color"
+              >
+                <div class="activity-content">
+                  <div class="activity-title">{{ activity.title }}</div>
+                  <div class="activity-desc">{{ activity.desc }}</div>
+                </div>
+              </el-timeline-item>
+            </el-timeline>
+          </el-card>
+        </el-col>
+      </el-row>
+
+      <!-- 底部信息区域 -->
+      <el-row :gutter="20" class="bottom-section">
+        <el-col :xs="24" :lg="12">
+          <el-card class="info-card" shadow="hover">
+            <template #header>
+              <div class="card-header">
+                <span>{{ $t('dashboard.systemHealth') }}</span>
+                <el-tag :type="systemHealth.type" size="small">{{ systemHealth.status }}</el-tag>
+              </div>
+            </template>
+            <div class="system-status">
+              <div class="status-item">
+                <div class="status-label">
+                  <Icon name="Odometer" />
+                  <span>{{ $t('dashboard.serverUptime') }}</span>
+                </div>
+                <div class="status-value">{{ $t('dashboard.uptime', { day: 15, hour: 8, minute: 32 }) }}</div>
+              </div>
+              <div class="status-item">
+                <div class="status-label">
+                  <Icon name="Cpu" />
+                  <span>{{ $t('dashboard.cpuUsage') }}</span>
+                </div>
+                <div class="status-progress">
+                  <el-progress :percentage="35" :color="getProgressColor(35)" />
+                </div>
+              </div>
+              <div class="status-item">
+                <div class="status-label">
+                  <Icon name="svg-save-fill" class="fs-16" />
+                  <span>{{ $t('dashboard.memoryUsage') }}</span>
+                </div>
+                <div class="status-progress">
+                  <el-progress :percentage="62" :color="getProgressColor(62)" />
+                </div>
+              </div>
+              <div class="status-item">
+                <div class="status-label">
+                  <Icon name="Coin" />
+                  <span>{{ $t('dashboard.diskSpace') }}</span>
+                </div>
+                <div class="status-progress">
+                  <el-progress :percentage="78" :color="getProgressColor(78)" />
+                </div>
+              </div>
+            </div>
+          </el-card>
+        </el-col>
+
+        <el-col :xs="24" :lg="12">
+          <el-card class="info-card" shadow="hover">
+            <template #header>
+              <div class="card-header">
+                <span>{{ $t('dashboard.notificationCenter') }}</span>
+                <el-badge :value="unreadCount" class="notification-badge" />
+              </div>
+            </template>
+            <div class="notifications">
+              <div
+                v-for="(notification, index) in notifications"
+                :key="index"
+                class="notification-item"
+                :class="{ unread: notification.unread }"
+              >
+                <el-tag :type="notification.type" size="small">{{ notification.tag }}</el-tag>
+                <span class="notification-text">{{ notification.text }}</span>
+                <span class="notification-time">{{ notification.time }}</span>
+              </div>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
+
+    </div>
   </div>
 </template>
 

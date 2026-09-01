@@ -9,11 +9,14 @@ export const useUserInfoStore = defineStore('userInfo', () => {
   const userNameCn = ref('')
   const roles = ref<string[]>([])
   const authMenus = ref<MenuRoute[]>([])
+  const permissions = ref<string[]>([])
 
   async function setUserInfo(userInfo: UserInfo) {
+    console.log('setUserInfo', userInfo)
     userName.value = userInfo.userName
     userNameCn.value = userInfo.userNameCn
     roles.value = userInfo.roles
+    permissions.value = userInfo.permissions as string[]
   }
 
   function setUserName(userInfo: Pick<UserInfo, 'userName' | 'userNameCn'>) {
@@ -71,6 +74,7 @@ export const useUserInfoStore = defineStore('userInfo', () => {
     userNameCn,
     roles,
     authMenus,
+    permissions,
     setUserInfo,
     setUserName,
     setAuthMenus,

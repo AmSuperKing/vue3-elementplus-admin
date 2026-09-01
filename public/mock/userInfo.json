@@ -13,7 +13,8 @@
     "permissions": [
       "sys:menu:add",
       "sys:menu:edit",
-      "sys:menu:delete"
+      "sys:menu:delete",
+      "sys:dashboard:viewAll"
     ]
   }
 }

@@ -32,6 +32,8 @@ interface UserInfo {
   userNameCn: string
   roles: string[]
   token: string
+  permissions: string[]
+  [key: string]: unknown
 }
 
 interface ApiResponse<T = unknown> {

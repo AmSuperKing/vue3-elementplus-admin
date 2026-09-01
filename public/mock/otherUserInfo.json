@@ -11,7 +11,8 @@
       "normal"
     ],
     "permissions": [
-      "sys:menu:view"
+      "sys:menu:view",
+      "sys:dashboard:viewBasic"
     ]
   }
 }
